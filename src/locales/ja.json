@@ -1,1 +1,500 @@
-{}
+{
+  "site": {
+    "name": "Void Platform Wiki",
+    "shortName": "Void Platform",
+    "tagline": "壁ジャンプ、ダッシュ、トゲ、コイン攻略",
+    "description": "Void Platformの基本操作、壁ジャンプとダッシュ、コイン収集のコツ、トゲの危険、初心者向けの実践的なレベル攻略を紹介します。",
+    "legalNotice": "非公式のファンWikiです。プレイヤーによる、プレイヤーのためのサイトです。"
+  },
+  "nav": {
+    "menu": "メニュー",
+    "toggleTheme": "テーマを切り替える",
+    "guide": "ガイド",
+    "mechanics": "メカニクス",
+    "progression": "進行",
+    "tutorial": "チュートリアル",
+    "modes": "モード",
+    "community": "コミュニティ",
+    "technical": "技術"
+  },
+  "home": {
+    "meta": {
+      "title": "Void Platform Wiki - 攻略、操作、ヒント",
+      "description": "Void Platformの基本操作、壁ジャンプとダッシュ、コイン収集のコツ、トゲの危険、初心者向けの実践的なレベル攻略を紹介します。"
+    },
+    "hero": {
+      "eyebrow": "精密プラットフォーマー",
+      "title": "Void Platform Wiki",
+      "description": "壁ジャンプ、ダッシュ、トゲの危険、コイン収集を特徴とする高難度プラットフォーマー。各レベルを攻略するためのヒントと操作方法を紹介します。",
+      "stats": [
+        "ブラウザゲーム",
+        "壁ジャンプ＆ダッシュ",
+        "コイン収集",
+        "精密プラットフォーミング"
+      ],
+      "primaryCta": "初心者ガイド",
+      "secondaryCta": "プラットフォームの仕組み",
+      "tertiaryCta": "ブラウザでVoid Platformをプレイ",
+      "videoLabel": "ゲームプレイのプレビュー"
+    },
+    "updates": {
+      "title": "最新情報",
+      "browse": "すべてのガイドを見る",
+      "viewAll": "すべて見る"
+    },
+    "start": {
+      "eyebrow": "ここから始める",
+      "title": "Void Platformの旅",
+      "cards": [
+        {
+          "number": "1",
+          "title": "初心者ガイド",
+          "description": "初回プレイの流れを学びましょう。ルートを読み、各ジャンプのタイミングを合わせ、壁ジャンプとダッシュをつないで最初のチェックポイントへ。"
+        },
+        {
+          "number": "2",
+          "title": "進行ガイド",
+          "description": "アンカー間の距離を覚え、移動テクニックを1つずつ追加して、単発クリアをより長いランにつなげましょう。"
+        },
+        {
+          "number": "3",
+          "title": "コインルート",
+          "description": "安全な着地点を基準にコイン回収を計画し、すべてのコインを取るために虚空越しのぶっつけジャンプを強いられないようにします。"
+        },
+        {
+          "number": "4",
+          "title": "プラットフォームの仕組み",
+          "description": "乗る前に停止・移動・帰還の各フェーズを確認し、動くプラットフォームの端で取り残されないようにしましょう。"
+        }
+      ]
+    },
+    "popular": {
+      "eyebrow": "人気ページ",
+      "title": "話題の記事",
+      "quickLinks": [
+        "Void Platformの基本",
+        "プラットフォーム移動",
+        "落下の仕組み",
+        "シングルプレイ"
+      ],
+      "cards": [
+        {
+          "badge": "初心者",
+          "title": "Void Platform 初心者ガイド",
+          "description": "初回プレイの流れを学びましょう。レベルを読み、ジャンプのタイミングを合わせ、ダッシュを使って次のチェックポイントへ。",
+          "href": "/guide/void-platform-beginner-guide"
+        },
+        {
+          "badge": "基本",
+          "title": "Void Platformの遊び方",
+          "description": "移動、壁ジャンプ、ダッシュのタイミング、各ルートを支える操作に慣れましょう。",
+          "href": "/guide/void-platform-how-to-play"
+        },
+        {
+          "badge": "メカニクス",
+          "title": "Void Platformのプラットフォーム移動",
+          "description": "動くプラットフォームでジャンプを決める前に、停止・移動・帰還のフェーズを確認しましょう。",
+          "href": "/mechanics/void-platform-platform-movement"
+        },
+        {
+          "badge": "メカニクス",
+          "title": "Void Platformの落下の仕組み",
+          "description": "重力、コヨーテタイム、ジャンプバッファ、虚空での死亡、アンカーでの復活を理解しましょう。",
+          "href": "/mechanics/void-platform-falling-mechanics"
+        },
+        {
+          "badge": "メカニクス",
+          "title": "Void Platformのプラットフォーム物理",
+          "description": "ジャンプの弧、当たり判定、一方通行のプラットフォーム、納得できる死亡がどう噛み合うかを見ていきます。",
+          "href": "/mechanics/void-platform-platform-physics"
+        },
+        {
+          "badge": "モード",
+          "title": "Void Platformのシングルプレイモード",
+          "description": "ソロランを準備し、挑戦のペースを整え、クリーンなクリアを台無しにするミスを避けましょう。",
+          "href": "/modes/void-platform-single-player"
+        },
+        {
+          "badge": "ヒント",
+          "title": "Void Platformのヒントとコツ",
+          "description": "コヨーテタイム、先行入力ジャンプ、頂点での方向転換、意図的なリセットを使ってランを立て直しましょう。",
+          "href": "/guide/void-platform-tips"
+        },
+        {
+          "badge": "進行",
+          "title": "Void Platform 進行ガイド",
+          "description": "アンカーと移動テクニックの計画を立て、最初のクリアからより難しいルートへ進みましょう。",
+          "href": "/progression/void-platform-progression-guide"
+        },
+        {
+          "badge": "コミュニティ",
+          "title": "Void Platform コミュニティ",
+          "description": "コミュニティの議論、共有ルート、よくある設定の質問への回答を見つけましょう。",
+          "href": "/community/void-platform-community"
+        }
+      ]
+    },
+    "aboutGame": {
+      "title": "Void Platformとは？",
+      "paragraphs": [
+        "Void Platformは、壁ジャンプ、ダッシュ、トゲの危険、コイン収集を中心としたブラウザ向けの精密プラットフォーマーです。ルートは虚空の上に浮かんでいるため、各ジャンプではプラットフォームの周期を読み、弧を決め、着地に失敗したときは素早く立て直す必要があります。",
+        "基本の流れはシンプルです。浮遊プラットフォームを渡り、コインを集め、トゲ地帯を避け、先へ進む前に次のアンカーへ到達します。当サイトのガイドでは、操作、プラットフォーム移動、落下の仕組み、生存のコツを解説し、初めてのプレイヤーが繰り返しのリセットから安定したクリアへ進めるようにします。"
+      ],
+      "stats": [
+        {
+          "label": "プラットフォーム",
+          "value": "ブラウザ"
+        },
+        {
+          "label": "ジャンル",
+          "value": "精密プラットフォーマー"
+        },
+        {
+          "label": "移動",
+          "value": "壁ジャンプ＆ダッシュ"
+        },
+        {
+          "label": "目的",
+          "value": "コインを集める"
+        },
+        {
+          "label": "危険",
+          "value": "トゲと虚空"
+        }
+      ],
+      "cta": "すべてのガイドを見る"
+    },
+    "explore": {
+      "title": "Void Platform Wikiを探索",
+      "description": "初回プレイ、移動、落下、進行、チャレンジ段階、操作、更新情報、よくある質問を扱う8つのVoid Platformガイドハブを見て回りましょう。",
+      "modules": [
+        {
+          "order": 1,
+          "name": "Void Platform 初心者ガイド",
+          "description": "Void Platformの初回プレイの流れを学びましょう。レベルを読み、ジャンプのタイミングを合わせ、壁ジャンプとダッシュを使い、無駄な挑戦をせず最初のチェックポイントへ。",
+          "href": "/guide/void-platform-beginner-guide",
+          "displayType": "step-by-step",
+          "highlights": [
+            {
+              "label": "1",
+              "detail": "短いランから始め、ジャンプの高さ、ダッシュの距離、壁ジャンプのタイミングを試してから、隙間へ踏み込みましょう。"
+            },
+            {
+              "label": "2",
+              "detail": "動くプラットフォームを1周期まるごと観察し、接近・停止・移動・帰還のフェーズを把握しましょう。"
+            },
+            {
+              "label": "3",
+              "detail": "壁ジャンプで高さを取り戻し、通常のジャンプでは越えられない隙間のためにダッシュを残しましょう。"
+            },
+            {
+              "label": "4",
+              "detail": "各プラットフォームの中央付近に着地しましょう。端では勢いが虚空へ運びます。"
+            },
+            {
+              "label": "5",
+              "detail": "難しい区間の前に復活アンカーを覚え、1回の失敗がラン全体ではなく1回の挑戦で済むようにしましょう。"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "name": "Void Platform ゲームプレイガイド",
+          "description": "Void Platformの基本ループを理解しましょう。浮遊プラットフォームを渡り、コインを集め、トゲを避け、開始地点からチェックポイントまで綺麗なルートを保ちます。",
+          "href": "/guide/void-platform-gameplay",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "移動",
+              "detail": "ジャンプ、壁ジャンプ、ダッシュをつないで浮遊プラットフォームを渡りましょう。"
+            },
+            {
+              "label": "コイン",
+              "detail": "次のジャンプを合わせる時間を確保しながら、ルート上のコインを集めましょう。"
+            },
+            {
+              "label": "トゲ",
+              "detail": "トゲ地帯は致命的な危険として扱い、低速で端に近づきましょう。"
+            },
+            {
+              "label": "アンカー",
+              "detail": "復活アンカーを覚え、ルート失敗がラン全体ではなく1回の挑戦で済むようにしましょう。"
+            },
+            {
+              "label": "ルート",
+              "detail": "乗る前にプラットフォームの1周期を観察し、停止中に決断しましょう。"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "name": "Void Platformのヒントとコツ",
+          "description": "より正確なジャンプ、安全なプラットフォームへの乗り方、ルートを外した後の素早い立て直しに役立つVoid Platformの実践的なヒントです。",
+          "href": "/guide/void-platform-tips",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "コヨーテ",
+              "detail": "崖を離れた直後でも少しの間ジャンプが成立するので、慌てて連打しないようにしましょう。"
+            },
+            {
+              "label": "先行入力",
+              "detail": "着地直前にジャンプを押して、接触時に次のジャンプを入力しておきましょう。"
+            },
+            {
+              "label": "頂点",
+              "detail": "空中制御が最も強い弧の頂点付近で方向を変えましょう。"
+            },
+            {
+              "label": "停止",
+              "detail": "動くプラットフォームには加速中ではなく停止中に乗りましょう。"
+            },
+            {
+              "label": "リセット",
+              "detail": "悪いルートの後は、意図的に虚空でリセットして最後のアンカーへ戻りましょう。"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "name": "Void Platform 進行ガイド",
+          "description": "アンカー、移動テクニック、再現性のあるラインを学び、最初のクリーンクリアからより難しいVoid Platformのルートへ進む計画を立てましょう。",
+          "href": "/progression/void-platform-progression-guide",
+          "displayType": "step-by-step",
+          "highlights": [
+            {
+              "label": "1",
+              "detail": "最初のルートはダッシュを使わずにクリアし、自然なジャンプ間隔を覚えましょう。"
+            },
+            {
+              "label": "2",
+              "detail": "壁ジャンプの後にダッシュを加え、着地点を越えずに隙間を広げましょう。"
+            },
+            {
+              "label": "3",
+              "detail": "既知のチェックポイントでアンカー間のルートを練習し、リセットが自動化するまで繰り返しましょう。"
+            },
+            {
+              "label": "4",
+              "detail": "新しい地形を無理に進むのではなく、以前のレベルに戻ってより綺麗なラインとコインルートを狙いましょう。"
+            },
+            {
+              "label": "5",
+              "detail": "各ジャンプが単独で安定したら、移動テクニックをつないで1本の連続ランにしましょう。"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "name": "Void Platformのレベルとチャレンジ",
+          "description": "固定の隙間や直線シャトルから、エレベーター、振り子の弧、位相プラットフォーム、追跡者まで、Void Platformのランを形作るチャレンジの種類を比較します。",
+          "href": "/mechanics",
+          "displayType": "tier-grid",
+          "highlights": [
+            {
+              "label": "S",
+              "detail": "追跡型と位相型のプラットフォーム：周期を読むのが遅いと失敗します。"
+            },
+            {
+              "label": "A",
+              "detail": "振り子の弧と垂直エレベーター：空中での調整が着地を決めます。"
+            },
+            {
+              "label": "B",
+              "detail": "直線シャトル：1周期見れば理解できます。"
+            },
+            {
+              "label": "C",
+              "detail": "固定の棚と広い隙間：純粋なジャンプ距離の勝負です。"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "name": "Void Platform 操作ガイド",
+          "description": "Void Platformのすべてのルートを支える操作をわかりやすくまとめました。左右移動、ジャンプ、壁ジャンプ、ダッシュ、リセットです。",
+          "href": "/guide/void-platform-how-to-play",
+          "displayType": "code-cards",
+          "highlights": [
+            {
+              "label": "移動",
+              "detail": "ジャンプする前に左右入力で次の着地点を合わせましょう。"
+            },
+            {
+              "label": "ジャンプ",
+              "detail": "ジャンプを長押しすると高い弧になり、早く離すと小さく跳べます。"
+            },
+            {
+              "label": "壁ジャンプ",
+              "detail": "壁に向かってジャンプし、蹴って高さを取り戻しましょう。"
+            },
+            {
+              "label": "ダッシュ",
+              "detail": "通常のジャンプでは越えられない隙間をダッシュで渡りましょう。"
+            },
+            {
+              "label": "リセット",
+              "detail": "ランをやり直すか、虚空で死亡した後に最後のアンカーへ戻りましょう。"
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "name": "Void Platform 更新ガイド",
+          "description": "確認済みのVoid Platform更新情報と、ルート、プラットフォーム周期、当たり判定、復活タイミングに影響する変更を追いましょう。",
+          "href": "/community/void-platform-updates",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "パッチ",
+              "detail": "アップデートごとにパッチノートを確認しましょう。バランス変更はソロルートに最も影響します。"
+            },
+            {
+              "label": "周期",
+              "detail": "古い周期がそのまま続くと決めつけず、パッチ後にプラットフォームのタイミングを学び直しましょう。"
+            },
+            {
+              "label": "修正",
+              "detail": "ジャンプやアンカーの挙動を変える当たり判定・復活の修正に注目しましょう。"
+            },
+            {
+              "label": "モード",
+              "detail": "新しいチャレンジルールにより、慣れたルートに厳しいタイミングが追加されることがあります。"
+            }
+          ]
+        },
+        {
+          "order": 8,
+          "name": "Void Platform よくある質問",
+          "description": "ブラウザでのプレイ、操作、ジャンプ失敗、虚空での死亡、コインルートに関するVoid Platformのよくある質問に素早く答えます。",
+          "href": "/tutorial",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "ブラウザ",
+              "detail": "Void Platformはブラウザで動作するため、インストールは不要です。"
+            },
+            {
+              "label": "操作",
+              "detail": "ジャンプ、壁ジャンプ、ダッシュのタイミングがVoid Platformのすべてのルートを決めます。"
+            },
+            {
+              "label": "死亡",
+              "detail": "虚空に触れると挑戦が終了し、最後のアンカーへ戻されます。"
+            },
+            {
+              "label": "コイン",
+              "detail": "綺麗なジャンプラインを崩さずに、ルート上のコインを集めましょう。"
+            },
+            {
+              "label": "ヘルプ",
+              "detail": "レベルで行き詰まったら、まずVoid Platformの初心者ガイドから始めましょう。"
+            }
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "title": "Void Platform よくある質問",
+      "description": "Void Platformの移動、操作、危険、進行に関するよくある質問に素早く答えます。",
+      "items": [
+        {
+          "question": "Void Platformとは？",
+          "answer": "Void Platformは、壁ジャンプ、ダッシュ、トゲの危険、コイン収集を中心としたブラウザ向けの精密プラットフォーマーです。ランではプラットフォームのパターンを読み、ジャンプを決め、ルートを外した後は素早く立て直すことが求められます。"
+        },
+        {
+          "question": "Void Platformはダウンロードが必要ですか？",
+          "answer": "Void Platformはブラウザで動作するため、別のクライアントをインストールせずにランを始められます。ゲームページを開き、移動とジャンプの操作で開始してください。"
+        },
+        {
+          "question": "Void Platformではどの操作を使いますか？",
+          "answer": "Void Platformでは左右移動、ジャンプ、壁ジャンプ、ダッシュを使います。速度よりもジャンプのタイミングが重要です。長押しで高い弧、早めに離して小さなジャンプ、着地点を合わせてからダッシュしましょう。"
+        },
+        {
+          "question": "Void Platformでジャンプが失敗し続けるのはなぜですか？",
+          "answer": "Void Platformのジャンプ失敗の多くは、動くプラットフォームへの乗り遅れ、落下中の修正の遅れ、頂点後に方向入力を離すことが原因です。プラットフォームを1周期観察し、停止中に決断し、弧の頂点付近で操作しましょう。"
+        },
+        {
+          "question": "Void Platformで長く生き残るには？",
+          "answer": "トゲと開いた虚空をリセット地点として扱い、動くプラットフォームの中央付近に着地し、復活アンカー間の距離を覚えましょう。意図的なリセットは悪いルートを押し通すより速いです。"
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Void Platformを極める準備はできましたか？",
+      "description": "新規・復帰プレイヤー向けの実践的なレベルガイドで、壁ジャンプ、ダッシュのタイミング、トゲの危険、コインルートを学びましょう。",
+      "primary": "初心者ガイドを読む",
+      "secondary": "ブラウザでVoid Platformをプレイ"
+    }
+  },
+  "guide": {
+    "overviewTitle": "Void Platformを始めよう",
+    "overviewDescription": "Void Platformの基本から始めましょう。操作、壁ジャンプ、ダッシュ、コインルート、最初のクリアまでの道のりを解説します。"
+  },
+  "mechanics": {
+    "overviewTitle": "Void Platformのメカニクス",
+    "overviewDescription": "壁ジャンプ、ダッシュのタイミング、コヨーテタイム、動くプラットフォーム、そしてVoid Platformの各ランを形作る危険を理解しましょう。"
+  },
+  "progression": {
+    "overviewTitle": "Void Platformの進行",
+    "overviewDescription": "信頼できるアンカー、移動テクニック、再現性のあるラインで、最初のクリアからより難しいルートへ進みましょう。"
+  },
+  "tutorial": {
+    "overviewTitle": "Void Platform チュートリアル",
+    "overviewDescription": "操作、プラットフォームのタイミング、トゲの危険、生存のコツを扱うVoid Platformのステップバイステップチュートリアルに従いましょう。"
+  },
+  "modes": {
+    "overviewTitle": "Void Platformのモード",
+    "overviewDescription": "シングルプレイ、サバイバル、チャレンジの各モードでVoid Platformのランを比較しましょう。"
+  },
+  "community": {
+    "overviewTitle": "Void Platform コミュニティ",
+    "overviewDescription": "Void Platformコミュニティの議論、確認済みの更新情報、共有ルート、よくある質問への回答を見つけましょう。"
+  },
+  "technical": {
+    "overviewTitle": "Void Platform 技術ガイド",
+    "overviewDescription": "Void Platformのブラウザ要件、操作、プラットフォームの挙動、技術的な詳細を確認しましょう。"
+  },
+  "shared": {
+    "wikiNavigation": "Wikiナビゲーション",
+    "activeCodes": "コミュニティ情報",
+    "communityUpdatesDescription": "確認済みの更新情報、共有ルート、コミュニティの回答をチェックしましょう。",
+    "updated": "更新",
+    "viewAllCodes": "コミュニティ情報を見る",
+    "playOnRoblox": "ブラウザでプレイ",
+    "inThisSection": "このセクション",
+    "tableOfContents": "目次",
+    "nextSteps": "次のステップ",
+    "needHelp": "助けが必要ですか？",
+    "relatedReading": "関連記事",
+    "relatedGuides": "関連ガイド",
+    "readMore": "続きを読む",
+    "officialMedia": "公式メディア",
+    "home": "ホーム",
+    "noGuidesAvailable": "まだガイドがありません。後でもう一度ご確認ください。"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "お探しのガイドは移動したか、まだ追加されていない可能性があります。",
+    "browse": "Void Platformのガイドを見る"
+  },
+  "footer": {
+    "aboutTitle": "Void Platform Wiki",
+    "about": "Void Platform Wikiは、壁ジャンプ、ダッシュ、トゲの危険、コインルート、実践的なレベル攻略を扱う独立したファン制作のガイドハブです。",
+    "quickLinks": "クイックリンク",
+    "guides": "ガイド",
+    "legal": "法的情報",
+    "copyright": "2026 Void Platform Wiki。元のゲーム制作者・販売元とは提携していません。",
+    "description": "壁ジャンプ、ダッシュ、トゲの危険、コイン収集を備えたブラウザ向け精密プラットフォーマー。",
+    "playGame": "ブラウザでVoid Platformをプレイ",
+    "officialDiscord": "コミュニティガイド",
+    "officialYoutube": "ゲームプレイのプレビューを見る",
+    "vvBuilder": "ゲームの操作",
+    "beginnerGuide": "初心者ガイド",
+    "raceGuides": "メカニクス",
+    "bossGuides": "進行",
+    "buildGuide": "チュートリアル",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfService": "利用規約"
+  }
+}

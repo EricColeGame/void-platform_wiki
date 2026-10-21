@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";
 import { hasLocale } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { ThemeProvider } from "next-themes";
@@ -24,13 +24,16 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "site" });
+  const siteName = t("name");
+  const siteDescription = t("description");
   const image = `${siteUrl}/images/hero.webp`;
   const adsenseId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID;
   return {
     metadataBase: new URL(siteUrl),
     applicationName: siteConfig.name,
-    title: { default: "Void Platform Wiki", template: "%s" },
-    description: siteConfig.description,
+    title: { default: siteName, template: "%s" },
+    description: siteDescription,
     manifest: "/manifest.json",
     icons: {
       icon: [
@@ -45,8 +48,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Void Platform" },
     formatDetection: { telephone: false },
     category: "games",
-    openGraph: { type: "website", locale, url: `${siteUrl}/${locale}`, siteName: siteConfig.name, title: siteConfig.name, description: siteConfig.description, images: [{ url: image, width: 1600, height: 900, alt: siteConfig.name }] },
-    twitter: { card: "summary_large_image", title: siteConfig.name, description: siteConfig.description, images: [image] },
+    alternates: {
+      canonical: `${siteUrl}/${locale}`,
+      languages: Object.fromEntries(routing.locales.map((item) => [item, `${siteUrl}/${item}`])),
+    },
+    openGraph: { type: "website", locale, url: `${siteUrl}/${locale}`, siteName, title: siteName, description: siteDescription, images: [{ url: image, width: 1600, height: 900, alt: siteName }] },
+    twitter: { card: "summary_large_image", title: siteName, description: siteDescription, images: [image] },
     ...(adsenseId ? { other: { "google-adsense-account": adsenseId } } : {}),
   };
 }
