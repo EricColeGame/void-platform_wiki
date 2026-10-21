@@ -1,0 +1,117 @@
+export const metadata = {
+  title: "Guía de Void Platform en Reddit: autoalojamiento, configuración y respuestas de la comunidad",
+  description: "Una guía de Void Platform en Reddit que cubre la configuración autoalojada, las funciones de despliegue en Cloudflare, consejos para administradores y las preguntas más frecuentes de la comunidad.",
+  category: "community",
+  date: "2026-10-21",
+}
+
+La mayoría de las personas que buscan una guía de Void Platform en Reddit se encuentran atascadas en la misma bifurcación: ¿desplegar directamente en Cloudflare o levantar primero una plataforma compartida? Una plataforma Void convierte una única cuenta de Cloudflare en una superficie de despliegue para el equipo: un administrador la instala una vez y cada desarrollador conecta el CLI de Void a su URL, inicia sesión mediante un método de acceso habilitado y publica. Esta guía de Void Platform en Reddit reúne lo que realmente dice la documentación oficial, cuáles son los puntos de fricción habituales según los reportes de la comunidad y cómo decidir si tu equipo necesita una plataforma o no.
+
+La versión corta: si despliegas una aplicación para ti mismo, no necesitas una plataforma. Si varios desarrolladores comparten una cuenta de Cloudflare y quieres registros retenidos, historial de despliegues retenido y una única capa de acceso, probablemente sí la necesites. Todo lo que sigue está organizado en torno a esa decisión.
+
+## Qué hace realmente una plataforma Void
+
+Una plataforma Void es un destino de despliegue compartido construido sobre una cuenta de Cloudflare que tu equipo controla. El administrador se encarga de la instalación y el mantenimiento. Los desarrolladores nunca tocan la configuración a nivel de cuenta: apuntan el CLI a la URL de la plataforma, se autentican y despliegan.
+
+El detalle importante que sorprende a la gente es que la plataforma no cambia cómo se construyen las aplicaciones. Tanto un despliegue directo en Cloudflare como una plataforma autoalojada usan las mismas API de aplicación, así que una app que funciona en un destino funciona en el otro. Lo que añade la plataforma es acceso compartido más historial de despliegues retenido.
+
+| Capacidad | Directo en Cloudflare | Plataforma Void autoalojada (núcleo) |
+| --- | --- | --- |
+| Workers AI y solicitudes a proveedores | Tu propia cuenta y gateway | Gateway y proxy de la instalación |
+| Registros en tiempo de ejecución | Sesión de tail en vivo de Cloudflare | Registros retenidos de la plataforma |
+| Reversión de la aplicación | Versiones del Worker | Despliegues retenidos de la plataforma |
+| Sandboxes | Requiere Workers Paid y Docker | Requiere Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y builds de GitHub gestionados | No requerido | No incluido en una instalación estándar |
+
+Esa tabla es todo el argumento en miniatura. Un tail en vivo desaparece en el momento en que cierras la terminal; los registros retenidos de la plataforma, no. Volver a una versión del Worker es un modelo mental distinto de volver a un despliegue retenido de la plataforma, y los equipos que confunden ambos pierden tiempo real durante los incidentes. Según los reportes de la comunidad, esa confusión es una de las sorpresas tempranas más comunes.
+
+## Qué incluye la instalación del núcleo (y qué no)
+
+Una instalación estándar es deliberadamente ligera. El núcleo incluye Sandboxes gestionados y una pasarela de correo electrónico. El correo no está activo de fábrica: solo se activa después de configurar un dominio de correo y una zona compartidos.
+
+Cuatro capacidades quedan explícitamente fuera del núcleo: el panel de usuario, los builds y webhooks de GitHub, los Containers de build y los dominios personalizados de proyecto. Si tu equipo espera alguna de ellas desde el primer día, presupuesta la configuración opcional en lugar de dar por hecho que vienen incluidas.
+
+| Componente | ¿En una instalación estándar? | Qué hay que saber |
+| --- | --- | --- |
+| Sandboxes gestionados | Sí | Necesita Workers Paid en la cuenta de la plataforma |
+| Pasarela de correo | Sí | Se habilita cuando se configuran un dominio de correo y una zona compartidos |
+| Panel de usuario | No | Añadido opcional |
+| Builds y webhooks de GitHub | No | Opcional; las plataformas compiladas desde código fuente que los añadan deben usar ingress de webhooks aislado cuando Access protege la API |
+| Containers de build | No | Añadido opcional |
+| Dominios personalizados de proyecto | No | Añadido opcional |
+
+Una nota más sobre el alcance que vale la pena repetir: una plataforma de equipo requiere Workers for Platforms y la infraestructura de soporte documentada. Las funciones dependen en última instancia de cómo esté configurada la instalación, así que dos equipos que ejecutan "la misma" plataforma Void pueden acabar con conjuntos de capacidades notablemente distintos.
+
+## Instalar una plataforma Void: la lista de verificación del administrador
+
+La [guía oficial de instalación de la plataforma Void](https://void.cloud/guide/self-hosted-platform) repasa los requisitos previos y las credenciales antes que cualquier otra cosa, y ese orden no es casualidad. Las instalaciones que se atascan casi siempre lo hacen porque se dieron por sentadas una credencial o un nivel de cuenta en lugar de confirmarlos.
+
+| Paso | Acción | Por qué importa |
+| --- | --- | --- |
+| 1 | Decidir entre despliegue directo y plataforma compartida | Los despliegues individuales realmente no necesitan una plataforma |
+| 2 | Confirmar Workers Paid en la cuenta de la plataforma | Los Sandboxes dependen de ello |
+| 3 | Confirmar Workers for Platforms si es una plataforma de equipo | Sustenta la infraestructura documentada |
+| 4 | Reunir las credenciales antes de empezar | Las credenciales faltantes detienen una instalación a mitad de camino |
+| 5 | Ejecutar la instalación del núcleo | Entrega Sandboxes gestionados y la pasarela de correo |
+| 6 | Configurar el dominio de correo y la zona compartidos | El correo sigue deshabilitado hasta que esto termina |
+| 7 | Habilitar al menos un método de inicio de sesión | Los desarrolladores no pueden iniciar sesión sin uno |
+| 8 | Distribuir la URL de la plataforma y las instrucciones del CLI | Reduce drásticamente las preguntas repetidas |
+
+El paso 8 es el que los administradores se saltan. Una URL de plataforma compartida en un mensaje de chat hace tres semanas no es documentación. Escríbela una vez, junto con los métodos de inicio de sesión habilitados, y eliminarás toda una categoría de solicitudes de soporte.
+
+Si más adelante añades los servicios opcionales de GitHub compilando desde el código fuente, sigue la configuración de ingress de webhooks aislado cuando Access protege la API. Los reportes de la comunidad describen de forma consistente la entrega de webhooks como la pieza que falla primero cuando Access se sitúa delante de la API sin esa separación.
+
+## Reportes de la comunidad: dónde se atascan los nuevos administradores
+
+Los temas recurrentes en las discusiones de la comunidad rara vez son exóticos. Son lagunas de configuración que parecen errores de la plataforma.
+
+| Síntoma | Causa probable | Solución |
+| --- | --- | --- |
+| Los desarrolladores no pueden iniciar sesión | Ningún método de inicio de sesión habilitado, o una URL de plataforma obsoleta | Habilita un método y publica la URL canónica |
+| El correo nunca se envía | Dominio de correo y zona compartidos sin configurar | Termina la configuración de la pasarela de correo |
+| "La reversión está rota" | Se comparan despliegues de la plataforma con versiones del Worker | Usa el historial de despliegues retenidos de la plataforma |
+| Falla la creación de Sandboxes | Falta Workers Paid en la cuenta de la plataforma | Actualiza la cuenta de la plataforma, no la del desarrollador |
+| Los webhooks de GitHub fallan detrás de Access | Ingress de webhooks no aislado | Sigue la configuración de ingress de webhooks aislado |
+
+Dos patrones destacan en los reportes de la comunidad. Primero, los administradores diagnostican la cuenta del desarrollador cuando la restricción está en la cuenta de la plataforma: los Sandboxes son el ejemplo clásico. Segundo, la gente asume que las funciones opcionales están rotas cuando simplemente nunca se instalaron. El panel de usuario, los builds de GitHub y los dominios personalizados de proyecto no forman parte de una instalación estándar, así que su ausencia es el comportamiento esperado, no un defecto.
+
+Un hábito útil: antes de abrir un hilo o un issue, escribe en qué destino estás —Cloudflare directo o plataforma autoalojada— y qué componentes opcionales instalaste. La mitad de todo el ida y vuelta en un hilo de la guía de Void Platform en Reddit desaparece una vez que ese contexto está en el primer mensaje.
+
+## Conseguir respuestas útiles en los hilos de la guía de Void Platform en Reddit
+
+La ayuda de la comunidad es rápida cuando la pregunta es específica y lenta cuando no lo es. La diferencia casi siempre es el contexto.
+
+| Pregunta débil | Pregunta sólida |
+| --- | --- |
+| "Los Sandboxes no funcionan" | "Falla la creación de Sandboxes en una plataforma autoalojada del núcleo; Workers Paid está activo en la cuenta de la plataforma" |
+| "El inicio de sesión está roto" | "El CLI se conecta a la URL de la plataforma pero no aparece ningún método de inicio de sesión; esto es lo que está habilitado" |
+| "Falta la reversión" | "Busco despliegues retenidos de la plataforma pero solo veo versiones del Worker" |
+| "El correo no se envía" | "Pasarela de correo instalada; dominio de correo y zona compartidos configurados; sigue sin haber entrega" |
+
+Algunos hábitos que hacen que las respuestas de la comunidad lleguen más rápido:
+
+- **Nombra tu destino.** Cloudflare directo y una plataforma autoalojada se comportan de forma distinta en registros, reversión y Sandboxes.
+- **Enumera lo que instalaste.** Solo el núcleo, o el núcleo más los servicios opcionales de GitHub y los Containers de build.
+- **Indica el nivel de cuenta.** Workers Paid en la cuenta de la plataforma es un requisito estricto para los Sandboxes.
+- **Separa los síntomas de las suposiciones.** "El CLI se autentica pero el despliegue falla" es más útil que una teoría sobre la causa.
+- **Reporta la solución.** Los hilos que terminan con una solución son lo que hace que una guía de Void Platform en Reddit valga la pena leer seis meses después.
+
+Nada de esto requiere revelar secretos. Las credenciales, los tokens y los identificadores de cuenta deben quedar completamente fuera de las publicaciones públicas: describe la configuración, no las claves.
+
+## Preguntas frecuentes
+
+**¿Necesito una plataforma Void si soy el único desarrollador?**
+
+No. Si despliegas una aplicación para ti mismo, despliega directamente en Cloudflare. Una plataforma existe para añadir acceso compartido e historial de despliegues retenido para un equipo, y un desarrollador en solitario gana poco con esa sobrecarga.
+
+**¿Qué incluye realmente una instalación del núcleo?**
+
+Sandboxes gestionados y una pasarela de correo. El correo solo funciona una vez que configuras un dominio de correo y una zona compartidos. El panel de usuario, los builds y webhooks de GitHub, los Containers de build y los dominios personalizados de proyecto no forman parte del núcleo.
+
+**¿Por qué fallan los Sandboxes en una instalación nueva?**
+
+Los Sandboxes requieren Workers Paid en la cuenta de la plataforma. Los reportes de la comunidad muestran que esta es la mala configuración más común: los administradores revisan la cuenta del desarrollador en lugar de la cuenta que aloja la plataforma.
+
+**¿Una guía de Void Platform en Reddit sustituye a la documentación oficial?**
+
+Es un complemento. Usa los hilos de la comunidad para aprender qué problemas se repiten y cómo formula la gente las soluciones, y luego confirma los requisitos previos y las credenciales con la documentación oficial de instalación antes de cambiar nada en producción.

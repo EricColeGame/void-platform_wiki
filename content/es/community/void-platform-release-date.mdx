@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Fecha de lanzamiento de Void Platform: qué esperar y cómo empezar hoy",
+  description: "Una guía práctica sobre la fecha de lanzamiento de Void Platform, la configuración autoalojada, las funciones principales y cómo pueden prepararse los equipos antes de que llegue el día del despliegue.",
+  category: "community",
+  date: "2026-10-21",
+}
+
+## Por qué la fecha de lanzamiento de Void Platform importa más de lo que crees
+
+Si llevas tiempo actualizando la documentación de Void esperando un anuncio de lanzamiento limpio, no eres el único. La fecha de lanzamiento de Void Platform importa porque es el momento en que tu equipo puede dejar de desplegar aplicaciones una por una y empezar a publicar en un entorno compartido y gobernado, con historial de despliegues conservado. En la práctica, la fecha de lanzamiento de Void Platform no es una casilla en un calendario: es el día en que tu propia instalación entra en funcionamiento y tus desarrolladores apuntan el CLI de Void hacia ella.
+
+Esa distinción cambia la forma en que planificas. Los equipos que tratan la fecha de lanzamiento de Void Platform como un evento de marketing tienden a quedarse sentados esperando. Los equipos que la tratan como un hito de infraestructura empiezan a revisar requisitos previos, credenciales y ajustes de cuenta desde el principio, y ya están desplegando mientras los demás siguen leyendo.
+
+## Qué es realmente una plataforma Void
+
+Una plataforma Void es un destino de despliegue compartido. Tu equipo despliega aplicaciones en una única cuenta de Cloudflare que un administrador instala y mantiene. Los desarrolladores nunca tocan Cloudflare directamente: conectan el CLI de Void a la URL de la plataforma, inician sesión con el método de acceso que haya habilitado el administrador y publican sus aplicaciones.
+
+Void deja claro que una plataforma no es obligatoria para el trabajo en solitario. Si despliegas una aplicación solo para ti, la despliegas directamente en Cloudflare y te saltas por completo la capa de plataforma. La plataforma existe para lo que un desarrollador individual no necesita: acceso compartido, una pasarela común para Workers AI y las peticiones a proveedores, y un historial de despliegues que sobrevive a la versión actual del Worker.
+
+La instalación básica es deliberadamente ligera. Incluye Sandboxes gestionados y una pasarela de correo electrónico, y el correo solo se activa cuando configuras un dominio y una zona de correo compartidos. Varias funciones que la gente asume como estándar —el panel de usuario, las compilaciones y webhooks de GitHub, los Containers de compilación y los dominios de proyecto personalizados— no forman parte de una instalación básica.
+
+| Capacidad | ¿Incluida en una instalación básica? | Notas |
+| --- | --- | --- |
+| Sandboxes gestionados | Sí | Requiere Workers Paid en la cuenta de la plataforma |
+| Pasarela de correo electrónico | Sí | Se habilita tras configurar un dominio y una zona de correo compartidos |
+| Acceso compartido del equipo | Sí | La razón principal para ejecutar una plataforma |
+| Historial de despliegues conservado | Sí | Permite revertir a despliegues anteriores de la plataforma |
+| Panel de usuario | No | No se incluye en una instalación estándar |
+| Compilaciones y webhooks de GitHub | No | Opcional; requiere configuración adicional |
+| Containers de compilación | No | No forma parte de la instalación básica |
+| Dominios de proyecto personalizados | No | No forma parte de la instalación básica |
+
+Un detalle que conviene señalar a los administradores: si compilas una plataforma desde el código fuente y añades los servicios opcionales de GitHub, Void recomienda la configuración de ingreso de webhooks aislado cuando Cloudflare Access protege la API. Omitir ese paso es una causa habitual de fallos de webhook confusos después de la puesta en marcha.
+
+## Qué significa la fecha de lanzamiento de Void Platform para los equipos autoalojados
+
+Aquí está la parte que sorprende a la gente: no hay ninguna página de tienda que actualizar. Como la plataforma es autoalojada, la fecha de lanzamiento de Void Platform se divide en dos eventos distintos, y confundirlos es donde se desvían los plazos.
+
+El primer evento es el de origen: cuando Void publica o actualiza el código de la plataforma y la documentación que lo acompaña. El segundo evento es tuyo: el día en que tu instalación está configurada, con credenciales listas y entregada a los desarrolladores. Solo el segundo pone aplicaciones en producción.
+
+| Evento de lanzamiento | Qué significa | Quién lo controla | Cómo confirmarlo |
+| --- | --- | --- | --- |
+| Disponibilidad en origen | El código de la plataforma de Void y la guía de instalación están al día | Void | Consulta la guía oficial de instalación y sus páginas de requisitos previos |
+| Preparación de la infraestructura | La cuenta de Cloudflare, el plan Workers Paid y el método de acceso están listos | Tu administrador | Revisión de la cuenta y los accesos |
+| Configuración completa | La pasarela de correo, los dominios y los servicios opcionales están conectados | Tu administrador | Despliegue de prueba a través del CLI de Void |
+| Puesta en marcha del equipo | Los desarrolladores pueden iniciar sesión y desplegar | Tú | Primer despliegue compartido exitoso |
+
+Los informes de la comunidad de administradores que gestionan despliegues compartidos rara vez se centran en una cuenta atrás. Se centran en la deriva de configuración: un método de acceso que nunca se habilitó, una zona de correo que nunca se vinculó, un ingreso de webhooks que se omitió. Esas son las cosas que realmente retrasan un lanzamiento, no la fecha de publicación en origen.
+
+La conclusión práctica: trata la fecha de lanzamiento de Void Platform como el día en que tu lista de comprobación está vacía, no el día en que aparece un banner en un sitio web.
+
+## Directo a Cloudflare frente a la plataforma: ¿qué lanzamiento necesitas?
+
+Ambos destinos usan las mismas API de aplicación, lo que hace la decisión más sencilla de lo que parece a primera vista. La pregunta es si necesitas acceso compartido e historial conservado, o si solo necesitas que tu aplicación funcione.
+
+| Función | Directo a Cloudflare | Plataforma autoalojada básica |
+| --- | --- | --- |
+| Workers AI y peticiones a proveedores | Tu cuenta y pasarela | Pasarela y proxy de la instalación |
+| Registros en tiempo de ejecución | Tail en vivo de Cloudflare | Registros conservados de la plataforma |
+| Reversión de la aplicación | Versiones del Worker | Despliegues conservados de la plataforma |
+| Sandboxes | Requiere Workers Paid y Docker | Requiere Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y compilaciones gestionadas de GitHub | No requeridos | No incluidos en una instalación estándar |
+
+Lee esa tabla como una herramienta de decisión. Si eres un desarrollador en solitario que publica una sola aplicación, el despliegue directo te da todo lo que necesitas con menos sobrecarga. Si eres un equipo que necesita una pasarela compartida, un rastro de registros duradero y una reversión que no dependa de recordar qué versión del Worker era la buena, la plataforma es el destino correcto, y una plataforma de equipo requiere Workers for Platforms además de la infraestructura documentada.
+
+La disponibilidad de funciones también depende de cómo esté configurada cada instalación. Dos equipos que ejecutan "la misma" plataforma pueden tener superficies muy distintas si uno habilitó los servicios opcionales de GitHub y el otro no.
+
+## Cómo prepararte antes de que llegue la fecha de lanzamiento de Void Platform
+
+Lo más útil que puedes hacer mientras esperas es reducir la brecha entre "disponible" y "en funcionamiento". Sigue esta lista en orden: cada fila desbloquea la siguiente.
+
+| Paso | Qué hacer | Responsable | Por qué importa |
+| --- | --- | --- | --- |
+| 1 | Leer de principio a fin la sección de requisitos previos de la guía oficial | Administrador | Detecta pronto carencias de plan e infraestructura |
+| 2 | Confirmar que Workers Paid está activo en la cuenta de la plataforma | Administrador | Necesario para Sandboxes y las funciones de plataforma de equipo |
+| 3 | Preparar y validar las credenciales | Administrador | La mayoría de los fallos de instalación se remontan a las credenciales |
+| 4 | Elegir y habilitar un método de acceso | Administrador | Los desarrolladores no pueden conectar el CLI sin él |
+| 5 | Decidir sobre la pasarela de correo y configurar un dominio y una zona de correo compartidos | Administrador | El correo permanece desactivado hasta que se haga esto |
+| 6 | Planificar el ingreso de webhooks si añades servicios de GitHub | Administrador | El ingreso aislado es obligatorio cuando Access protege la API |
+| 7 | Distribuir la URL de la plataforma y las instrucciones del CLI a los desarrolladores | Líder de equipo | Elimina el ida y vuelta de "¿cómo me conecto?" |
+| 8 | Acordar una política de reversión y retención de registros | Líder de equipo | Hace que el historial conservado sea realmente útil |
+
+Algunos consejos prácticos que ahorran tiempo de verdad:
+
+- **Prueba primero con una aplicación desechable.** Haz que un solo desarrollador despliegue una aplicación trivial a través del CLI antes de que migre todo el equipo. Expone problemas de acceso y de pasarela en cuestión de minutos.
+- **Anota el método de acceso.** Si los desarrolladores inician sesión mediante un método habilitado que no está documentado, cada nueva incorporación se convierte en un ticket de soporte.
+- **No des por hecho que el panel existe.** Si tu equipo espera una interfaz web, confirma qué incluye realmente tu instalación antes de prometerla.
+- **Mantén documentada una ruta de despliegue directo.** Los experimentos en solitario todavía pueden ir directamente a Cloudflare, lo que mantiene limpia la plataforma compartida.
+
+Para los detalles autorizados de configuración, trabaja a partir de la [guía oficial de instalación de la plataforma autoalojada de Void](https://void.cloud/guide/self-hosted-platform) en lugar de resúmenes de segunda mano: es la fuente que se mantiene al día.
+
+## Cómo saber qué lanzamiento estás ejecutando realmente
+
+Como las instalaciones se configuran de forma independiente, "¿estamos al día?" es una pregunta que respondes inspeccionando el comportamiento, no leyendo una insignia de versión.
+
+| Señal | Qué ves en una plataforma básica | Qué te indica |
+| --- | --- | --- |
+| Registros en tiempo de ejecución | Registros conservados de la plataforma | La canalización de registros de la plataforma está conectada |
+| Reversión de la aplicación | Reversión a despliegues conservados de la plataforma | El historial de despliegues se está almacenando |
+| Sandboxes | Disponibles | Workers Paid está activo en la cuenta de la plataforma |
+| Correo | Pasarela activa tras configurar el dominio y la zona | La configuración de correo compartido se completó correctamente |
+| Panel | Ausente salvo que se añada por separado | Estás en una instalación estándar, no ampliada |
+
+Si faltan varias de esas señales, no estás ejecutando una instalación básica completa, y ese hallazgo es mucho más útil que cualquier fecha de lanzamiento. Combina la comprobación con una revisión rápida de tus requisitos previos y credenciales frente a la documentación oficial, ya que la configuración, y no el tiempo, es lo que separa una plataforma que funciona de una que está estancada.
+
+## Preguntas frecuentes
+
+**¿Existe una fecha oficial de lanzamiento de Void Platform que pueda poner en el calendario?**
+
+No hay una fecha universal única, porque la plataforma es autoalojada. Void publica el código y las indicaciones de instalación, pero tu fecha efectiva de lanzamiento de Void Platform es el día en que tu administrador termina la configuración y tus desarrolladores pueden desplegar a través del CLI.
+
+**¿Necesito una plataforma, o puedo simplemente desplegar mi aplicación?**
+
+Si despliegas para ti mismo, despliega directamente en Cloudflare: no se requiere una plataforma. Instala una cuando un equipo necesite acceso compartido, una pasarela de IA común, registros conservados y reversión a despliegues anteriores de la plataforma.
+
+**¿Qué falta en una instalación estándar que los equipos suelen esperar?**
+
+El panel de usuario, las compilaciones y webhooks de GitHub, los Containers de compilación y los dominios de proyecto personalizados no forman parte de una instalación básica. Los Sandboxes gestionados y una pasarela de correo electrónico sí se incluyen, aunque el correo solo se activa después de configurar un dominio y una zona de correo compartidos.
+
+**¿Qué es lo que más retrasa en la práctica una fecha de lanzamiento de Void Platform?**
+
+La configuración, no la disponibilidad. Los informes de la comunidad señalan sistemáticamente los métodos de acceso no habilitados, las credenciales no preparadas, las zonas de correo ausentes y el ingreso de webhooks aislado omitido como los verdaderos bloqueadores, y todos ellos puedes resolverlos antes del día del despliegue.

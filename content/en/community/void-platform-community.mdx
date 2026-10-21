@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Void Platform Community: How Developers Build, Share, and Deploy Together",
+  description: "A guide to the Void Platform community — the Discord, GitHub, and open-source workflows that help teams ship Vite apps on Cloudflare.",
+  category: "community",
+  date: "2026-10-21",
+}
+
+## Why the Void Platform Community Exists
+
+Shipping an internal app used to mean provisioning a cloud account, wiring up a database, and waiting on approvals. The Void Platform community removes most of that friction: it is the open-source deployment layer that lets teams host Vite-built apps on Cloudflare, plus the people around it who share patterns, file bugs, and push improvements upstream.
+
+If you have ever wanted to hand a designer or an operations teammate the ability to deploy a working prototype without handing over your cloud credentials, this is the group built for that exact problem. The Void Platform community grew out of a simple observation: companies want to encourage quickly built internal apps, but they do not want to give cloud access to every employee.
+
+That tension — speed versus guardrails — is what most conversations in the community come back to.
+
+## The Three Pieces the Community Actually Shares
+
+Void ships as three open-source products that are distributed together as a single JavaScript package and Vite plugin. You install them with `npm install void`, and that shared package is why discussion tends to happen in one place rather than three separate forums.
+
+| Product | What it does | Why the community cares |
+|---|---|---|
+| **Void Platform** | A shared deployment platform for teams to host Void apps on Cloudflare | Admins get access control, resource limits, and usage visibility in one place |
+| **Void SDK** | A composable JavaScript SDK for full-stack Vite apps | Adapters for React and Vue, file-based API routing, pre-rendering, caching, islands, end-to-end types |
+| **Void CLI** | Provisions resources and deploys Vite apps to Cloudflare | One command handles build, migrations, resource provisioning, and deploy |
+
+The three are tightly coupled: the CLI deploys apps built with the SDK onto the Platform. That means a rough edge reported against one usually touches the others, which is exactly the kind of cross-cutting feedback that benefits from a shared space. You can read the full launch details in [Cloudflare's announcement of the open-source Void Platform, SDK, and CLI](https://blog.cloudflare.com/deploy-with-void).
+
+## Where the Void Platform Community Gathers
+
+There are two official front doors, and they serve different purposes. Discord is where real-time discussion happens; GitHub is where the durable record lives. Knowing which to use saves everyone time.
+
+| Channel | Best used for | What to expect |
+|---|---|---|
+| **Discord** | Quick questions, real-time troubleshooting, show-and-tell | Fast, conversational, best for unblocking yourself today |
+| **GitHub Discussions** | Longer proposals, architecture patterns, fork strategies | Threaded, searchable, good for ideas that outlive a single day |
+| **GitHub Issues** | Reproducible bugs and concrete feature requests | Tracked work with a paper trail |
+| **Upstream pull requests** | Code, documentation, and fixes | Reviewed changes that benefit every fork |
+| **Your own fork** | Company-specific integrations and private workflows | Fully yours — no obligation to upstream anything |
+
+A useful habit: search GitHub before asking in Discord. Many configuration questions have already been answered in an issue thread, and linking to that thread in chat makes the answer permanent for the next person.
+
+Community reports suggest the most active threads cluster around three topics — deployment configuration, framework adapters, and how much to customize a fork versus keep it close to upstream. If you are new, read those first.
+
+## How the Open-Source Model Shapes Participation
+
+Void Platform is fully open source, and that changes what "community" means here. You are not just a user of a hosted service; you can fork the platform, integrate your company's systems, customize deployment workflows, or make it run on other deployment platforms. You can also run it exactly as shipped.
+
+| Role | Core responsibilities | Sensible first step |
+|---|---|---|
+| **Platform admin** | Access control, resource limits, guardrails, deployment inspection | Self-host the platform, then connect the CLI |
+| **App builder** | Ship internal apps to the shared environment | Install the package, run your first deploy |
+| **Contributor** | Fixes, docs, adapters, features | Open an issue describing the problem, then a PR |
+| **Fork maintainer** | Company-specific integrations, private customizations | Fork, then track upstream changes deliberately |
+
+Because the platform is meant to be forked, the community tolerates divergence well. Nobody expects every fork to send patches back. What people do appreciate is a clear issue report when a divergence reveals a gap that upstream should probably close.
+
+## Joining the Void Platform Community: A Practical Path
+
+You do not need to self-host anything to participate. Many members start by building a single app and asking questions along the way. Here is a sequence that works well.
+
+1. **Star and watch the GitHub repo.** Watching gives you release notes and issue activity without any commitment.
+2. **Join the Discord server.** Introduce yourself and describe what you are building — specifics get better answers than "anyone here?"
+3. **Install the package** with `npm install void` and add it as a Vite plugin.
+4. **Deploy something small.** A single route with one database query is enough to surface the concepts.
+5. **Ask a narrow question.** Include your framework, your adapter, and the exact command you ran.
+6. **Give back once.** A documentation fix counts. So does answering a question you asked yourself two weeks ago.
+
+If you are the person setting up the shared platform for a team, the prerequisites are modest but non-negotiable:
+
+| Requirement | Why it matters |
+|---|---|
+| Cloudflare account with Workers for Platforms and R2 enabled | Runtime isolation for each app plus object storage |
+| A PostgreSQL database | Backing store for platform data |
+| An account with your chosen login provider | Authentication for approved users |
+| A domain for your apps | Routing and recognizable URLs |
+
+Once the platform is running, approved users connect with `void connect` and deploy from there. That is the moment most admins start paying attention to the community — configuration questions get specific fast.
+
+## What Teams Build Together (and Where the Community Helps)
+
+The platform's two headline benefits are faster prototyping and participation from people who do not normally write code. Both show up repeatedly in community discussions.
+
+| Scenario | Who typically builds it | Where community input helps most |
+|---|---|---|
+| Interactive prototype | Designer working with a coding agent | Framework adapters, routing patterns |
+| Internal dashboard | Operations teammate | Deployment templates, data access examples |
+| Full-stack app with AI features | Developer | AI bindings, provisioning behavior |
+| Multi-tenant internal platform | Platform team | Fork strategy, guardrail design |
+
+A concrete example of why the shared space matters: importing `void/db` gives you a local database during development and provisions a D1 database on deploy, and importing `void/ai` wires up Cloudflare's AI Gateway automatically. Those defaults are powerful, but they also raise questions — what gets provisioned, when, and at whose cost. Hearing how another team answered that is often faster than reading source code.
+
+The same applies to the React router, which is built for Async React using transitions and Suspense. Community threads on coordinating navigation, data fetching, and mutations through transitions tend to be practical rather than theoretical.
+
+## Contributing Well: Etiquette for the Void Platform Community
+
+Open-source communities succeed or fail on the quality of their reports. A few habits go a long way.
+
+| Practice | Why it helps |
+|---|---|
+| Reproduce on a minimal app before filing | Separates platform bugs from app bugs |
+| Include versions, adapter, and framework | Saves a round trip of questions |
+| Say what you already tried | Signals you did the reading |
+| Send docs fixes as PRs, not complaints | Documentation is the highest-leverage contribution |
+| Search issues before opening a new one | Keeps the tracker usable as it grows |
+
+Two more things worth internalizing. First, fork maintainers are community members too — if you maintain a fork with a fix that upstream would want, offer it. Second, be generous with "this worked for me" replies in Discord; a short confirmation is often more useful than a long theory.
+
+## Frequently Asked Questions About the Void Platform Community
+
+**Is the Void Platform community only for experienced developers?**
+No. The platform explicitly targets teams where non-technical colleagues build apps with coding agents — a designer shipping an interactive prototype, or an operations teammate deploying an internal dashboard. The community reflects that mix, so beginner-level questions are normal and welcome.
+
+**Do I need my own Cloudflare account to participate?**
+Not necessarily. If your company runs a shared Void Platform, you deploy to that environment through the CLI without touching Cloudflare directly. If you are working solo or your team does not need platform management features, the SDK also deploys straight to your own Cloudflare account.
+
+**Where should I report a bug in Void Platform?**
+Open a GitHub issue with a minimal reproduction, your framework and adapter, and the command you ran. Then, if you want a faster conversation about it, mention it in Discord. Keeping the authoritative details in the issue means the next person with the same problem can find them.
+
+**Can I fork the platform and still be part of the Void Platform community?**
+Absolutely — forking is an expected outcome, not a departure. Many teams fork to integrate internal systems or add company-specific workflows. Contributing improvements upstream is optional but appreciated, and it is the fastest way to get your edge case maintained by more than one team.
+
+The through-line is simple: the Void Platform community is less about a product page and more about a shared deployment environment that people improve as they use it. Join the Discord for the conversation, watch GitHub for the record, and deploy something small this week.

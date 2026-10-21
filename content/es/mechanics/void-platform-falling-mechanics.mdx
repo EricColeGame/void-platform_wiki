@@ -1,0 +1,123 @@
+export const metadata = {
+  title: "Mecánicas de caída en Void Platform: gravedad, muerte en el vacío y reaparición explicadas",
+  description: "Un análisis práctico de las mecánicas de caída de Void Platform: curvas de gravedad, tiempo coyote, muerte en el vacío, reglas de reaparición y las técnicas de movimiento que mantienen viva la partida.",
+  category: "mechanics",
+  date: "2026-10-21",
+}
+
+Caer es el único sistema de Void Platform que te castiga antes de que lo entiendas. La mayoría de las muertes en la primera partida provienen de malinterpretar cómo maneja el juego un borde fallado, no de enemigos ni puzles, y eso convierte las mecánicas de caída de Void Platform en el sistema más valioso que puedes aprender desde el principio. Una vez que entiendes cómo se resuelven la gravedad, el control en el aire y el contacto con el vacío, esos mismos saltos que parecían aleatorios empiezan a sentirse legibles.
+
+## Qué controlan realmente las mecánicas de caída de Void Platform
+
+Caer en Void Platform no es una sola regla. Es una pila de cuatro subsistemas que se resuelven en orden cada fotograma: aceleración gravitatoria, respuesta a la entrada del jugador, detección de colisiones y resolución del resultado. Cuando un salto se siente "mal", la causa casi siempre es una capa de esa pila comportándose de forma distinta a la que asumiste.
+
+Las cuatro capas cumplen funciones muy diferentes:
+
+- **Capa de gravedad** — establece con qué rapidez aceleras hacia abajo y si existe una velocidad máxima de caída.
+- **Capa de entrada** — decide cuánto control horizontal conservas en el aire y si se respetan las pulsaciones tardías de salto.
+- **Capa de colisión** — determina qué cuenta como superficie aterrizable frente a un borde atravesable.
+- **Capa de resultado** — resuelve qué ocurre cuando abandonas por completo el área jugable, incluida la colocación de la reaparición.
+
+Los reportes de la comunidad apuntan de forma consistente a lo mismo: los jugadores que aprenden primero la capa de resultado mejoran más rápido, porque saber dónde vas a reaparecer cambia lo agresivo que puedes ser al intentar un salto. Las mecánicas de caída de Void Platform son indulgentes en algunos puntos y deliberadamente estrictas en otros, y esa estrictura suele concentrarse en la capa de resultado.
+
+## La máquina de estados de la caída, paso a paso
+
+Las mecánicas de caída de Void Platform funcionan con una pequeña máquina de estados. Tu personaje está siempre exactamente en uno de estos estados, y las transiciones ocurren automáticamente según la entrada y la posición. Entender las transiciones es lo que te permite predecir un salto en lugar de reaccionar a él.
+
+| Estado | Cómo entras en él | Qué comprueba el juego | Efecto práctico |
+| --- | --- | --- | --- |
+| En suelo | Aterrizar en una superficie válida | Etiqueta de superficie, ángulo de pendiente | Se restauran todas las opciones de movimiento |
+| Suelta de borde | Caminar fuera de un borde sin saltar | Temporizador de gracia | Ventana corta en la que un salto aún se registra |
+| Ascenso | Salto iniciado | Búfer de salto, mantenimiento de entrada | La altura escala con la duración del mantenimiento |
+| Ápice | Velocidad vertical cercana a cero | Multiplicador de control aéreo | El momento más fácil para dirigirse |
+| Descenso | La velocidad vertical se vuelve positiva | Límite de velocidad de caída | El control se vuelve más pesado |
+| Terminal | Se alcanza el límite de velocidad de caída | Valor del límite | La deriva horizontal es mínima |
+| Contacto con el vacío | La posición sale de los límites jugables | Plano de muerte, ancla de reaparición | Se resuelve el estado de la partida, se activa la reaparición |
+
+Dos transiciones concentran la mayor parte de la habilidad en las mecánicas de caída de Void Platform. La primera es la suelta de borde: una breve ventana de gracia tras caminar fuera hace que un salto ligeramente tardío todavía funcione, y por eso los jugadores con confianza saltan tarde en lugar de temprano. La segunda es el ápice, donde el control aéreo suele ser más fuerte: el momento de comprometerte con una dirección, no después de haber empezado ya a caer.
+
+### Por qué el ápice importa más que el salto
+
+La mayoría de los jugadores tratan la pulsación de salto como la decisión importante. En la práctica, es en el ápice donde se decide el resultado. Como el control aéreo suele alcanzar su punto máximo cerca de la velocidad vertical cero, un cambio de dirección en el ápice cuesta casi nada, mientras que ese mismo cambio durante un descenso rápido cuesta mucha distancia horizontal. Si solo te llevas un hábito de estas mecánicas de caída de Void Platform, que sea este: mantén tu dirección y luego ajusta en la cima del arco.
+
+## Gravedad, velocidad terminal y control aéreo
+
+Los números que hay detrás de las mecánicas de caída de Void Platform rara vez se muestran en el juego, pero sus relaciones son consistentes y observables. La gravedad no suele ser una única constante: a menudo es asimétrica, con un descenso más rápido que el ascenso para que los saltos se sientan ágiles en lugar de flotantes.
+
+| Variable | Qué gobierna | Por qué los diseñadores la ajustan | Qué notas al jugar |
+| --- | --- | --- | --- |
+| Gravedad de ascenso | Aceleración al subir | Un ascenso más corto se siente responsivo | Los saltos se sienten nítidos, no flotantes |
+| Gravedad de descenso | Aceleración al caer | Un regreso más rápido al suelo | Los aterrizajes se sienten pesados |
+| Límite de velocidad de caída | Velocidad máxima hacia abajo | Evita atravesar la geometría | Las caídas largas dejan de acelerar |
+| Control aéreo | Autoridad horizontal en el aire | Equilibra precisión frente a inercia | El control se debilita al final de una caída |
+| Ventana coyote | Gracia tras dejar un borde | Perdona entradas tardías | Los saltos tardíos siguen funcionando |
+| Búfer de salto | Gracia antes de aterrizar | Encola entradas tempranas | Pulsar salto justo antes de aterrizar funciona |
+
+La mala interpretación más común es el límite de velocidad de caída. Los jugadores asumen que una caída larga seguirá acelerando y por eso apuntan a una plataforma lejana; en realidad, una vez alcanzado el límite, la distancia extra de caída añade casi nada de deriva horizontal. En descensos largos en Void Platform, deberías comprometerte con tu punto de aterrizaje pronto en lugar de corregir durante toda la caída.
+
+El control aéreo merece una nota propia. Muchas versiones reducen la autoridad horizontal a medida que aumenta la velocidad de caída, y por eso una corrección en pleno aire funciona de maravilla en el ápice y casi no hace nada dos fotogramas antes de aterrizar. Si un salto sigue fallando en el mismo punto, comprueba si estás corrigiendo demasiado tarde: la respuesta suele ser que sí.
+
+## Muerte en el vacío frente a daño por caída: dos resultados distintos
+
+Los jugadores nuevos suelen tratar cada caída como letal. Las mecánicas de caída de Void Platform en realidad resuelven dos resultados separados, y confundirlos lleva a una cautela innecesaria.
+
+| Resultado | Disparador | Resultado típico | Cómo jugar con ello |
+| --- | --- | --- | --- |
+| Daño por caída | Aterrizar en una superficie válida por encima de un umbral | Pérdida de salud, posible tambaleo | Absorbe la altura con saltos cortos o aterrizajes deslizados |
+| Muerte en el vacío | Salir por completo de los límites jugables | Reinicio inmediato de la partida al último ancla | Acepta el reinicio y vuelve a aproximarte desde el ancla |
+| Aterrizaje suave | Aterrizar por debajo del umbral | Sin penalización | Úsalo libremente para reposicionarte |
+| Reaparición en ancla | Cualquier evento de reinicio | Volver al último punto de control o al inicio | Aprende el espaciado de las anclas antes de intentar rutas arriesgadas |
+
+La distinción importa porque la muerte en el vacío suele ser más limpia que el daño por caída. Un reinicio por vacío te devuelve a un ancla conocida con el estado completo, mientras que el daño por caída puede dejarte vivo pero comprometido, a veces en una posición peor que la que te habría dado el reinicio. Los jugadores experimentados a veces toman el vacío intencionadamente cuando una ruta ha ido mal, porque el ancla vale más que la barra de salud.
+
+Los informes de experiencia de jugadores también señalan una frustración recurrente: la geometría de casi-acierto. Los bordes que parecen aterrizables pero están etiquetados como atravesables te dejarán caer al vacío sin aviso. Hasta que aprendas qué superficies son cosméticas, acércate a los bordes desconocidos a baja velocidad y confirma el aterrizaje antes de comprometerte con una partida completa.
+
+## Técnicas avanzadas de caída que vale la pena practicar
+
+Una vez interiorizados los fundamentos, las mecánicas de caída de Void Platform abren un conjunto de técnicas que convierten las caídas en movimiento. Ninguna requiere trucos de sincronización precisos fuera de las propias reglas del juego: todas son aplicaciones de la máquina de estados.
+
+| Técnica | Patrón de entrada | Qué logra | Dificultad |
+| --- | --- | --- | --- |
+| Salto tardío | Saltar justo después de dejar un borde | Distancia máxima desde una carrera corta | Baja |
+| Redirección en el ápice | Cambio de dirección cerca de velocidad vertical cero | Giros bruscos en el aire con poco coste | Baja |
+| Aterrizaje con búfer | Salto pulsado justo antes del contacto | Re-salto inmediato al aterrizar | Media |
+| Caída limitada | Dirigirse pronto en un descenso largo | Aterrizaje predecible en plataformas lejanas | Media |
+| Enrutado por anclas | Reinicio deliberado en el vacío tras una mala ruta | Recuperación rápida a una posición conocida | Media |
+| Roce de borde | Aproximación a baja velocidad a bordes desconocidos | Confirma superficies aterrizables con seguridad | Baja |
+
+El orden de práctica importa. El salto tardío y la redirección en el ápice dan el mayor retorno inmediato, porque corrigen las dos causas más comunes de saltos fallidos. El aterrizaje con búfer es el siguiente paso y se entrena mejor en terreno plano con saltos cortos repetidos antes de intentarlo sobre un vacío.
+
+## Solución de problemas: por qué un salto sigue fallando
+
+Cuando un salto concreto en las mecánicas de caída de Void Platform se niega a funcionar, la causa suele ser uno de un pequeño conjunto de problemas. Diagnostica por síntoma en lugar de reintentar la misma entrada.
+
+| Síntoma | Causa probable | Solución |
+| --- | --- | --- |
+| El salto "se come" tu entrada | Pulsaste después de que se cerrara la ventana de gracia | Salta antes, o mantén la dirección al salir del borde |
+| Aterrizas corto siempre | Corriges demasiado tarde en la caída | Comprométete con la dirección en el ápice |
+| Te pasas de la plataforma | Mantienes la dirección durante todo el arco | Suelta antes, vuelve a dirigir en el ápice |
+| Caes a través de un borde visible | La superficie es cosmética, no aterrizable | Prueba a baja velocidad antes de comprometerte |
+| Posición de reaparición inconsistente | Ancla alcanzada desde un ángulo inusual | Acércate al ancla desde la dirección prevista |
+
+Algunos hábitos hacen que todo esto sea más fácil de aprender:
+
+- **Graba un salto fallido** en lugar de repetirlo a ciegas: el patrón es más fácil de ver que de sentir.
+- **Practica con la versión más corta** de un salto antes de la ruta completa.
+- **Separa los errores de entrada de los errores de geometría**: uno se arregla con sincronización, el otro requiere una ruta nueva.
+- **Aprende el espaciado de las anclas** antes de adentrarte en territorio desconocido.
+
+Para un contexto más amplio sobre cómo los juegos implementan la gravedad, la inercia y las ventanas de entrada indulgentes, la [descripción general del diseño de juegos de plataformas en Wikipedia](https://en.wikipedia.org/wiki/Platform_game) es una introducción útil que encaja limpiamente con lo que observas en Void Platform.
+
+## Preguntas frecuentes
+
+**¿Son las mecánicas de caída de Void Platform iguales en todas las áreas?**
+En su mayoría, sí. La gravedad, el control aéreo y las ventanas de gracia son sistemas globales. Lo que cambia entre áreas es la geometría y la colocación de las anclas, y por eso un salto que funciona en una sala puede fallar en otra incluso con entradas idénticas.
+
+**¿Mantener pulsado el botón de salto cambia cuánto caigo?**
+Mantenerlo suele afectar a la altura del salto en el ascenso, no a la velocidad de caída en el descenso. Una vez que estás descendiendo, el límite de velocidad de caída gobierna tu caída, así que mantenerlo más tiempo no hace nada.
+
+**¿Puedo sobrevivir a una caída al vacío?**
+No. El contacto con el vacío es un evento de reinicio, no un evento de daño. La ventaja es que el reinicio es limpio y te devuelve a un ancla conocida, lo que a menudo es mejor que sobrevivir a un aterrizaje pesado.
+
+**¿Cuál es la forma más rápida de mejorar en las mecánicas de caída de Void Platform?**
+Aprende primero la ventana de gracia de la suelta de borde y la redirección en el ápice. Esas dos transiciones explican la mayoría de los saltos fallidos, y ambas se pueden practicar en terreno plano antes de llevarlas sobre un vacío.

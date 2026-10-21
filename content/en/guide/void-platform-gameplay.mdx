@@ -1,0 +1,110 @@
+export const metadata = {
+  title: "Void Platform Gameplay: A Hands-On Guide to Installing and Deploying on Cloudflare",
+  description: "Void Platform gameplay, explained: install the platform, connect the CLI, deploy apps, and know exactly what the core build includes.",
+  category: "guide",
+  date: "2026-10-21",
+}
+
+## What Void Platform Gameplay Really Means
+
+If you searched for Void Platform gameplay expecting a video game, here's the twist: Void Platform is a deployment platform, and the "gameplay" is the hands-on loop of installing it, wiring it up, and shipping apps into a shared Cloudflare account. It matters because that loop decides whether your team gets shared access, retained deployment history, and managed sandboxes — or a pile of one-off deploys nobody can audit. In this guide, Void Platform gameplay means the practical play-by-play: picking a target, running the install, and sidestepping the traps that turn a short setup into a long cleanup.
+
+The mental model is simple. A Void platform is a shared deployment target that an administrator installs and maintains. Developers then point the Void CLI at the platform's URL, sign in through whichever login method is enabled, and deploy their apps. Nobody hand-manages individual Cloudflare projects.
+
+| Role | What they own | First move |
+| --- | --- | --- |
+| Administrator | Installing and maintaining the platform | Work through the prerequisites and credentials guides |
+| Developer | Connecting and deploying | Point the Void CLI at the platform URL and sign in |
+| Solo builder | Speed above all | Skip the platform and deploy directly to Cloudflare |
+
+That last row is the most important shortcut in Void Platform gameplay. If you're deploying an app for yourself, you don't need to install a platform first — deploy straight to Cloudflare and save the overhead.
+
+## Choose Your Target Before You Install
+
+The first real decision in Void Platform gameplay isn't technical, it's strategic: direct Cloudflare or a core self-hosted platform. Both targets use the same application APIs, so your app code doesn't change. What changes is everything around the app — access, logging, and rollback history.
+
+| Feature | Direct to Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your account and your gateway | The installation's gateway and proxy |
+| Runtime logs | Live Cloudflare tail | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Requires Workers Paid and Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard installation |
+
+Read that table as a trade. Direct deploys are lean and fast, but logs are live-only and rollback is version-based. A platform adds shared access plus a retained history of deployments — genuinely useful when more than one person ships code and someone inevitably asks, "what changed last Tuesday?"
+
+One more planning note: a team platform requires Workers for Platforms and the documented infrastructure. Features depend on how the installation is configured, so decide your scope before you touch a terminal.
+
+## The Core Loop, Step by Step
+
+Think of this as the main quest line of Void Platform gameplay. Each step unlocks the next, and skipping ahead tends to cost more time than it saves.
+
+| Step | What you do | Why it matters |
+| --- | --- | --- |
+| 1 | Confirm prerequisites, including Workers Paid on the platform account | Sandboxes depend on it |
+| 2 | Collect the required credentials | Missing credentials stall the install |
+| 3 | Install the core platform | This is the shared target your team deploys into |
+| 4 | Configure a shared mail domain and zone | Email through the gateway only turns on once this exists |
+| 5 | Share the platform URL with developers | They connect the Void CLI and sign in with an enabled login method |
+| 6 | Deploy, then check retained logs and roll back to a retained deployment | This is the payoff: shared visibility and recovery |
+
+Step 4 is the one people postpone, and it's the one that bites. The core installation includes an email gateway, but email is enabled only when you configure a shared mail domain and zone. If transactional mail is part of your app, treat the mail domain as a day-one task rather than a later polish item.
+
+Step 5 is where the team actually joins the game. Developers don't need to understand the install — they need a URL, a login method that's switched on, and a working Void CLI. Write those three things down somewhere obvious.
+
+## What Ships in the Box — and What You Build Yourself
+
+A standard installation is deliberately narrow. Knowing the boundary up front prevents a lot of "why isn't this here?" conversations.
+
+| Component | In a core install? | Notes |
+| --- | --- | --- |
+| Managed Sandboxes | Yes | Requires Workers Paid on the platform account |
+| Email gateway | Yes | Enabled once a shared mail domain and zone are configured |
+| User dashboard | No | Not part of a standard installation |
+| GitHub builds and webhooks | No | Optional, added through source-built platforms |
+| Build Containers | No | Outside the core installation |
+| Custom project domains | No | Outside the core installation |
+
+If you need the optional GitHub services, plan for a source-built platform. And if Access protects the API, follow the isolated webhook ingress setup rather than exposing the webhook path directly — that detail is easy to miss and annoying to retrofit. The official [Void guide to installing a self-hosted platform](https://void.cloud/guide/self-hosted-platform) is the reference to keep open while you work through it.
+
+## Admin Tips for a Clean First Run
+
+Good Void Platform gameplay from the admin seat is mostly about sequencing. A few habits that pay off:
+
+- **Decide the target first.** Solo work goes direct to Cloudflare; shared work gets a platform.
+- **Verify Workers Paid early.** Sandboxes are gated on it, and discovering that mid-install is demoralizing.
+- **Treat the mail domain as a first-class task.** No shared mail domain and zone means no email gateway.
+- **Agree on login methods before onboarding.** Developers should never guess how to sign in.
+- **Scope optional services deliberately.** Dashboard, GitHub builds, Containers, and custom project domains are all additions, not defaults.
+- **Protect the API and isolate webhook ingress.** Especially if you're building from source with Access in front.
+
+When something feels broken, it's usually a configuration boundary rather than a bug:
+
+| Symptom | Likely cause | The move |
+| --- | --- | --- |
+| Email never sends | Shared mail domain and zone not configured | Set them up, then re-test the gateway |
+| Sandboxes won't run | Workers Paid missing on the platform account | Upgrade the platform account |
+| Team can't see deployment history | They're deploying direct, not through the platform | Point the CLI at the platform URL |
+| Dashboard or GitHub builds missing | Optional services aren't in the core install | Build from source with the add-ons you need |
+
+## Player Experience: What the First Week Usually Feels Like
+
+Community reports and player experience from teams running shared deployment platforms tend to follow a familiar arc. The install itself is rarely the hard part — the friction shows up in the handoff, when developers who've been deploying direct to Cloudflare suddenly need a URL, a login method, and a different mental model. Teams that write those details down before the switch describe a much smoother transition than teams that announce the platform and let people figure it out.
+
+The other recurring theme in player experience is expectations about retention. People who expect a dashboard and managed GitHub builds out of the box are disappointed; people who know the core install is intentionally lean treat those as roadmap items instead of missing features. Read the feature table before you promise anything to your team.
+
+## FAQ
+
+**Is Void Platform gameplay an actual game?**
+No. Void Platform is a deployment platform for shipping apps into a shared Cloudflare account. "Gameplay" here is shorthand for the hands-on workflow — installing, connecting, deploying, and recovering.
+
+**Do I need to install a platform to deploy one app?**
+No. If you're deploying an app for yourself, deploy directly to Cloudflare. You only need a platform when you want shared access and retained deployment history for a team.
+
+**What does the core installation actually include?**
+Managed Sandboxes and an email gateway. Email is enabled when you configure a shared mail domain and zone. The user dashboard, GitHub builds and webhooks, build Containers, and custom project domains are not part of the core install.
+
+**Can I add GitHub builds later?**
+Yes, through a source-built platform that adds the optional GitHub services. If Access protects the API, use the isolated webhook ingress setup rather than exposing webhooks directly.
+
+Master the setup loop once, and the rest of your Void Platform gameplay is just shipping — with logs you can actually read and deployments you can actually roll back.

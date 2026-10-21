@@ -1,0 +1,131 @@
+export const metadata = {
+  title: "Void Platform: cómo llegar a Void, iniciar sesión y desplegar tu primera aplicación",
+  description: "Un tutorial paso a paso sobre Void Platform: cómo llegar a Void, conectar la CLI, habilitar un método de inicio de sesión y desplegar tu primera aplicación en una cuenta compartida de Cloudflare.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## Qué significa realmente "llegar a Void"
+
+Void Platform es la capa compartida que permite a todo un equipo desplegar aplicaciones en una única cuenta de Cloudflare, y saber cómo llegar a Void es la diferencia entre un primer despliegue de cinco minutos y una tarde perdida. Si alguna vez te han entregado la URL de una plataforma y una CLI y te han dicho "solo conéctate", ya sabes que la pieza que falta es el contexto. Esta guía cubre Void Platform: cómo llegar a Void como el administrador que la instala, y como el desarrollador que inicia sesión, vincula la CLI y publica una aplicación.
+
+La expresión "llegar a Void" se usa de forma imprecisa, así que ayuda dividirla en tres capas distintas. La mayoría de los intentos fallidos ocurren porque alguien resolvió una capa y asumió que las otras dos ya estaban cubiertas.
+
+| Capa | Cómo se ve en la práctica | Quién suele encargarse |
+| --- | --- | --- |
+| Alcance de red | La plataforma tiene una URL que responde a las peticiones | Administrador |
+| Alcance de autenticación | Al menos un método de inicio de sesión está habilitado, para que una persona pueda entrar | Administrador |
+| Alcance de herramientas | La CLI de Void apunta a esa URL y está autenticada | Desarrollador |
+
+Si falta cualquiera de las tres, la plataforma existe pero sigue siendo efectivamente inaccesible. Abórdalas en orden.
+
+## Antes de empezar: requisitos previos y requisitos de acceso
+
+Una plataforma Void no es un servicio alojado al que simplemente inicias sesión: es algo que un administrador instala y mantiene. Eso significa que los requisitos previos se dividen claramente entre la infraestructura que necesitas en la cuenta de la plataforma y las credenciales que necesitas en el lado del cliente.
+
+| Requisito | Por qué importa | Notas |
+| --- | --- | --- |
+| Una cuenta de Cloudflare para la plataforma | La plataforma despliega aplicaciones en una cuenta compartida | La instalación principal apunta a una única cuenta compartida |
+| Workers Paid en la cuenta de la plataforma | Necesario para los Sandboxes gestionados | Los Sandboxes forman parte de la instalación principal |
+| Docker (ruta de despliegue directo) | Necesario localmente cuando ejecutas los Sandboxes tú mismo | No es necesario si solo consumes una plataforma compartida |
+| Un dominio de correo y una zona compartidos | Las funciones de la pasarela de correo permanecen desactivadas hasta que se configuren | El correo solo se habilita después de configurar el dominio y la zona |
+| Credenciales de administrador | Necesarias para instalar y mantener la plataforma | Documentadas en la guía de credenciales |
+| Un método de inicio de sesión habilitado | Sin uno, nadie puede completar un inicio de sesión | Se configura durante la instalación o inmediatamente después |
+| La CLI de Void en cada máquina de desarrollador | Es la forma principal en que los desarrolladores llegan a la plataforma | Conéctala a la URL de la plataforma |
+
+Algunos consejos prácticos antes de comenzar:
+
+- Lee las guías de requisitos previos y credenciales en la [documentación oficial de instalación de Void](https://void.cloud/guide/self-hosted-platform) antes de tocar una terminal: son breves y evitan la mayor parte del retrabajo.
+- Decide de antemano si estás construyendo un objetivo individual o una plataforma de equipo. Una plataforma de equipo necesita Workers for Platforms además de la infraestructura documentada, lo que supone una construcción considerablemente más grande.
+- Ten tu zona DNS lista si el correo es importante para tu flujo de trabajo. Adaptar un dominio de correo más adelante significa revisar la instalación.
+- Guarda la URL de la plataforma en un lugar permanente. Los informes de la comunidad de administradores que gestionan plataformas de despliegue compartidas citan sistemáticamente "la CLI apuntaba a la URL equivocada" como el problema más común del primer día.
+
+## Void Platform: cómo llegar a Void, paso a paso
+
+La secuencia a continuación refleja el orden previsto: instalar primero, configurar los servicios compartidos después y luego dejar entrar a los desarrolladores. Saltarse el paso de la CLI es la razón más común por la que la gente concluye que la plataforma está rota.
+
+### Paso 1 — Instalar la plataforma principal
+
+Un administrador instala y mantiene la plataforma; los desarrolladores no instalan nada en el lado del servidor. La instalación principal incluye Sandboxes gestionados y una pasarela de correo, pero varias cosas que la gente espera —un panel de usuario, compilaciones y webhooks gestionados de GitHub, Containers de compilación y dominios de proyecto personalizados— deliberadamente no forman parte de ella. Espera que el núcleo sea ligero.
+
+### Paso 2 — Configurar el dominio de correo y la zona compartidos
+
+La pasarela de correo viene incluida en la instalación principal, pero permanece inerte hasta que configuras un dominio de correo y una zona compartidos. Si te saltas esto, nada falla de forma ruidosa: simplemente nunca obtienes el comportamiento de correo. Trátalo como parte de la instalación, no como un extra opcional.
+
+### Paso 3 — Habilitar un método de inicio de sesión
+
+El inicio de sesión ocurre "a través de un método de inicio de sesión habilitado", lo que significa que la plataforma solo ofrece lo que el administrador ha activado. Confirma que al menos un método funciona de principio a fin antes de invitar a desarrolladores, idealmente iniciando sesión tú mismo en una ventana de navegador privada.
+
+### Paso 4 — Conectar la CLI de Void a la URL de la plataforma
+
+Cada desarrollador apunta la CLI de Void a la URL de la plataforma. Este es el momento de "llegar a Void" en el sentido cotidiano: la CLI encuentra la plataforma o no la encuentra. Si la API está detrás de la protección de Access, ten en cuenta que las plataformas construidas desde el código fuente que añaden los servicios opcionales de GitHub deben seguir la configuración de entrada de webhooks aislada en lugar de abrir un agujero en la API protegida.
+
+### Paso 5 — Iniciar sesión y desplegar
+
+Inicia sesión a través del método habilitado y luego despliega. Ambos destinos de despliegue —Cloudflare directo y una plataforma compartida— usan las mismas API de aplicación, así que todo lo que aprendiste desplegando directamente sigue aplicándose.
+
+| Paso | Responsable | Resultado |
+| --- | --- | --- |
+| 1. Instalar el núcleo | Administrador | La plataforma existe y se ejecuta |
+| 2. Configurar dominio/zona de correo | Administrador | La pasarela de correo se activa |
+| 3. Habilitar método de inicio de sesión | Administrador | Las personas pueden autenticarse |
+| 4. Conectar la CLI | Desarrollador | Las herramientas pueden encontrar la plataforma |
+| 5. Iniciar sesión y desplegar | Desarrollador | La primera aplicación está en vivo |
+
+## ¿Cloudflare directo o una plataforma compartida? Elegir la ruta correcta
+
+No todo el mundo necesita una plataforma. Si despliegas una aplicación únicamente para ti, la orientación es clara: despliega directamente en Cloudflare y omite por completo la instalación de la plataforma. Una plataforma se justifica cuando quieres acceso compartido e historial conservado en todo un equipo.
+
+| Función | Directo a Cloudflare | Plataforma autohospedada principal |
+| --- | --- | --- |
+| Workers AI y peticiones a proveedores | Tu propia cuenta y pasarela | Pasarela y proxy de la instalación |
+| Registros de tiempo de ejecución | Tail en vivo de Cloudflare | Registros conservados de la plataforma |
+| Reversión de aplicación | Versiones del Worker | Despliegues conservados de la plataforma |
+| Sandboxes | Necesita Workers Paid y Docker | Necesita Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y compilaciones gestionadas de GitHub | No necesarios | No incluidos en una instalación estándar |
+
+El patrón es claro: el despliegue directo te da inmediatez, mientras que la plataforma te da retención y acceso compartido. Elige en función de si "quién desplegó qué, y cuándo" necesita una respuesta dentro de seis semanas.
+
+## Funciones opcionales que no obtendrás de serie
+
+Una sorpresa recurrente para los nuevos administradores es que la plataforma que instalaron no es la plataforma que imaginaban. Aquí está la división honesta.
+
+| Capacidad | ¿En la instalación principal? | Qué hacer en su lugar |
+| --- | --- | --- |
+| Sandboxes gestionados | Sí | Nada: disponibles por defecto |
+| Pasarela de correo | Sí, una vez configurada | Configurar el dominio de correo y la zona compartidos |
+| Panel de usuario | No | Depender de flujos de trabajo impulsados por la CLI |
+| Compilaciones y webhooks de GitHub | No | Añadir los servicios opcionales mediante una compilación desde el código fuente |
+| Containers de compilación | No | Añadir mediante configuración opcional |
+| Dominios de proyecto personalizados | No | Planificar en torno al enrutamiento proporcionado por la plataforma |
+
+Si añades los servicios de GitHub mediante una compilación desde el código fuente y tu API está protegida por Access, sigue la guía de entrada de webhooks aislada: existe precisamente para que los webhooks puedan llegar sin debilitar la protección de la API.
+
+## Solución de problemas: cuando no puedes llegar a Void
+
+La mayoría de los informes de "inaccesible" se resuelven en un puñado de causas. Haz coincidir el síntoma antes de empezar a cambiar la configuración.
+
+| Síntoma | Causa probable | Primera cosa que probar |
+| --- | --- | --- |
+| La CLI no encuentra la plataforma | URL de plataforma incorrecta | Vuelve a comprobar la URL que distribuyó el administrador |
+| La página de inicio de sesión no ofrece nada | Ningún método de inicio de sesión habilitado | Pide al administrador que habilite uno |
+| Las funciones de correo nunca se activan | Dominio de correo o zona compartidos no configurados | Completa la configuración del dominio de correo y la zona |
+| Los Sandboxes no arrancan | Workers Paid no está activo en la cuenta de la plataforma | Confirma el plan en la cuenta de la plataforma |
+| No hay panel tras iniciar sesión | No forma parte de la instalación principal | Usa el flujo de trabajo de la CLI en su lugar |
+| Webhooks bloqueados detrás de Access | API protegida con servicios opcionales de GitHub | Aplica la configuración de entrada de webhooks aislada |
+
+Dos hábitos previenen la mayoría de estos casos: verificar la URL antes de tocar la CLI y confirmar que un método de inicio de sesión funciona antes de incorporar a un equipo. Todo lo demás tiende a ser un detalle de configuración más que una plataforma rota.
+
+## Preguntas frecuentes
+
+**¿Necesito instalar una plataforma Void para desplegar mi propia aplicación?**
+No. Si despliegas una aplicación para ti mismo, despliega directamente en Cloudflare: la plataforma es una construcción para equipos compartidos, no un requisito previo.
+
+**¿Cómo llegan los desarrolladores a Void una vez instalada la plataforma?**
+Conectan la CLI de Void a la URL de la plataforma e inician sesión a través de un método de inicio de sesión habilitado. El trabajo del administrador es asegurarse de que ambos existan antes de que los desarrolladores lo intenten.
+
+**Soy desarrollador, no administrador. ¿Qué necesito realmente para Void Platform, cómo llegar a Void en mi caso?**
+Tres cosas: la URL de la plataforma, una cuenta vinculada a un método de inicio de sesión habilitado y la CLI instalada localmente. Si falta alguna de ellas, pregunta a tu administrador en lugar de depurar la CLI.
+
+**¿Por qué mi plataforma parece menos capaz de lo que sugiere la documentación?**
+Porque una instalación estándar es intencionadamente ligera. El panel de usuario, las compilaciones y webhooks gestionados de GitHub, los Containers de compilación y los dominios de proyecto personalizados son añadidos opcionales, no valores por defecto. Confirma qué incluye realmente tu instalación antes de asumir que algo está roto.

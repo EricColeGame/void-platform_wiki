@@ -1,0 +1,125 @@
+export const metadata = {
+  title: "Estratégia de sobrevivência da Void Platform: um guia prático para manter sua plataforma de implantação auto-hospedada viva",
+  description: "Uma estratégia prática de sobrevivência da Void Platform: o que instalar, o que monitorar, como manter rollbacks e logs funcionando e como escalar para uma equipe.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## Por que uma estratégia de sobrevivência da Void Platform começa antes de você instalar qualquer coisa
+
+Uma plataforma Void transforma uma conta compartilhada do Cloudflare em um destino de implantação que toda a sua equipe pode usar — e, como qualquer peça compartilhada de infraestrutura, ela só continua útil se alguém planejar sua manutenção. Uma estratégia real de sobrevivência da Void Platform tem menos a ver com heroísmo durante uma queda e mais com as decisões entediantes que você toma no primeiro dia: quais recursos instalar, o que monitorar e com que rapidez você consegue voltar a uma implantação que se sabe estar boa.
+
+Sem esse plano, uma configuração que funciona bem para um desenvolvedor vira silenciosamente um passivo para dez. Este guia percorre o lado prático de uma estratégia de sobrevivência da Void Platform, desde a escolha do destino de implantação correto até o agendamento da manutenção que mantém logs, rollbacks e sandboxes disponíveis quando você realmente precisa deles.
+
+## Escolha o destino certo primeiro: Cloudflare direto ou uma plataforma compartilhada
+
+A maior decisão de sobrevivência acontece antes da instalação. Se você está implantando um app para si mesmo, você implanta direto no Cloudflare e pula a plataforma por completo. Uma plataforma existe para adicionar acesso compartilhado e histórico de implantações retido para uma equipe.
+
+Ambos os caminhos usam as mesmas APIs de aplicação, então a diferença é operacional, não técnica. Construir uma plataforma de que você não precisa adiciona peças móveis que podem falhar; pular uma quando você tem uma equipe remove a rede de segurança que torna a recuperação possível.
+
+| Capacidade | Implantação direta no Cloudflare | Plataforma Void auto-hospedada principal |
+| --- | --- | --- |
+| Workers AI e requisições a provedores | Sua conta e seu gateway | Roteadas pelo gateway e proxy da instalação |
+| Logs de runtime | Live tail a partir do Cloudflare | Logs retidos na plataforma |
+| Rollback da aplicação | Histórico de versões do Worker | Implantações retidas na plataforma |
+| Sandboxes | Requer Workers Paid mais Docker | Requer Workers Paid na conta da plataforma |
+| Painel do usuário e builds gerenciados do GitHub | Não necessário | Não incluído em uma instalação padrão |
+| Acesso compartilhado da equipe | Não fornecido | Integrado |
+
+Uma regra prática rápida: se mais de uma pessoa implanta, ou se você já se perguntou "o que enviamos na terça-feira passada?", a plataforma compartilhada se paga.
+
+## Saiba exatamente o que a instalação principal faz e não faz por você
+
+A maioria das quedas autoinfligidas vem de presumir que um recurso está incluído quando não está. A instalação principal é deliberadamente enxuta: ela entrega Sandboxes gerenciadas e um gateway de e-mail. O e-mail só começa a funcionar depois que você configura um domínio de e-mail compartilhado e uma zona — até lá, o gateway existe, mas não tem de onde enviar.
+
+O painel do usuário, builds e webhooks do GitHub, Containers de build e domínios personalizados de projeto estão todos fora da instalação principal. Planeje cada um deles explicitamente em vez de descobrir a lacuna no meio da sprint.
+
+| Componente | Está em uma instalação padrão? | Impacto na sobrevivência se não planejado |
+| --- | --- | --- |
+| Sandboxes gerenciadas | Sim | Ambientes de runtime disponíveis sem fiação extra |
+| Gateway de e-mail | Sim, após configurar um domínio de e-mail compartilhado e uma zona | As notificações falham silenciosamente até a zona existir |
+| Painel do usuário | Não | Os desenvolvedores dependem apenas da CLI e da API |
+| Builds e webhooks do GitHub | Não — opcional, construído a partir do código-fonte | Merges não implantam automaticamente; você implanta manualmente |
+| Containers de build | Não | Os builds precisam acontecer fora da plataforma |
+| Domínios personalizados de projeto | Não | Os apps ficam em hostnames padrão até serem adicionados |
+
+Se você construir uma plataforma a partir do código-fonte e adicionar os serviços opcionais do GitHub, use a configuração de ingresso isolado de webhooks sempre que o Cloudflare Access proteger a API. Misturar uma API protegida pelo Access com um endpoint de webhook simples é uma das formas mais comuns de uma plataforma que funciona quebrar após uma rodada de endurecimento de segurança.
+
+## Os cinco pilares de uma estratégia de sobrevivência da Void Platform
+
+Trate estes como as paredes estruturais. Cada um mapeia para um modo específico de falha, e cada um tem uma primeira coisa a verificar quando algo parece errado.
+
+| Pilar | O que falha sem ele | Primeira coisa a verificar |
+| --- | --- | --- |
+| Identidade e acesso | Os desenvolvedores não conseguem entrar ou, pior, as pessoas erradas conseguem | Quais métodos de login estão habilitados na plataforma |
+| Histórico de implantação | Nenhum alvo de rollback limpo durante um incidente | Se as implantações retidas estão de fato se acumulando |
+| Observabilidade | Você descobre a quebra pelos usuários, não pelos logs | Se os logs da plataforma são retidos e legíveis |
+| Capacidade de runtime | As sandboxes se recusam a iniciar sob carga | Status do Workers Paid na conta da plataforma e disponibilidade do Docker |
+| Caminho de e-mail | Convites, alertas e redefinições nunca chegam | A configuração do domínio de e-mail compartilhado e da zona |
+
+**Acesso.** Cada desenvolvedor conecta a CLI do Void à URL da plataforma e entra por meio de um método de login habilitado. Mantenha essa lista curta e atualizada — um colega que saiu da equipe com um login ativo é um problema de sobrevivência, não de RH.
+
+**Histórico.** As implantações retidas são o seu mecanismo de recuperação. Uma plataforma sem histórico de rollback força você a reconstruir a partir do código-fonte sob pressão, que é exatamente quando os erros se acumulam.
+
+**Observabilidade.** Live tails são ótimos durante a depuração e inúteis depois do fato. Os logs retidos da plataforma são o que permitem reconstruir um incidente na manhã seguinte.
+
+**Capacidade.** As sandboxes precisam de Workers Paid na conta da plataforma, e as sandboxes direto no Cloudflare adicionalmente precisam de Docker. Confirme as permissões antes de um lançamento, não durante ele.
+
+**E-mail.** Nada do gateway de e-mail funciona até que o domínio compartilhado e a zona estejam configurados. Faça isso no dia da instalação para não estar depurando DNS durante uma queda.
+
+## Defina uma cadência de manutenção que você realmente seguirá
+
+Uma estratégia de sobrevivência da Void Platform falha com mais frequência por negligência do que por má arquitetura. Verificações pequenas e agendadas superam limpezas profundas ocasionais.
+
+| Cadência | Tarefa | Por que importa |
+| --- | --- | --- |
+| Semanal | Confirme que a CLI conecta e que uma implantação de teste é bem-sucedida | Detecta cedo a deriva de credenciais e métodos de login |
+| Semanal | Passe os olhos nos logs retidos em busca de erros recorrentes | Transforma instabilidade vaga em uma correção específica |
+| Mensal | Verifique se o rollback funciona em um app de baixo risco | Um caminho de rollback que você nunca testou não é um caminho |
+| Mensal | Revise quem pode entrar | Reduz o raio de impacto de contas obsoletas |
+| Trimestral | Releia os pré-requisitos e credenciais da sua instalação | Os requisitos de configuração mudam conforme a plataforma evolui |
+| Após qualquer mudança | Reteste implantações, logs e e-mail de ponta a ponta | A maior parte das quebras segue uma mudança de configuração, não de código |
+
+A revisão trimestral é onde a maioria das equipes encontra surpresas — uma credencial expirada, um método de login que ninguém lembra de ter habilitado ou uma zona que nunca foi concluída.
+
+## Uma matriz de riscos para quando a plataforma se comporta mal
+
+Mantenha esta tabela em algum lugar que sua equipe consiga encontrar. Ela não vai diagnosticar tudo, mas encurta os primeiros dez minutos de um incidente.
+
+| Sintoma | Causa provável | Primeira ação |
+| --- | --- | --- |
+| A CLI não consegue alcançar a plataforma | URL errada ou nenhum método de login habilitado | Confirme a URL da plataforma e depois verifique os métodos de login |
+| As implantações têm sucesso, mas os logs estão faltando | Logs não retidos onde você está olhando | Verifique a retenção de logs da plataforma em vez de um live tail |
+| Nenhum alvo de rollback para uma versão recente | Histórico de implantação não retido para esse app | Inspecione a lista de implantações retidas antes de reconstruir |
+| As sandboxes não iniciam | Workers Paid ausente ou Docker indisponível | Verifique o plano na conta da plataforma |
+| O e-mail nunca chega | Domínio de e-mail compartilhado ou zona não configurados | Conclua a configuração do domínio de e-mail e da zona |
+| Os webhooks do GitHub falham após o endurecimento | Access protegendo a API sem ingresso isolado | Mude para o padrão de ingresso isolado de webhooks |
+
+## Escalando: o que uma plataforma de equipe realmente exige
+
+Uma plataforma de equipe é um compromisso maior do que uma instalação pessoal. Ela exige Workers for Platforms e a infraestrutura documentada, e o conjunto exato de recursos depende de como você configura a instalação. Orce para isso antes de prometer um painel, builds automatizados do GitHub ou domínios personalizados aos seus desenvolvedores.
+
+| Requisito | Aplica-se a | Nota de sobrevivência |
+| --- | --- | --- |
+| Workers for Platforms | Plataformas de equipe | Infraestrutura principal, não um complemento |
+| Workers Paid na conta da plataforma | Sandboxes | Confirme antes de integrar desenvolvedores |
+| Infraestrutura documentada | Plataformas de equipe | Desviar cria modos de falha não documentados |
+| Ingresso isolado de webhooks | Serviços opcionais do GitHub atrás do Access | Evita falhas silenciosas de webhooks |
+
+O [guia oficial de instalação da plataforma Void](https://void.cloud/guide/self-hosted-platform) é a referência para manter nos favoritos — ele cobre pré-requisitos e credenciais, e é a fonte da verdade quando sua configuração se afasta do caminho documentado.
+
+A versão mais duradoura de uma estratégia de sobrevivência da Void Platform é entediante: instale apenas o que você precisa, retenha histórico e logs, teste o rollback antes de precisar dele e revise o acesso em um cronograma. Faça isso, e a plataforma continua sendo uma ferramenta de implantação em vez de um gerador de quedas.
+
+## Perguntas frequentes
+
+**Preciso instalar uma plataforma se sou o único desenvolvedor?**
+Não. Implantar direto no Cloudflare usa as mesmas APIs de aplicação e pula completamente a sobrecarga da plataforma. Uma estratégia de sobrevivência da Void Platform só vale o esforço quando você precisa de acesso compartilhado e histórico de implantações retido para uma equipe.
+
+**Qual é a recuperação mais rápida em uma estratégia de sobrevivência da Void Platform?**
+Fazer rollback para uma implantação retida. É por isso que testar o rollback mensalmente em um app de baixo risco importa — o caminho de recuperação tem que funcionar antes do incidente, não durante ele.
+
+**O e-mail está incluído em uma instalação padrão?**
+O gateway de e-mail faz parte da instalação principal, mas só funciona depois que você configura um domínio de e-mail compartilhado e uma zona. Trate essa configuração como parte da instalação, não como uma tarefa de acompanhamento.
+
+**Por que meus webhooks do GitHub quebraram após habilitar o Access?**
+Se o Cloudflare Access protege a API, os serviços opcionais do GitHub precisam da configuração de ingresso isolado de webhooks. Sem ela, as chamadas de webhook são bloqueadas e os builds param de ser acionados — uma falha fácil de passar despercebida até alguém perguntar por que nada foi implantado.

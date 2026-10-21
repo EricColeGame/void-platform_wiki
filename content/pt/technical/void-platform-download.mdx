@@ -1,0 +1,110 @@
+export const metadata = {
+  title: "Guia de download do Void Platform: instale uma plataforma de equipe auto-hospedada",
+  description: "Tudo o que você precisa para fazer o download do Void Platform: pré-requisitos, serviços principais vs. opcionais e instalação passo a passo até o primeiro deploy.",
+  category: "technical",
+  date: "2026-10-21",
+}
+
+## O que "download do Void Platform" realmente significa
+
+A maioria das pessoas que pesquisa por download do Void Platform espera um único arquivo de instalador e um assistente avançar-avançar-concluir. A realidade é diferente: o Void é uma plataforma auto-hospedada que sua equipe implanta em uma conta compartilhada da Cloudflare, e a etapa de "download" na verdade consiste em preparar as ferramentas da plataforma e executar seu fluxo de configuração. Entender essa distinção desde o início economiza horas, porque ela decide se você precisa de uma plataforma. Se você está publicando um app apenas para si mesmo, faça o deploy diretamente na Cloudflare e ignore a plataforma por completo.
+
+Uma plataforma Void é a camada compartilhada entre seus desenvolvedores e a Cloudflare. Como administrador, você a instala e a mantém em execução. Os desenvolvedores então apontam o Void CLI para a URL da plataforma, fazem login por um dos métodos habilitados e implantam seus apps nessa conta compartilhada. Cada parte do processo de download do Void Platform existe para tornar essa transição confiável e repetível.
+
+Como a plataforma fica na sua conta da Cloudflare, e não em um laptop, o download tem menos a ver com um arquivo e mais com infraestrutura. Você trabalhará com credenciais da Cloudflare, requisitos de plano e um conjunto documentado de serviços. A tabela abaixo alinha as expectativas.
+
+| O que as pessoas esperam de um download do Void Platform | O que realmente acontece |
+| --- | --- |
+| Um único instalador `.exe` ou `.dmg` | A plataforma é compilada e implantada na sua própria conta da Cloudflare |
+| Roda no seu laptop | Roda na nuvem, compartilhada por toda a equipe |
+| Instantâneo, sem configuração de conta | Exige credenciais da Cloudflare, um plano Workers Paid e infraestrutura documentada |
+| Obrigatório para todo projeto | Desenvolvedores solo podem fazer deploy diretamente na Cloudflare |
+| Tudo incluído de fábrica | Uma instalação principal é intencionalmente enxuta; complementos são separados |
+
+## Lista de pré-requisitos e credenciais
+
+Antes de iniciar um download do Void Platform, reúna as contas e os acessos de que você precisará. Na prática, a maioria das instalações que falham decorre de uma permissão ausente ou de um plano subprovisionado, não da plataforma em si. Passar por esta lista primeiro transforma uma tarde frustrante em uma configuração tranquila.
+
+| Requisito | Por que você precisa | Observações |
+| --- | --- | --- |
+| Conta da Cloudflare | Hospeda a plataforma e todos os apps implantados | Compartilhada por toda a equipe |
+| Plano Workers Paid | Necessário para Sandboxes gerenciados | Aplicado à conta da plataforma |
+| Workers for Platforms | Necessário para uma plataforma de equipe | Combine com a infraestrutura documentada |
+| Credenciais da plataforma | Autenticam a instalação e o acesso à API | Cobertas nos guias oficiais de instalação |
+| Domínio e zona de e-mail compartilhados | Ativam o gateway de e-mail | Opcional — o e-mail permanece desativado até ser configurado |
+| Void CLI | Como os desenvolvedores se conectam e fazem deploy | Instalado em cada máquina de desenvolvedor |
+
+Duas dessas exigências merecem atenção extra. Primeiro, o plano Workers Paid precisa estar ativo na conta da plataforma, não apenas na conta de um desenvolvedor individual, ou os Sandboxes não serão executados. Segundo, as credenciais devem ser tratadas como segredos de produção desde o primeiro dia, já que o gateway de instalação e o proxy ficam na frente do Workers AI e das requisições de provedores para todos os apps da plataforma.
+
+Se sua organização usa o Cloudflare Access para proteger a API, planeje o caminho de webhook desde cedo. Plataformas compiladas a partir do código-fonte que adicionam os serviços opcionais do GitHub precisam de uma entrada de webhook isolada para que webhooks recebidos não sejam bloqueados pelo Access. Adaptar isso depois é muito mais doloroso do que projetar para isso desde o início.
+
+## Instalação principal vs. serviços opcionais
+
+Uma das maiores surpresas após um download do Void Platform é descobrir o que uma instalação padrão inclui — e o que ela deliberadamente deixa de fora. O núcleo é enxuto por design: Sandboxes gerenciados mais um gateway de e-mail, com o e-mail habilitado somente depois que você configura um domínio e uma zona de e-mail compartilhados.
+
+| Incluído em uma instalação principal | Não incluído em uma instalação principal |
+| --- | --- |
+| Sandboxes gerenciados | Painel do usuário |
+| Gateway de e-mail (após configurar domínio e zona) | Builds e webhooks do GitHub |
+| Acesso compartilhado para a equipe | Build Containers |
+| Histórico de deploys retido | Domínios personalizados de projeto |
+| Gateway de instalação e proxy para requisições de IA | Integrações gerenciadas do GitHub de qualquer tipo |
+
+Essa divisão importa quando você planeja uma implantação em larga escala. Uma equipe que espera um painel refinado no primeiro dia ficará decepcionada, a menos que alguém o construa ou adicione. Da mesma forma, equipes que dependem de builds acionados pelo GitHub precisam da camada de serviços opcionais, e equipes que desejam domínios de projeto com marca precisam planejar esse trabalho separadamente.
+
+A abordagem prática é instalar o núcleo primeiro, verificar se os Sandboxes e os deploys funcionam e só então adicionar os extras. Cada complemento aumenta a superfície que você mantém, e um serviço opcional com problema é muito mais fácil de diagnosticar quando o núcleo está sabidamente bom.
+
+## Cloudflare direto vs. uma plataforma auto-hospedada
+
+Antes de se comprometer com um download do Void Platform, confirme se uma plataforma é o alvo certo. Ambos os caminhos usam as mesmas APIs de aplicação, então você não fica preso a nenhum deles — a diferença é o acesso compartilhado e o histórico retido.
+
+| Recurso | Direto na Cloudflare | Plataforma auto-hospedada principal |
+| --- | --- | --- |
+| Workers AI e requisições de provedores | Sua conta e seu gateway | Gateway de instalação e proxy |
+| Logs de execução | Tail ao vivo da Cloudflare | Logs retidos da plataforma |
+| Rollback de aplicação | Versões do Worker | Deploys retidos da plataforma |
+| Sandboxes | Exige Workers Paid e Docker | Exige Workers Paid na conta da plataforma |
+| Painel do usuário e builds gerenciados do GitHub | Não necessário | Não incluído em uma instalação padrão |
+
+Resumindo: vá direto se você está implantando um app para si mesmo e quer o caminho mais curto até a produção. Escolha a plataforma se sua equipe precisa de um alvo de deploy compartilhado, logs retidos e a capacidade de fazer rollback para um deploy retido específico em vez de uma versão bruta do Worker. Observe também a diferença dos Sandboxes — deploys diretos exigem Docker localmente, enquanto a plataforma transfere essa exigência para a conta da plataforma.
+
+## Passo a passo: do download do Void Platform ao primeiro deploy
+
+Com os pré-requisitos confirmados, a instalação em si segue uma sequência previsível. Trate cada etapa como um portão: não avance até que a anterior esteja verificada.
+
+| Etapa | O que você faz | Como é o "concluído" |
+| --- | --- | --- |
+| 1 | Confirme seu alvo: Cloudflare direto ou plataforma auto-hospedada | Uma decisão clara, documentada para a equipe |
+| 2 | Prepare a conta da Cloudflare, os planos e as credenciais | Workers Paid ativo; Workers for Platforms pronto para uma configuração de equipe |
+| 3 | Compile e implante a plataforma usando o guia oficial de instalação | Plataforma acessível em sua URL |
+| 4 | Configure o domínio e a zona de e-mail compartilhados (opcional) | Gateway de e-mail ativo e enviando |
+| 5 | Adicione serviços opcionais, como builds do GitHub ou Build Containers | Cada complemento verificado independentemente |
+| 6 | Conecte os desenvolvedores por meio do Void CLI | Um desenvolvedor faz login e publica um app de teste |
+
+**Etapa 1 e 2: decida e provisione.** Anote se você está executando direto ou auto-hospedado antes de mexer em qualquer coisa. Em seguida, provisione a conta da Cloudflare, confirme o plano Workers Paid e configure o Workers for Platforms se a plataforma for para uma equipe. Mantenha as credenciais em um armazenamento de segredos compartilhado, em vez de passá-las em conversas.
+
+**Etapa 3 e 4: instale e configure o e-mail.** Siga o [guia oficial de instalação da plataforma auto-hospedada Void](https://void.cloud/guide/self-hosted-platform) em vez de improvisar, pois a infraestrutura documentada importa. Quando a plataforma estiver acessível, configure o domínio e a zona de e-mail compartilhados se quiser o gateway de e-mail — sem essa etapa, o e-mail simplesmente permanece desativado.
+
+**Etapa 5 e 6: estenda e integre.** Adicione serviços opcionais um de cada vez e teste após cada um. Depois, entregue aos desenvolvedores a URL da plataforma e as instruções do CLI, e peça a uma pessoa que conclua um login e um deploy completos como teste de fumaça antes de anunciar a plataforma para toda a equipe.
+
+| Sintoma | Causa provável | Correção |
+| --- | --- | --- |
+| Os Sandboxes não iniciam | Workers Paid não está ativo na conta da plataforma | Verifique ou faça upgrade do plano nessa conta |
+| Os desenvolvedores não conseguem fazer login | Nenhum método de login habilitado | Habilite um método de login compatível na configuração da plataforma |
+| O e-mail nunca é enviado | Domínio ou zona de e-mail compartilhados ausentes | Configure o domínio e a zona e teste novamente |
+| Webhooks do GitHub falham atrás do Access | Entrada de webhook não isolada | Siga a configuração de entrada de webhook isolada |
+| Recursos de equipe indisponíveis | Workers for Platforms não configurado | Complete a infraestrutura documentada |
+
+## Perguntas frequentes
+
+**Existe um download do Void Platform para Windows ou macOS?**
+Não — não há instalador desktop para consumidores. Um download do Void Platform significa compilar e implantar a plataforma na sua própria conta da Cloudflare. Sua máquina local só precisa do Void CLI para que os desenvolvedores possam se conectar à URL da plataforma e fazer deploy.
+
+**Preciso de um download do Void Platform se sou um desenvolvedor solo?**
+Normalmente não. Se você está implantando um app para si mesmo, faça o deploy diretamente na Cloudflare e ignore a plataforma. A plataforma se justifica quando uma equipe precisa de um alvo de deploy compartilhado, logs retidos e histórico de deploys retido para rollbacks.
+
+**O que está faltando em uma instalação padrão?**
+O painel do usuário, os builds e webhooks do GitHub, os Build Containers e os domínios personalizados de projeto estão todos fora da instalação principal. Sandboxes gerenciados e o gateway de e-mail estão incluídos, embora o e-mail só funcione depois que um domínio e uma zona de e-mail compartilhados forem configurados.
+
+**Qual plano uma plataforma de equipe exige?**
+Uma plataforma de equipe exige Workers for Platforms mais a infraestrutura documentada, e os Sandboxes gerenciados exigem um plano Workers Paid na conta da plataforma. Os recursos exatos dependem de como sua instalação está configurada, então revise os guias oficiais antes de começar.

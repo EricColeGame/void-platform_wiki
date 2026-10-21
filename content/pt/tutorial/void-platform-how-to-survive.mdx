@@ -1,0 +1,121 @@
+export const metadata = {
+  title: "Void Platform How to Survive: Um Guia Prático para Conter Agentes de IA",
+  description: "Aprenda Void Platform how to survive com execuções não confiáveis de agentes de IA: declare capacidades, isole cada execução em uma microVM e inspecione traces quando algo der errado.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## Por que "Sobreviver" É a Mentalidade Certa
+
+A maioria dos tutoriais sobre agentes de IA foca em fazer com que eles façam mais. Este foca em garantir que eles não possam fazer demais. No momento em que um agente consegue abrir um shell, editar arquivos e chamar APIs, ele deixa de ser um gerador de texto e passa a agir com autoridade real — uma autoridade que você não revisou pessoalmente, linha por linha. Essa é a lacuna que o Void Platform foi criado para fechar, e é por isso que a expressão **Void Platform how to survive** tem menos a ver com continuar vivo e mais com continuar no controle.
+
+A ideia central é simples: uma execução equivale a uma microVM descartável, sem kernel compartilhado e sem acesso ambiente à sua máquina host. Em vez de confiar no bom comportamento do modelo, você confia na fronteira ao redor dele. Acerte essa fronteira e um agente que se comporta mal se torna um incidente contido, com um rastro documental. Erre e você está a uma injeção de prompt bem elaborada de uma tarde muito ruim.
+
+Este guia aborda **Void Platform how to survive** em uma ordem prática: preparar o runtime, declarar capacidades, entender o que o isolamento realmente bloqueia, ler a telemetria depois e evitar os erros que silenciosamente desfazem tudo isso.
+
+## Void Platform How to Survive: O Checklist de Configuração
+
+Antes de executar qualquer coisa interessante, configure o ambiente para que a falha seja barata. O Void Platform roda localmente em Linux com KVM ou em macOS com Apple Silicon, e é open source sob Apache 2.0, então você pode ler exatamente como a fronteira é aplicada em vez de aceitar isso por fé. A linha de versão atual é a v0.2.0, instalada por meio de um script curto no site oficial.
+
+| Etapa | O que fazer | Por que isso importa para sobreviver |
+| --- | --- | --- |
+| 1 | Instale o runtime em uma máquina que você considere descartável ou bem respaldada por backup | Mantém experimentos iniciais longe de credenciais de produção |
+| 2 | Confirme que sua plataforma suporta virtualização por hardware (KVM no Linux, Apple Silicon no macOS) | Sem isso, você volta a modelos de isolamento mais fracos |
+| 3 | Baixe ou construa um rootfs compatível com OCI para o ambiente do agente | Guests reproduzíveis significam incidentes reproduzíveis |
+| 4 | Comece com uma única execução interativa antes de automatizar qualquer coisa | Você aprende os modos de falha a baixo custo, uma execução por vez |
+| 5 | Configure a exportação de traces e métricas OTLP para sua stack de observabilidade | Evidência coletada depois do fato é evidência que você pode nunca conseguir |
+| 6 | Só então passe para pipelines multi-estágio por meio da camada de operador | Coordenação sem contenção apenas multiplica o risco |
+
+Um hábito útil: trate a primeira execução de qualquer agente novo como um simulado de incêndio. Dê a ele uma tarefa trivial, observe o trace e confirme que as ferramentas que ele acessou foram as ferramentas que você declarou. Se algo inesperado aparecer no trace, você encontrou um problema de configuração antes que ele encontrasse você.
+
+## Declarar Capacidades É a Habilidade Central de Sobrevivência
+
+O runtime é o ponto de controle. Um agente decide o que quer fazer; o Void Platform decide o que ele tem permissão para tocar. Essa decisão é tomada *antes* da execução, por meio de capacidades declaradas que cobrem comandos, arquivos, acesso à rede e limites de recursos.
+
+| Escopo de capacidade | Padrão seguro | Dica de sobrevivência |
+| --- | --- | --- |
+| Sistema de arquivos | Apenas caminhos montados explicitamente | Monte um diretório de trabalho, nunca um diretório home |
+| Saída de rede | Negar por padrão, permitir hosts específicos | Bloqueie o endereço de metadados da nuvem de forma categórica |
+| Comandos e ferramentas | Apenas os binários de que a tarefa precisa | Não entregue um gerenciador de pacotes a um agente de pesquisa |
+| Segredos | Injetados por execução, nunca ambientes | Passe o único token necessário, não um arquivo de credenciais |
+| Computação e duração | Limitadas por execução | Limites curtos transformam loops descontrolados em falhas baratas |
+| Dispositivos do host | Nenhum | Uma tarefa que "precisa" de acesso bruto a dispositivos merece uma segunda olhada |
+
+Relatos da comunidade de equipes que rodam agentes de CLI em sandboxes isoladas tendem a convergir para a mesma lição: os agentes que causam problemas raramente são os que estão fazendo algo exótico. São os que tinham um pouco mais de acesso do que a tarefa exigia, e usaram esse acesso exatamente conforme as instruções de qualquer texto que por acaso ingeriram.
+
+É também por isso que a disciplina de prompt, sozinha, não conta como isolamento. Instruções podem ser redirecionadas por entrada não confiável; permissões não podem, desde que o runtime as aplique. Se você levar apenas uma coisa deste passo a passo de **Void Platform how to survive**, que seja esta: coloque a barreira de proteção no runtime, não no system prompt.
+
+## O Que o Isolamento Realmente Bloqueia
+
+Ambientes compartilhados apagam a fronteira. Sandboxes de longa duração, configurações container-first e permissões implícitas tornam difícil raciocinar sobre o que um agente realmente consegue alcançar — e mais difícil ainda provar isso depois de um incidente. A tabela abaixo resume os modos de falha que a fronteira de microVM foi projetada para eliminar, enquadrados como comparação e não como veredito.
+
+| Padrão de ataque | O que dá errado em um container compartilhado | Como uma microVM por execução o contém |
+| --- | --- | --- |
+| Injeção de prompt a partir de conteúdo ingerido | Segredos ambientes no ambiente são lidos e exfiltrados | Nenhum segredo do host existe dentro do guest |
+| Escape pelo socket do container | Um socket de runtime montado entrega controle total do host | Nenhum socket desse tipo está presente no guest |
+| Uso indevido de container privilegiado | Discos e dispositivos do host se tornam acessíveis | Nenhum dispositivo do host é exposto por padrão |
+| Truques com release-agent de cgroup | Uma configuração de cgroup elaborada executa código no host | A execução permanece dentro do kernel do guest |
+| Requisições ao serviço de metadados | Credenciais da nuvem são coletadas pela rede padrão | O endpoint de metadados é inalcançável |
+
+Containers endurecidos podem ser defendidos contra a maioria desses casos, e muitas equipes fazem exatamente isso. A diferença é de postura: containers exigem que você se lembre de endurecê-los toda vez, enquanto o Void Platform torna o isolamento o padrão e mantém um kernel separado entre o agente e sua máquina. Quando você está pensando em **Void Platform how to survive** a uma entrada genuinamente hostil, padrões vencem disciplina.
+
+## Observabilidade: Como Sobreviver ao Depois
+
+A contenção limita o raio de destruição. A observabilidade conta o que aconteceu dentro dele. O Void Platform emite traces e métricas OTLP, além de eventos estruturados de execução, para que uma execução concluída seja inspecionável em vez de misteriosa.
+
+| Sinal | O que ele informa | Quando olhar para ele |
+| --- | --- | --- |
+| Spans de trace por estágio | Qual estágio rodou, em que ordem e quanto tempo levou | Sempre que um agente "simplesmente parou" |
+| Métricas de tokens e custo | Onde o orçamento está sendo consumido por estágio | Antes de escalar para pipelines |
+| Eventos de ciclo de vida da execução | Quando um box iniciou, concluiu ou deu erro | Imediatamente após uma execução falha |
+| Telemetria de processo | Pressão de CPU e memória dentro do guest | Quando execuções são encerradas inesperadamente |
+| Artefatos preservados | Saídas, logs e eventos estruturados | Durante a revisão de incidentes |
+
+A versão prática de **Void Platform how to survive** a uma execução ruim é um ritual de revisão de cinco minutos: pegue o trace da execução, confirme quais estágios tocaram quais ferramentas declaradas e verifique se algo alcançou fora do seu escopo. Como os snapshots tornam as restaurações rápidas, você também pode reexecutar o mesmo cenário com capacidades mais restritas e comparar os traces lado a lado — um antes e depois genuíno que a maioria das configurações de sandbox não consegue oferecer.
+
+## Escalando com a Camada de Operador
+
+A contenção é por execução, mas o trabalho real envolve muitas execuções. Uma vez que uma única execução é contida de forma confiável, a camada de operador — o Void-Control — permite criar e coordenar execuções entre estágios, conduzi-las a partir de uma interface terminal-first e inspecionar um grafo de execução de como os estágios se relacionam.
+
+A regra de sobrevivência aqui é que escalar não pode afrouxar a fronteira. Algumas barreiras de proteção que se sustentam na prática:
+
+- **Um estágio, um propósito.** Um estágio que tanto pesquisa na web quanto grava em um repositório compartilhado é um estágio sobre o qual você não consegue raciocinar.
+- **Mantenha conjuntos de capacidades estreitos por estágio.** O estágio que lê páginas não confiáveis não deve ser o estágio que detém credenciais de deploy.
+- **Inspecione o grafo antes de inspecionar os logs.** Caminhos de execução revelam surpresas mais rápido do que a saída bruta.
+- **Reexecute estágios com falha em um guest novo.** Snapshots tornam isso barato; a reutilização torna isso arriscado.
+
+Equipes que tratam cada estágio como sua própria unidade de contenção tendem a descobrir que **Void Platform how to survive** a um pipeline multi-estágio é, em grande parte, um exercício de recusar compartilhar estado entre estágios que não precisam dele.
+
+## Erros Comuns Que Desfazem a Fronteira
+
+Mesmo com um bom isolamento, hábitos de configuração podem reabrir a porta silenciosamente. Estes são os que valem uma auditoria primeiro.
+
+| Erro | Sintoma | Correção |
+| --- | --- | --- |
+| Montar um diretório amplo do host "só por segurança" | O agente consegue ler arquivos sem relação com a tarefa | Monte um único diretório de trabalho |
+| Reutilizar um guest de longa duração para muitas tarefas | O raciocínio sobre a fronteira fica nebuloso com o tempo | Uma execução, uma microVM, sempre |
+| Deixar a saída de rede totalmente aberta | Requisições de saída inesperadas nos traces | Permita apenas hosts específicos |
+| Adiar a exportação de telemetria para "depois" | Nenhuma evidência quando algo quebra | Configure o OTLP antes da primeira execução real |
+| Confiar no system prompt como camada de segurança | O agente segue instruções injetadas | Aplique limites no runtime |
+
+A experiência de jogadores na comunidade mais ampla de sandboxing de agentes ecoa isso: a maioria dos incidentes são incidentes de configuração. O runtime fez seu trabalho; a montagem era ampla demais, o token era amplo demais ou a rede estava aberta demais.
+
+Se você quer ver como a fronteira é realmente implementada em vez de aceitar a palavra de um post de blog, o [runtime e a documentação do Void Platform](https://voidplatform.ai/) percorre o modelo de isolamento, a abordagem de rootfs OCI e as notas de versão diretamente.
+
+## FAQ
+
+**"Void Platform how to survive" tem a ver com mecânicas de sobrevivência de jogos?**
+Não. Neste contexto, sobreviver significa manter as falhas de um agente de IA não confiável contidas, para que nunca cheguem à sua máquina host, às suas credenciais ou aos seus sistemas de produção.
+
+**Preciso de uma máquina separada para rodar agentes com segurança?**
+Não necessariamente, mas o suporte à virtualização por hardware importa. O Void Platform usa microVMs dedicadas sem kernel compartilhado, o que oferece uma fronteira real mesmo em uma única máquina de desenvolvimento.
+
+**Como sei que um agente permaneceu dentro de suas capacidades?**
+Leia o trace. Spans por estágio, eventos de ciclo de vida da execução e artefatos preservados mostram quais ferramentas foram usadas e quando. Se um estágio buscou algo que você não declarou, a execução deveria ter falhado em vez de ter sucesso silenciosamente.
+
+**Qual é a forma mais rápida de aprender Void Platform how to survive a uma execução com falha?**
+Comece com uma execução interativa, um único diretório montado e saída de rede restrita a hosts específicos. Quando falhar — e vai falhar —, você obtém um trace pequeno e legível em vez de um grande e ambíguo.
+
+## A Conclusão
+
+Sobreviver à execução de agentes não é sobre escrever prompts melhores. É sobre colocar uma fronteira ao redor da coisa que age, declarar o que ela pode tocar antes de começar e manter evidências de tudo o que fez. Faça isso de forma consistente — uma execução, uma microVM, capacidades estreitas, telemetria ativada desde o primeiro dia — e a pergunta muda de "o que poderia dar errado?" para "o que deu errado, e onde está o trace?". Esse é um lugar muito melhor para se estar, e é exatamente o que uma abordagem **Void Platform how to survive** foi projetada para oferecer.

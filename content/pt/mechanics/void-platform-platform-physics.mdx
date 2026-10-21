@@ -1,0 +1,102 @@
+export const metadata = {
+  title: "Física de plataformas do Void Platform: arcos de salto, colisão e mortes justas",
+  description: "Uma análise prática da física de plataformas do Void Platform: arcos de salto, caixas de colisão, coyote time e como ajustar plataformas flutuantes para que pareçam justas.",
+  category: "mechanics",
+  date: "2026-10-21",
+}
+
+Um único salto mal calculado sobre o vazio diz ao jogador tudo sobre o quanto um jogo respeita o tempo dele. A **física de plataformas do Void Platform** é o contrato invisível entre o nível e as mãos do jogador — a curva de gravidade, a caixa de colisão e a janela de tolerância que decidem se um salto parece heroico ou barato. Acerte esse contrato e os jogadores vão morrer quarenta vezes aprendendo uma fase com prazer; erre e eles vão culpar o jogo e ir embora. Este guia detalha as partes móveis da **física de plataformas do Void Platform** para que designers, modders e jogadores curiosos entendam por que algumas plataformas flutuantes parecem deliberadas e outras parecem arbitrárias.
+
+## Por que a física de plataformas do Void Platform define o sucesso ou o fracasso de uma fase
+
+Uma plataforma no vazio é qualquer superfície suspensa acima de um plano letal, e seu trabalho inteiro é criar tensão sem criar confusão. Jogadores leem uma fase em uma fração de segundo: veem uma forma, adivinham como ela se comporta e se comprometem com um salto. A física de plataformas do Void Platform determina se esse palpite compensa. Quando o volume de colisão corresponde à silhueta e o arco do salto corresponde ao vão visível, as mortes parecem merecidas. Quando um dos dois mente, os jogadores param de confiar na fase — e, uma vez que a confiança se vai, todo salto seguinte parece um cara ou coroa.
+
+Três regras fazem a maior parte do trabalho:
+
+- **Honestidade da silhueta.** O que o jogador vê é onde o jogador pousa. Nada de beiradas invisíveis, nada de saliências decorativas que bloqueiam o movimento.
+- **Dimensionamento dos vãos.** O salto mais difícil de uma seção deve ficar confortavelmente abaixo da distância máxima real do jogador, não no limite dela.
+- **Consequência visível.** Uma plataforma que desaparece, se desloca ou desmorona precisa sinalizar esse comportamento antes que o jogador se comprometa.
+
+| Indício visual | O que os jogadores assumem | Erro de design comum |
+| --- | --- | --- |
+| Contorno largo, plano e sólido | Pouso seguro, sólido em todos os lados | Estreitar o colisor sem redesenhar a arte |
+| Laje fina sem apoios | Superfície de mão única ou frágil | Torná-la totalmente sólida e bloquear rotas verticais |
+| Brilho tênue ou partículas à deriva | Plataforma temporária ou que alterna | Efeito sutil demais para ser lido em velocidade de corrida |
+| Movimento lento e constante | Quebra-cabeça de timing previsível | Adicionar pausas aleatórias sem indicação visual |
+| Tremulação, rachaduras ou contagem regressiva | Superfície cronometrada que desaparece | Removê-la sem nenhuma pista sonora |
+
+## Gravidade, velocidade de queda e tempo no ar: os números centrais
+
+A maior parte da sensação na física de plataformas do Void Platform mora em um punhado de valores ajustáveis, e a ordem em que você os ajusta importa mais do que os valores em si. Comece pela altura do salto, depois pela velocidade de queda, depois pelo controle no ar. Mudar os três ao mesmo tempo é como um build acaba parecendo "estranho" sem um motivo claro.
+
+A maior melhoria isolada que a maioria dos protótipos pode fazer é a **gravidade assimétrica**: gravidade ligeiramente mais fraca na subida e gravidade visivelmente mais forte na queda. Isso dá aos saltos um arco legível no topo e uma descida ágil e responsiva, para que os jogadores passem menos tempo flutuando impotentes sobre o vazio. Combine isso com altura de salto variável — soltar o botão cedo corta a subida — e você obtém tanto pulinhos de precisão quanto saltos completos com o mesmo botão.
+
+| Variável | O que controla | Aumente e… | Diminua e… |
+| --- | --- | --- | --- |
+| Impulso de salto | Altura máxima | Arcos maiores, mais tempo no ar | Pulinhos mais curtos e ágeis |
+| Gravidade de subida | Tempo até o ápice | Lançamento mais flutuante e pesado | Subida mais rápida e explosiva |
+| Gravidade de queda | Sensação da descida | Queda lenta e controlável | Queda rápida e impactante |
+| Velocidade máxima de queda | Velocidade terminal | Mais tempo para corrigir no meio da queda | Menos recuperação, mais comprometimento |
+| Aceleração no ar | Direção no meio do salto | Correções tolerantes | Saltos comprometidos, guiados por momento |
+| Atrito no solo | Distância de parada | Deslizante, com muito momento | Paradas nítidas e instantâneas |
+
+Um fluxo de trabalho útil é construir uma sala de testes com três vãos — um fácil, um médio e um difícil — e ajustar apenas com base neles até que um jogador novo os atravesse sem instruções. Se ele ultrapassa o vão fácil, seu impulso de salto está alto demais em relação à escala do nível. Se ele fica aquém do vão difícil repetidamente, ou o vão é largo demais ou a corrida de aproximação é curta demais.
+
+## Colisão, beiradas e as bordas de uma plataforma no vazio
+
+É na colisão que a boa física de plataformas do Void Platform silenciosamente desmorona. O culpado clássico é o enroscão de canto: o jogador raspa a beirada da plataforma com a lateral da hitbox na subida, para de repente e escorrega para o vazio. Do ponto de vista do jogo, nada deu errado. Do ponto de vista do jogador, o salto estava correto e o jogo o recusou.
+
+A solução é a correção de canto — empurrar o personagem alguns pixels na horizontal quando ele está prestes a raspar um canto — somada a uma checagem de pouso tolerante que trata "pés logo acima da superfície" como pouso, e não como passagem. Relatos da comunidade de modding de jogos de plataforma classificam consistentemente os enroscões de canto e as surpresas com plataformas de mão única como as duas principais causas de reclamações do tipo "a culpa foi do jogo".
+
+| Tipo de superfície | Comportamento de colisão | Melhor uso |
+| --- | --- | --- |
+| Plataforma no vazio sólida | Bloqueia em todas as direções | Ancoragens, paredes, tetos, beiradas |
+| Plataforma no vazio de mão única | Bloqueia apenas por cima | Rotas verticais e atalhos |
+| Superfície escorregadia | Atrito reduzido no contato | Quebra-cabeças de momento e deslizamento |
+| Superfície desmoronante | Some pouco depois do contato | Momentos de pressão e sequências de perseguição |
+| Superfície alternante | Alterna entre sólida e fantasma | Seções de ritmo e timing |
+| Superfície móvel | Carrega o momento do jogador | Transporte e timing de precisão |
+
+Plataformas de mão única merecem atenção especial. Elas tornam o level design vertical muito mais flexível, mas também convidam a pergunta "por que eu caí através disso?". Adicione uma linguagem visual clara — perfil mais fino, acabamento de borda distinto, material de superfície diferente — e os jogadores aprenderão a regra em uma única tela.
+
+## Plataformas móveis no vazio, momento e janelas de timing
+
+Uma plataforma móvel adiciona um segundo corpo ao problema de física. Quando uma plataforma carrega um jogador, o jogador deve herdar a velocidade da plataforma enquanto está sobre ela e depois manter uma quantidade sensata desse momento ao saltar. Ignore a herança e os passageiros escorregam em alta velocidade; exagere e os saltos ficam imprevisíveis. O ponto ideal costuma ser transferência total de velocidade enquanto estiver no chão, com uma fração reduzida ao saltar.
+
+As janelas de timing importam tanto quanto a matemática. Uma plataforma que se move rápido demais para a distância que percorre transforma um quebra-cabeça em um teste de reflexo. Uma plataforma que pausa demais mata o ritmo. Jogadores de teste geralmente precisam ver um ciclo completo do trajeto da plataforma — ou pelo menos uma forte sugestão dele — antes de precisarem se comprometer.
+
+- **Pré-visualize o trajeto.** Mostre a rota com rastros de luz, marcações-guia ou uma sombra no piso do vazio.
+- **Sincronize de propósito.** Se a fase tem uma batida musical ou mecânica, alinhe os ciclos das plataformas a ela para que o padrão seja audível além de visível.
+- **Nunca mude a velocidade no meio do trajeto**, a menos que a mudança seja a mecânica e esteja claramente sinalizada.
+- **Dê ao jogador um ponto de lançamento estável** antes de cada sequência longa de plataformas móveis.
+
+## Checklist de ajuste: testando a física de plataformas do Void Platform no seu build
+
+Testar é onde os números abstratos se tornam um jogo que as pessoas conseguem de fato jogar. Execute o checklist abaixo em ordem — cada etapa isola uma variável para que você saiba exatamente o que mudou quando a sensação muda. Para um embasamento mais profundo sobre colisão e esquemas de controle, as análises aprofundadas de level design do Game Developer são uma boa referência.
+
+| Etapa | Teste | Critério de aprovação |
+| --- | --- | --- |
+| 1 | Teste da silhueta às cegas | Jogadores novos escolhem a rota pretendida sem dicas |
+| 2 | Teste de salto na distância máxima | O salto mais difícil fica bem abaixo do máximo real |
+| 3 | Teste de input tardio | Um salto apertado logo após sair da beirada ainda funciona |
+| 4 | Teste de raspão no canto | Nenhum enroscão ao saltar além das bordas da plataforma |
+| 5 | Teste de condução | Os jogadores permanecem firmes em plataformas móveis na velocidade máxima |
+| 6 | Teste de ciclo de morte | O respawn é rápido e nunca joga o jogador em uma morte repetida |
+
+Dois sistemas de tolerância carregam a maior parte da boa vontade. O **coyote time** concede um curto período de graça para saltar depois de sair de uma beirada, e o **buffer de salto** memoriza um salto apertado pouco antes do pouso. Ambos são medidos em frações de segundo e ambos costumam ser invisíveis quando bem ajustados. Relatos da comunidade sugerem começar em torno de um décimo de segundo para cada um e ajustar a partir daí — o suficiente para absorver o erro de timing humano, não o suficiente para permitir que os jogadores trapaceiem as checagens de distância.
+
+Por fim, trate o respawn como parte da física de plataformas do Void Platform. Uma morte que custa cinco segundos de carregamento transforma um desafio justo em punição. Mantenha o ciclo curto, gere os jogadores em terreno sólido e nunca coloque um checkpoint onde um inimigo parado ou uma plataforma móvel possa matá-los antes que recuperem o controle.
+
+## FAQ
+
+**O que é a física de plataformas do Void Platform em termos simples?**
+É o conjunto de regras que governa como um personagem se move e interage com plataformas flutuando sobre um plano letal — gravidade, arcos de salto, caixas de colisão, transferência de momento e os sistemas de tolerância que suavizam o erro de timing humano.
+
+**Quanto coyote time uma seção de plataformas no vazio deve usar?**
+Comece pequeno. Uma janela de graça em torno de um décimo de segundo é uma base comum; aumente-a para jogos mais lentos e focados em exploração e diminua-a para platformers de precisão, onde o timing apertado é o ponto.
+
+**Plataformas no vazio devem ser sólidas ou de mão única?**
+Use plataformas sólidas como ancoragens estruturais e plataformas de mão única para rotas verticais e atalhos. O importante é a consistência: escolha uma linguagem visual clara e aplique-a em todo lugar para que os jogadores nunca precisem adivinhar.
+
+**Por que os jogadores culpam o jogo em vez de si mesmos quando caem?**
+Quase sempre porque a colisão não correspondia ao visual, o vão excedia a distância de salto legível ou um enroscão de canto cancelou um input que parecia correto. Corrigir esses três problemas remove a maior parte da frustração da física de plataformas do Void Platform sem tornar a fase mais fácil.

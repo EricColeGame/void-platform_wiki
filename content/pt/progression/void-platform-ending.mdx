@@ -1,0 +1,119 @@
+export const metadata = {
+  title: "Fim da Void Platform Explicado: O Que Acontece Depois do Último Passo de Configuração",
+  description: "Um olhar claro sobre o fim da Void Platform: o que a sua instalação principal inclui, o que ela deixa de fora e como encerrar, reverter ou fazer o handoff de forma limpa.",
+  category: "progression",
+  date: "2026-10-21",
+}
+
+O fim da Void Platform é menos um final e mais um handoff — o ponto em que a configuração da sua implantação compartilhada deixa de ser um projeto e passa a ser infraestrutura. Chegar lá importa porque os últimos passos decidem se os desenvolvedores conseguem fazer login e publicar por conta própria, ou se cada release ainda passa por você. Este guia percorre como é de fato o fim da Void Platform, o que a instalação principal inclui, o que ela deliberadamente deixa de fora e como encerrar tudo de forma limpa.
+
+## O Que o Fim da Void Platform Realmente Significa
+
+Uma Void platform é uma camada de implantação compartilhada: sua equipe implanta aplicativos em uma única conta da Cloudflare que você, como administrador, instala e mantém. Os desenvolvedores não mexem na infraestrutura. Eles apontam a Void CLI para a URL da plataforma, fazem login pelo método de autenticação que você habilitou e implantam.
+
+Então o "fim" não é um desligamento. É o momento em que sua instalação se torna autoatendimento. O trabalho de administração passa de construir para manter, e a métrica de sucesso muda de "a implantação terminou?" para "alguém precisou me pedir ajuda?".
+
+Esse enquadramento importa porque duas jornadas muito diferentes podem ambas chegar a um fim.
+
+| Caminho | Para quem é | Como é o fim |
+| --- | --- | --- |
+| Direto para a Cloudflare | Alguém implantando um app para si mesmo | Nenhuma instalação de plataforma; você vai direto para a Cloudflare |
+| Plataforma core auto-hospedada | Uma equipe compartilhando uma conta | A instalação é concluída, os desenvolvedores se conectam e implantam de forma independente |
+
+Se você está construindo para si mesmo, pule a plataforma por completo — a documentação é explícita ao dizer que você não precisa instalar uma antes. O fim da Void Platform só se torna um marco quando outras pessoas dependem da instalação.
+
+## O Que Você Tem Quando a Configuração Termina
+
+A instalação principal é deliberadamente enxuta. Ela vem com Sandboxes gerenciados e um gateway de e-mail. O e-mail não fica ativo por padrão, porém — ele é ativado quando você configura um domínio e uma zona de e-mail compartilhados.
+
+Todo o resto que uma plataforma madura poderia oferecer é tratado como opcional, e essa distinção é a coisa mais útil de se entender antes de declarar a instalação concluída. A tabela abaixo compara o que cada destino de implantação oferece.
+
+| Recurso | Direto para a Cloudflare | Plataforma core auto-hospedada |
+| --- | --- | --- |
+| Workers AI e requisições de provedores | Sua própria conta e gateway | O gateway e proxy da instalação |
+| Logs de runtime | Live tail da Cloudflare | Logs retidos na plataforma |
+| Rollback de aplicação | Versões do Worker | Implantações retidas na plataforma |
+| Sandboxes | Exige Workers Paid mais Docker | Exige Workers Paid na conta da plataforma |
+| Dashboard de usuário e builds gerenciados do GitHub | Não obrigatório | Não incluído em uma instalação padrão |
+
+Ambos os destinos usam as mesmas APIs de aplicação, e é por isso que o fim parece anticlimático. Nada sobre o comportamento de um app muda. O que muda é quem é dono do histórico — logs retidos e implantações retidas são o verdadeiro ganho da plataforma.
+
+## O Que o Fim Não Inclui
+
+Uma fonte comum de decepção no fim da Void Platform é presumir que "instalado" significa "completo". Não significa. Vários recursos que as pessoas esperam de uma plataforma de implantação estão fora da instalação principal.
+
+- **Dashboard de usuário** — não faz parte de uma instalação padrão.
+- **Builds e webhooks gerenciados do GitHub** — disponíveis apenas como serviços opcionais.
+- **Build Containers** — não incluídos no core.
+- **Domínios personalizados de projeto** — não incluídos no core.
+
+Nenhum desses é uma falha. São decisões de escopo, e conhecê-las de antemão evita que você prometa à sua equipe um dashboard que a plataforma nunca ia oferecer.
+
+Se você compilar a partir do código-fonte e adicionar os serviços opcionais do GitHub, há um detalhe de configuração que vale destacar: quando o Access protege a API, siga a configuração de ingresso isolado de webhook. Pular esse passo é o tipo de coisa que aparece semanas depois como builds falhando silenciosamente.
+
+## Um Fim Limpo da Void Platform: Checklist Passo a Passo
+
+O [guia oficial de instalação da plataforma auto-hospedada Void](https://void.cloud/guide/self-hosted-platform) divide a configuração em pré-requisitos, credenciais e configuração. O fim é onde você verifica se os três realmente convergiram. Use esta sequência.
+
+| Passo | Ação | Como é o "concluído" |
+| --- | --- | --- |
+| 1 | Confirme que os pré-requisitos foram atendidos | Cada requisito verificado antes da instalação, não depois |
+| 2 | Provisione as credenciais | Credenciais de admin e de serviço armazenadas em algum lugar acessível à equipe |
+| 3 | Habilite um método de login | Pelo menos um caminho de autenticação ativo para os desenvolvedores |
+| 4 | Configure o domínio e a zona de e-mail compartilhados | O gateway de e-mail entra no ar em vez de ficar parado |
+| 5 | Conecte a CLI à URL da plataforma | Uma implantação de teste é bem-sucedida a partir da máquina de um desenvolvedor |
+| 6 | Decida sobre os serviços opcionais | Builds do GitHub, dashboard e domínios personalizados explicitamente dentro ou fora |
+| 7 | Escreva a nota de handoff | Alguém além de você consegue implantar sem fazer perguntas |
+
+O passo 5 é o teste de verdade. Se um desenvolvedor consegue conectar a Void CLI à URL da plataforma, autenticar e enviar um app sem o seu envolvimento, o fim da Void Platform está genuinamente completo. Tudo antes disso é preparação.
+
+O passo 7 é o que a maioria das equipes pula. Uma nota curta cobrindo a URL da plataforma, os métodos de login habilitados, a propriedade da zona de e-mail e quem detém as credenciais de admin economiza horas depois.
+
+## Encerrar, Reverter ou Seguir em Frente
+
+Depois que a plataforma está no ar, "fim" ganha um segundo significado: o que acontece quando uma implantação precisa ser desfeita. É aqui que a plataforma compartilhada se paga em relação a uma configuração direta para a Cloudflare.
+
+Em uma implantação direta, reverter significa trabalhar com versões do Worker. Em uma plataforma core auto-hospedada, você reverte por meio das implantações retidas na plataforma, e tem os logs retidos da plataforma para explicar o que deu errado em primeiro lugar.
+
+| Situação | Caminho recomendado | Por quê |
+| --- | --- | --- |
+| Experimento solo, sem equipe envolvida | Implantar diretamente na Cloudflare | Sem sobrecarga de instalação, sem manutenção |
+| Um release quebrou a produção | Reverter via implantações retidas na plataforma | O histórico completo permanece na plataforma |
+| Precisa explicar um incidente | Logs retidos da plataforma | O live tail sozinho não persiste |
+| Adicionando builds baseados no GitHub | Habilitar serviços opcionais, isolar o ingresso de webhook | Mantém os builds funcionando por trás do Access |
+| A equipe cresce além do core | Planejar a infraestrutura do Workers for Platforms | Uma plataforma de equipe exige isso |
+
+Se sua equipe crescer além do core, o fim de uma fase se torna o início de outra. Uma plataforma de equipe exige Workers for Platforms e a infraestrutura documentada, e os recursos dependem muito de como a instalação está configurada.
+
+## Requisitos a Confirmar Antes de Declarar Concluído
+
+Os requisitos são fáceis de atender no primeiro dia e fáceis de esquecer no terceiro mês. Confirme cada um deles antes de dar o sinal verde.
+
+| Requisito | Onde se aplica | Por que importa no fim |
+| --- | --- | --- |
+| Workers Paid | Conta da plataforma, e Docker para sandboxes diretos | Os Sandboxes não rodam sem isso |
+| Docker | Uso de sandbox direto para a Cloudflare | Dependência local fácil de passar despercebida |
+| Workers for Platforms | Implantações de plataforma em escala de equipe | Obrigatório para uma plataforma de equipe compartilhada |
+| Domínio e zona de e-mail compartilhados | Gateway de e-mail | O e-mail permanece desativado até ser configurado |
+| Ingresso isolado de webhook | Plataformas compiladas do código-fonte com serviços do GitHub | Evita builds quebrados por trás do Access |
+
+Relatos da comunidade de equipes que rodam camadas de implantação compartilhadas tendem a convergir para a mesma lição: a instalação é a parte fácil, e as expectativas de manutenção são o que de fato determina se a plataforma se sustenta. A experiência de jogadores com ferramentas auto-hospedadas geralmente ecoa isso — as ferramentas que sobrevivem são as que têm um dono claro.
+
+Trate o fim da Void Platform como um compromisso de manutenção e não como uma linha de chegada. Atribua um responsável, documente a URL da plataforma e os métodos de login e revise os serviços opcionais em uma agenda regular em vez de adicioná-los de forma ad hoc.
+
+## FAQ
+
+**O fim da Void Platform é o mesmo que desligar a plataforma?**
+Não. Na prática, o fim da Void Platform se refere à conclusão da instalação e ao handoff — quando a plataforma está no ar, os desenvolvedores podem se autoatender, e o papel de admin passa para a manutenção. Desligar é uma decisão separada e muito mais rara.
+
+**O que está incluído em uma instalação principal?**
+Sandboxes gerenciados e um gateway de e-mail. O e-mail só fica ativo depois que você configura um domínio e uma zona de e-mail compartilhados. O dashboard de usuário, os builds e webhooks do GitHub, os Build Containers e os domínios personalizados de projeto não fazem parte da instalação principal.
+
+**Preciso de uma plataforma se estou implantando para mim mesmo?**
+Não. Implantar diretamente na Cloudflare é o caminho mais simples quando você é o único usuário. O fim da Void Platform só se torna relevante quando uma equipe compartilha uma conta e precisa de logs retidos e histórico de implantações.
+
+**Como faço o rollback depois que a configuração termina?**
+Use as implantações retidas na plataforma em uma plataforma auto-hospedada, ou as versões do Worker se você implantou diretamente. Combine o rollback com os logs retidos da plataforma para poder explicar a falha, não apenas desfazê-la.
+
+**E se minha equipe crescer além da instalação principal?**
+Você vai precisar do Workers for Platforms e da infraestrutura documentada. Nesse ponto, o fim da sua configuração principal se torna o início da construção de uma plataforma de equipe, e o conjunto de recursos depende inteiramente de como você a configura.

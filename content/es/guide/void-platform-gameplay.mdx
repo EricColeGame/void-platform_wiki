@@ -1,0 +1,110 @@
+export const metadata = {
+  title: "Jugabilidad de Void Platform: una guía práctica para instalar y desplegar en Cloudflare",
+  description: "La jugabilidad de Void Platform, explicada: instala la plataforma, conecta la CLI, despliega apps y sabe exactamente qué incluye la compilación principal.",
+  category: "guide",
+  date: "2026-10-21",
+}
+
+## Qué significa realmente la jugabilidad de Void Platform
+
+Si buscaste "jugabilidad de Void Platform" esperando un videojuego, aquí va el giro: Void Platform es una plataforma de despliegue, y la "jugabilidad" es el ciclo práctico de instalarla, conectarla y publicar apps en una cuenta compartida de Cloudflare. Importa porque ese ciclo decide si tu equipo obtiene acceso compartido, historial de despliegues retenido y sandboxes gestionados, o un montón de despliegues puntuales que nadie puede auditar. En esta guía, la jugabilidad de Void Platform significa el paso a paso práctico: elegir un objetivo, ejecutar la instalación y esquivar las trampas que convierten una configuración breve en una limpieza larga.
+
+El modelo mental es sencillo. Una plataforma Void es un objetivo de despliegue compartido que un administrador instala y mantiene. Después, los desarrolladores apuntan la CLI de Void a la URL de la plataforma, inician sesión con el método de acceso que esté habilitado y despliegan sus apps. Nadie gestiona a mano proyectos individuales de Cloudflare.
+
+| Rol | Qué posee | Primer paso |
+| --- | --- | --- |
+| Administrador | Instalar y mantener la plataforma | Trabajar con las guías de requisitos previos y credenciales |
+| Desarrollador | Conectar y desplegar | Apuntar la CLI de Void a la URL de la plataforma e iniciar sesión |
+| Constructor en solitario | La velocidad por encima de todo | Saltarse la plataforma y desplegar directamente en Cloudflare |
+
+Esa última fila es el atajo más importante de la jugabilidad de Void Platform. Si estás desplegando una app para ti mismo, no necesitas instalar una plataforma primero: despliega directamente en Cloudflare y ahórrate la sobrecarga.
+
+## Elige tu objetivo antes de instalar
+
+La primera decisión real en la jugabilidad de Void Platform no es técnica, es estratégica: Cloudflare directo o una plataforma autohospedada principal. Ambos objetivos usan las mismas API de aplicación, así que el código de tu app no cambia. Lo que cambia es todo lo que rodea a la app: acceso, registro y historial de reversión.
+
+| Función | Directo a Cloudflare | Plataforma autohospedada principal |
+| --- | --- | --- |
+| Workers AI y solicitudes a proveedores | Tu cuenta y tu gateway | El gateway y proxy de la instalación |
+| Logs en tiempo de ejecución | Tail en vivo de Cloudflare | Logs retenidos de la plataforma |
+| Reversión de la aplicación | Versiones del Worker | Despliegues retenidos de la plataforma |
+| Sandboxes | Requiere Workers Paid y Docker | Requiere Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y compilaciones gestionadas de GitHub | No requerido | No incluido en una instalación estándar |
+
+Lee esa tabla como un intercambio. Los despliegues directos son ligeros y rápidos, pero los logs son solo en vivo y la reversión se basa en versiones. Una plataforma añade acceso compartido más un historial retenido de despliegues, algo genuinamente útil cuando más de una persona publica código y alguien inevitablemente pregunta: "¿qué cambió el martes pasado?".
+
+Una nota más de planificación: una plataforma de equipo requiere Workers for Platforms y la infraestructura documentada. Las funciones dependen de cómo esté configurada la instalación, así que decide tu alcance antes de tocar un terminal.
+
+## El ciclo principal, paso a paso
+
+Piensa en esto como la línea de misiones principal de la jugabilidad de Void Platform. Cada paso desbloquea el siguiente, y adelantarse suele costar más tiempo del que ahorra.
+
+| Paso | Qué haces | Por qué importa |
+| --- | --- | --- |
+| 1 | Confirmar los requisitos previos, incluido Workers Paid en la cuenta de la plataforma | Los sandboxes dependen de ello |
+| 2 | Reunir las credenciales necesarias | Las credenciales faltantes detienen la instalación |
+| 3 | Instalar la plataforma principal | Este es el objetivo compartido en el que despliega tu equipo |
+| 4 | Configurar un dominio y una zona de correo compartidos | El correo a través del gateway solo se activa cuando esto existe |
+| 5 | Compartir la URL de la plataforma con los desarrolladores | Ellos conectan la CLI de Void e inician sesión con un método habilitado |
+| 6 | Desplegar, luego revisar los logs retenidos y revertir a un despliegue retenido | Esta es la recompensa: visibilidad compartida y recuperación |
+
+El paso 4 es el que la gente pospone, y es el que muerde. La instalación principal incluye un gateway de correo, pero el correo solo se habilita cuando configuras un dominio y una zona de correo compartidos. Si el correo transaccional forma parte de tu app, trata el dominio de correo como una tarea del primer día en lugar de un detalle de pulido posterior.
+
+El paso 5 es donde el equipo se une realmente al juego. Los desarrolladores no necesitan entender la instalación: necesitan una URL, un método de acceso que esté activado y una CLI de Void que funcione. Anota esas tres cosas en algún lugar visible.
+
+## Qué viene en la caja y qué construyes tú mismo
+
+Una instalación estándar es deliberadamente limitada. Conocer el límite de antemano evita muchas conversaciones del tipo "¿por qué no está esto aquí?".
+
+| Componente | ¿En una instalación principal? | Notas |
+| --- | --- | --- |
+| Sandboxes gestionados | Sí | Requiere Workers Paid en la cuenta de la plataforma |
+| Gateway de correo | Sí | Se habilita una vez configurados un dominio y una zona de correo compartidos |
+| Panel de usuario | No | No forma parte de una instalación estándar |
+| Compilaciones y webhooks de GitHub | No | Opcional, se añade mediante plataformas construidas desde el código fuente |
+| Build Containers | No | Fuera de la instalación principal |
+| Dominios de proyecto personalizados | No | Fuera de la instalación principal |
+
+Si necesitas los servicios opcionales de GitHub, planifica una plataforma construida desde el código fuente. Y si Access protege la API, sigue la configuración de ingreso de webhooks aislado en lugar de exponer la ruta del webhook directamente: ese detalle es fácil de pasar por alto y molesto de añadir después. La [guía oficial de Void para instalar una plataforma autohospedada](https://void.cloud/guide/self-hosted-platform) es la referencia que conviene tener abierta mientras avanzas.
+
+## Consejos de administrador para un primer arranque limpio
+
+La buena jugabilidad de Void Platform desde el asiento de administrador se trata sobre todo de secuenciación. Algunos hábitos que valen la pena:
+
+- **Decide el objetivo primero.** El trabajo en solitario va directo a Cloudflare; el trabajo compartido recibe una plataforma.
+- **Verifica Workers Paid pronto.** Los sandboxes dependen de ello, y descubrirlo a mitad de la instalación es desmoralizador.
+- **Trata el dominio de correo como una tarea de primera clase.** Sin un dominio y una zona de correo compartidos, no hay gateway de correo.
+- **Acuerda los métodos de acceso antes de incorporar gente.** Los desarrolladores nunca deberían adivinar cómo iniciar sesión.
+- **Delimita los servicios opcionales a propósito.** El panel, las compilaciones de GitHub, los Containers y los dominios de proyecto personalizados son todos añadidos, no valores por defecto.
+- **Protege la API y aísla el ingreso de webhooks.** Especialmente si construyes desde el código fuente con Access al frente.
+
+Cuando algo parece roto, normalmente es un límite de configuración y no un bug:
+
+| Síntoma | Causa probable | La acción |
+| --- | --- | --- |
+| El correo nunca se envía | Dominio y zona de correo compartidos sin configurar | Configúralos y vuelve a probar el gateway |
+| Los sandboxes no arrancan | Falta Workers Paid en la cuenta de la plataforma | Actualiza la cuenta de la plataforma |
+| El equipo no ve el historial de despliegues | Están desplegando directo, no a través de la plataforma | Apunta la CLI a la URL de la plataforma |
+| Faltan el panel o las compilaciones de GitHub | Los servicios opcionales no están en la instalación principal | Construye desde el código fuente con los complementos que necesites |
+
+## Experiencia del jugador: cómo suele sentirse la primera semana
+
+Los informes de la comunidad y la experiencia de jugador de equipos que ejecutan plataformas de despliegue compartidas suelen seguir un arco familiar. La instalación en sí rara vez es la parte difícil: la fricción aparece en el traspaso, cuando los desarrolladores que llevaban desplegando directo a Cloudflare de repente necesitan una URL, un método de acceso y un modelo mental distinto. Los equipos que anotan esos detalles antes del cambio describen una transición mucho más fluida que los equipos que anuncian la plataforma y dejan que la gente lo descubra por su cuenta.
+
+El otro tema recurrente en la experiencia de jugador son las expectativas sobre la retención. Quienes esperan un panel y compilaciones gestionadas de GitHub desde el primer momento se llevan una decepción; quienes saben que la instalación principal es intencionadamente limitada los tratan como elementos del roadmap en lugar de funciones ausentes. Lee la tabla de funciones antes de prometerle nada a tu equipo.
+
+## Preguntas frecuentes
+
+**¿La jugabilidad de Void Platform es un juego real?**
+No. Void Platform es una plataforma de despliegue para publicar apps en una cuenta compartida de Cloudflare. "Jugabilidad" aquí es una forma abreviada de referirse al flujo de trabajo práctico: instalar, conectar, desplegar y recuperar.
+
+**¿Necesito instalar una plataforma para desplegar una sola app?**
+No. Si estás desplegando una app para ti mismo, despliega directamente en Cloudflare. Solo necesitas una plataforma cuando quieres acceso compartido e historial de despliegues retenido para un equipo.
+
+**¿Qué incluye realmente la instalación principal?**
+Sandboxes gestionados y un gateway de correo. El correo se habilita cuando configuras un dominio y una zona de correo compartidos. El panel de usuario, las compilaciones y webhooks de GitHub, los Build Containers y los dominios de proyecto personalizados no forman parte de la instalación principal.
+
+**¿Puedo añadir compilaciones de GitHub más adelante?**
+Sí, mediante una plataforma construida desde el código fuente que añade los servicios opcionales de GitHub. Si Access protege la API, usa la configuración de ingreso de webhooks aislado en lugar de exponer los webhooks directamente.
+
+Domina el ciclo de configuración una vez, y el resto de tu jugabilidad de Void Platform es solo publicar, con logs que de verdad puedes leer y despliegues a los que de verdad puedes revertir.

@@ -1,0 +1,102 @@
+export const metadata = {
+  title: "Void Platform Platform Physics: Jump Arcs, Collision, and Fair Deaths",
+  description: "A practical breakdown of Void Platform platform physics: jump arcs, collision boxes, coyote time, and how to tune floating platforms that feel fair.",
+  category: "mechanics",
+  date: "2026-10-21",
+}
+
+One mistimed jump over empty space tells a player everything about how much a game respects their time. **Void Platform platform physics** is the invisible contract between the level and the player's hands — the gravity curve, the collision box, and the forgiveness window that decide whether a leap feels heroic or cheap. Get that contract right and players will happily die forty times learning a stage; get it wrong and they will blame the game and walk away. This guide breaks down the moving parts of **Void Platform platform physics** so designers, modders, and curious players can understand why some floating platforms feel deliberate and others feel arbitrary.
+
+## Why Void Platform Platform Physics Make or Break a Level
+
+A void platform is any surface suspended above a kill plane, and its entire job is to create tension without creating confusion. Players read a level in a fraction of a second: they see a shape, guess how it behaves, and commit to a jump. Void Platform platform physics determines whether that guess pays off. When the collision volume matches the silhouette and the jump arc matches the visible gap, deaths feel earned. When either one lies, players stop trusting the level — and once trust is gone, every jump afterward feels like a coin flip.
+
+Three rules do most of the work:
+
+- **Silhouette honesty.** What the player sees is what the player lands on. No invisible ledges, no decorative overhangs that block movement.
+- **Gap sizing.** The hardest jump in a section should sit comfortably below the player's true maximum distance, not at it.
+- **Visible consequence.** A platform that vanishes, shifts, or crumbles must telegraph that behavior before the player commits.
+
+| Visual cue | What players assume | Common design mistake |
+| --- | --- | --- |
+| Wide, flat, solid outline | Safe landing, solid on all sides | Narrowing the collider without redrawing the art |
+| Thin slab with no supports | One-way or fragile surface | Making it fully solid and blocking vertical routes |
+| Faint shimmer or drifting particles | Temporary or phasing platform | Effect too subtle to read at running speed |
+| Slow, steady motion | Predictable timing puzzle | Adding random pauses with no visual tell |
+| Flicker, cracks, or countdown ticks | Timed, vanishing surface | Removing it with no audio cue |
+
+## Gravity, Fall Speed, and Airtime: The Core Numbers
+
+Most of the feel in Void Platform platform physics lives in a handful of tunable values, and the order you tune them matters more than the values themselves. Start with jump height, then fall speed, then air control. Changing all three at once is how a build ends up feeling "off" with no clear reason why.
+
+The single biggest improvement most prototypes can make is **asymmetric gravity**: slightly weaker gravity while rising, noticeably stronger gravity while falling. It gives jumps a readable arc at the top and a snappy, responsive descent, so players spend less time floating helplessly over the void. Pair that with variable jump height — releasing the button early cuts the ascent — and you get both precision hops and full commits from the same button.
+
+| Variable | What it controls | Raise it and… | Lower it and… |
+| --- | --- | --- | --- |
+| Jump impulse | Peak height | Bigger arcs, more airtime | Tighter, snappier hops |
+| Rising gravity | Time to apex | Floatier, heavier launch | Quicker, more explosive rise |
+| Falling gravity | Descent feel | Slow, controllable float | Fast, punchy drop |
+| Max fall speed | Terminal velocity | More time to correct mid-fall | Less recovery, more commitment |
+| Air acceleration | Mid-air steering | Forgiving corrections | Committal, momentum-driven jumps |
+| Ground friction | Stopping distance | Slidey, momentum-heavy | Crisp, instant stops |
+
+A useful workflow is to build a test room with three gaps — one easy, one medium, one hard — and tune only against those until a fresh player clears them without instruction. If they overshoot the easy gap, your jump impulse is too high relative to level scale. If they undershoot the hard gap repeatedly, either the gap is too wide or the run-up is too short.
+
+## Collision, Ledges, and the Edges of a Void Platform
+
+Collision is where good Void Platform platform physics quietly falls apart. The classic offender is the corner snag: a player clips the very edge of a platform with the side of their hitbox on the way up and gets stopped dead, then slides down into the void. From the game's perspective nothing went wrong. From the player's perspective, the jump was correct and the game refused it.
+
+The fix is corner correction — nudging the character a few pixels horizontally when they are about to clip a corner — plus a forgiving landing check that treats "feet just above the surface" as a landing rather than a pass-through. Community reports from platformer modding scenes consistently rank corner snags and one-way-platform surprises as the top two causes of "that was the game's fault" complaints.
+
+| Surface type | Collision behavior | Best used for |
+| --- | --- | --- |
+| Solid void platform | Blocks from every direction | Anchors, walls, ceilings, ledges |
+| One-way void platform | Blocks only from above | Vertical routes and shortcuts |
+| Slippery surface | Reduced friction on contact | Momentum and slide puzzles |
+| Crumbling surface | Removes itself shortly after contact | Pressure moments and chase beats |
+| Phasing surface | Alternates between solid and ghost | Rhythm and timing sections |
+| Moving surface | Carries the player's momentum | Transport and precision timing |
+
+One-way platforms deserve special attention. They make vertical level design far more flexible, but they also invite the question "why did I fall through that?" Add a clear visual language — thinner profile, distinct edge trim, a different surface material — and players will learn the rule in one screen.
+
+## Moving Void Platforms, Momentum, and Timing Windows
+
+A moving platform adds a second body to the physics problem. When a platform carries a player, the player should inherit the platform's velocity while standing on it, then keep a sensible amount of that momentum when they jump off. Skip the inheritance and riders slide off at speed; overdo it and jumps become unpredictable. The sweet spot is usually full velocity transfer while grounded, with a reduced carry-over on jump.
+
+Timing windows matter just as much as the math. A platform that moves too fast for its travel distance turns a puzzle into a reflex test. A platform that pauses too long kills the rhythm. Playtesters generally need a full cycle of the platform's path visible — or at least strongly implied — before they must commit to it.
+
+- **Preview the path.** Show the route with light trails, guide markings, or a shadow on the void floor.
+- **Sync deliberately.** If the level has a musical or mechanical beat, align platform cycles to it so the pattern is audible as well as visible.
+- **Never change speed mid-path** unless the change is the mechanic and is clearly telegraphed.
+- **Give the player a stable launch point** before every long moving-platform sequence.
+
+## Tuning Checklist: Testing Void Platform Platform Physics in Your Build
+
+Testing is where the abstract numbers become a game people can actually play. Run the checklist below in order — each step isolates one variable so you know exactly what changed when the feel shifts. For deeper background on collision and control schemes, Game Developer's level design deep dives are a solid reference point.
+
+| Step | Test | Pass criteria |
+| --- | --- | --- |
+| 1 | Blind silhouette test | New players pick the intended route without hints |
+| 2 | Max-distance jump test | Hardest jump sits well below the true maximum |
+| 3 | Late-input test | A jump pressed just after leaving a ledge still fires |
+| 4 | Corner-clip test | No snags when jumping past platform edges |
+| 5 | Ride test | Players stay planted on moving platforms at top speed |
+| 6 | Death-loop test | Respawn is fast and never drops the player into a repeat death |
+
+Two forgiveness systems carry most of the goodwill. **Coyote time** grants a short grace period to jump after walking off an edge, and **jump buffering** remembers a jump pressed slightly before landing. Both are measured in fractions of a second, and both are usually invisible when tuned well. Community reports suggest starting around a tenth of a second for each and adjusting from there — enough to absorb human timing error, not enough to let players cheat distance checks.
+
+Finally, treat the respawn as part of Void Platform platform physics. A death that costs five seconds of loading turns a fair challenge into a punishment. Keep the loop tight, spawn players on solid ground, and never place a checkpoint where an idle enemy or moving platform can kill them before they regain control.
+
+## FAQ
+
+**What is Void Platform platform physics in simple terms?**
+It is the set of rules that governs how a character moves across and interacts with platforms floating over a kill plane — gravity, jump arcs, collision boxes, momentum transfer, and the forgiveness systems that smooth over human timing error.
+
+**How much coyote time should a void platform section use?**
+Start small. A grace window around a tenth of a second is a common baseline; increase it for slower, more exploration-focused games and decrease it for precision platformers where tight timing is the point.
+
+**Should void platforms be solid or one-way?**
+Use solid platforms as structural anchors and one-way platforms for vertical routes and shortcuts. The important part is consistency: pick a clear visual language and apply it everywhere so players never have to guess.
+
+**Why do players blame the game instead of themselves when they fall?**
+Almost always because the collision did not match the visuals, the gap exceeded the readable jump distance, or a corner snag cancelled an input that looked correct. Fixing those three issues removes most of the frustration from Void Platform platform physics without making the level easier.

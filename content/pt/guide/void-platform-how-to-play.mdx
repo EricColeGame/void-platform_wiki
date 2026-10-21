@@ -1,0 +1,136 @@
+export const metadata = {
+  title: "Void Platform: Como Jogar — Guia para Iniciantes em Execuções Seguras de Agentes de IA",
+  description: "Aprenda Void Platform como jogar com um passo a passo prático: instale o runtime, declare capacidades, execute agentes isolados em microVM e leia os traces.",
+  category: "guide",
+  date: "2026-10-21",
+}
+
+## O Que o Void Platform Realmente É
+
+Se você pesquisou por "Void Platform how to play", provavelmente esperava um jogo — e, de certa forma, encontrou um. O Void Platform é um runtime de código aberto que coloca cada execução de agente de IA dentro de sua própria microVM descartável, com as regras declaradas antes do primeiro movimento. Sem kernel compartilhado, sem acesso ambiente à sua máquina e sem adivinhação sobre o que o agente tocou quando a rodada termina.
+
+Este guia de como jogar no Void Platform leva você da instalação até sua primeira execução contida e depois mostra como ler a telemetria que indica se tudo correu limpo. A ideia central é que a geração nunca foi a parte difícil. O controle é. Assim que um agente pode abrir shells, editar arquivos e chamar APIs, a pergunta útil deixa de ser "isso ajudou?" e passa a ser "o que ainda o contém quando ele erra?"
+
+Essa mudança de enquadramento é o que faz a plataforma parecer menos uma ferramenta e mais um jogo com regras fixas.
+
+| Peça | O que é | Por que importa |
+| --- | --- | --- |
+| Void-Box | Runtime de microVM descartável | Cada execução recebe um limite dedicado |
+| Kernel convidado | Kernel isolado dentro da VM | Nenhum kernel compartilhado com o host |
+| Portão de capacidades | Declaração explícita de comandos, arquivos, rede e limites | Nada é ambiente ou implícito |
+| rootfs OCI | Imagem com overlays e snapshot/restore | Convidado reproduzível todas as vezes |
+| Telemetria OTLP | Traces, métricas e eventos estruturados | A execução permanece inspecionável depois |
+| Void-Control | Camada de operador para muitas execuções | Coordenar pipelines e inspecionar estágios |
+
+O modelo mental é refrescantemente simples: o agente decide o que fazer, e o runtime decide o que ele pode tocar, onde roda e o que você pode inspecionar depois. As capacidades são declaradas antes da execução, cada execução entra em seu próprio limite, e logs, traces e saídas permanecem observáveis o tempo todo.
+
+## Antes da Sua Primeira Execução: O Que Você Precisa
+
+A configuração é deliberadamente pequena. Não há control plane para levantar nem conta de fornecedor para criar — o projeto tem licença Apache 2.0 e foi projetado para ser neutro em relação a fornecedores, então o mesmo runtime funciona localmente ou em hardware remoto.
+
+| Requisito | Detalhes |
+| --- | --- |
+| Sistema operacional host | Linux com KVM, ou macOS em Apple Silicon |
+| Versão atual | v0.2.0 (mais recente na época da escrita) |
+| Instalação | Script de instalação de uma linha publicado no site oficial |
+| Licença | Apache 2.0, código aberto |
+| Compatibilidade com agentes | Agentes CLI existentes, ou agentes remotos no mesmo runtime |
+| Onde roda | Local ou remotamente, você escolhe |
+
+Duas notas práticas antes de começar. Primeiro, baixe o instalador apenas do [site oficial do Void Platform](https://voidplatform.ai/) e leia o script antes de canalizá-lo para um shell — isso é higiene básica, não desconfiança. Segundo, verifique seu hardware: a plataforma lista Linux KVM e macOS em Apple Silicon, então um Mac Intel mais antigo não é um host suportado. Se seu notebook é baseado em Intel, rode o runtime em uma máquina Linux.
+
+## Void Platform: Como Jogar — Sua Primeira Execução Isolada
+
+A forma mais rápida de aprender como jogar no Void Platform é escolher uma tarefa pequena o suficiente para terminar de uma sentada. Uma única pergunta de pesquisa, um pequeno refactor ou uma limpeza de arquivos via script funcionam bem. Resista à vontade de começar pelo seu pipeline mais complicado.
+
+| Passo | Ação | Como um bom resultado se parece |
+| --- | --- | --- |
+| 1 | Instalar o runtime | O instalador termina e o runtime responde |
+| 2 | Escolher um agente CLI | Você já sabe como esse agente se comporta |
+| 3 | Escrever uma lista curta de capacidades | Cada item tem um motivo que você consegue dizer em voz alta |
+| 4 | Iniciar a execução | Uma microVM nova inicia e um shell PTY interativo aparece |
+| 5 | Trabalhar dentro do shell | O agente permanece dentro do escopo declarado |
+| 6 | Inspecionar a saída | Traces, logs e artefatos são preservados |
+| 7 | Deixar a VM sair | O limite se fecha e nada permanece |
+
+### Escolha uma Tarefa que Caiba em Uma Caixa
+
+Uma boa primeira execução é estreita o suficiente para você avaliar o resultado a olho. Por exemplo, envolver um agente de código e pedir que ele resuma um repositório é uma tarefa bem delimitada: ele precisa de acesso de leitura a um diretório, nenhuma rede de saída e um teto de CPU modesto. Se o agente pedir mais do que isso, você aprendeu algo útil sobre a tarefa, não sobre a ferramenta.
+
+Snapshot e restore importam aqui. Como o runtime restaura a partir de snapshots em vez de inicializar uma VM completa a cada vez, as iterações permanecem rápidas o suficiente para que experimentar não pareça uma obrigação.
+
+## As Regras do Jogo: Declarando Capacidades
+
+Disciplina de prompt não é isolamento. Instruções podem ser redirecionadas por qualquer coisa que o agente ingere, e é por isso que qualquer tutorial honesto de como jogar no Void Platform começa com permissões em vez de prompts. Permissões devem ser aplicadas pelo runtime, não inferidas a partir de boas intenções.
+
+| Capacidade | O que concede | Ponto de partida sensato |
+| --- | --- | --- |
+| Montagens de sistema de arquivos | Leitura ou escrita em caminhos específicos | Um diretório de trabalho, somente leitura quando possível |
+| Saída de rede | Conexões de saída | Negar por padrão, depois permitir hosts específicos |
+| Montagens de ferramentas e skills | CLIs e skills visíveis ao agente | Apenas o que a tarefa realmente precisa |
+| Limites de recursos | Tetos de CPU e memória | Defina um teto mesmo para experimentos descartáveis |
+| Segredos | Credenciais dentro do convidado | Nenhum por padrão; tokens de curta duração se inevitável |
+
+Antes de aprovar qualquer capacidade, faça três perguntas. Esta tarefa falha sem ela? Qual é a pior coisa que uma instrução injetada poderia fazer com ela? E eu perceberia se acontecesse? Se a terceira resposta for não, você está sem observabilidade, não sem permissões.
+
+## Por Que o Limite se Mantém Onde os Contêineres Não
+
+Contêineres podem ser endurecidos contra a maioria dos ataques conhecidos, e muitas equipes fazem exatamente isso. A diferença está no padrão. Um agente baseado em contêiner compartilha o kernel do host, então uma única configuração incorreta tem um raio de impacto amplo. A razão pela qual um passo a passo de como jogar no Void Platform continua voltando ao isolamento é que a contenção precisa sobreviver à falha, não apenas a uma boa configuração.
+
+| Ataque | Agente baseado em contêiner | Execução no Void-Box |
+| --- | --- | --- |
+| Injeção de prompt | Segredos do ambiente podem vazar | Nenhum segredo ambiente do host |
+| Escape pelo socket Docker | Um socket montado concede controle total do host | Nenhum socket existe |
+| Contêiner privilegiado | Disco e dispositivos do host são alcançáveis | Nenhum dispositivo do host por padrão |
+| Escape de cgroup | Pode executar um binário no host | Apenas o kernel convidado |
+| SSRF de metadata | O serviço de metadata da nuvem pode entregar credenciais | O metadata é inalcançável |
+
+Leia essa tabela como uma declaração de design, não como um placar. O ponto é que, quando uma execução sai dos trilhos, o resultado deve ser um incidente contido com evidências visíveis — não acesso ambiente ao seu notebook.
+
+## Lendo o Placar: Traces, Métricas e Logs
+
+Observabilidade é a parte de como jogar no Void Platform que iniciantes pulam e operadores experientes nunca pulam. Uma execução não termina quando o agente para de digitar; ela termina quando você consegue explicar o que aconteceu.
+
+| Sinal | O que você obtém | Pergunta que responde |
+| --- | --- | --- |
+| Traces OTLP | Spans por estágio correlacionados à execução e ao estágio | Para onde o tempo realmente foi? |
+| Métricas OTLP | Tokens, custo e duração por estágio | Quanto esta execução me custou? |
+| Eventos estruturados | box.started, box.completed, stage.error | O que aconteceu, e em que ordem? |
+| Telemetria procfs via vsock | CPU e memória de dentro do convidado | A execução atingiu seu teto? |
+| Artefatos | Saídas, logs e eventos estruturados | O que ela produziu? |
+
+- **Traces pertencem à execução**, não a um sandbox compartilhado, então a correlação é inequívoca.
+- **Artefatos sobrevivem à VM**, o que significa que você pode auditar uma execução muito depois que o convidado desapareceu.
+- **Eventos de limite vêm da atividade host–convidado**, então você está lendo evidências em vez de reconstruir uma história.
+
+## Subindo de Nível: Coordenando Muitas Execuções com o Void-Control
+
+A contenção é por execução, mas o trabalho real envolve muitas execuções. O Void-Control é a camada de operador que gera execuções Void-Box, coordena-as entre estágios e mostra o que cada uma tocou. É terminal-first: você conduz execuções pela linha de comando e depois mergulha em qualquer estágio sem perder o contexto. A visibilidade do grafo de execução torna as relações entre estágios e os caminhos legíveis num relance, o que é a diferença entre depurar um pipeline e adivinhar sobre ele.
+
+Comece com um pipeline de dois estágios — pesquisa e depois rascunho, por exemplo — antes de construir algo mais longo. Cada estágio recebe seu próprio limite, o que mantém as falhas locais e torna o grafo fácil de raciocinar.
+
+## Hábitos que Separam Execuções Limpas das Bagunçadas
+
+| Erro | Sintoma | Correção |
+| --- | --- | --- |
+| Reutilizar uma caixa de longa duração | Permissões se acumulam entre tarefas | Uma execução por tarefa, sempre |
+| Conceder saída de rede em excesso | O agente alcança coisas que nunca precisou | Negar por padrão, permitir hosts específicos |
+| Pular limites de recursos | Comportamento ruidoso dentro do convidado | Defina tetos de CPU e memória cedo |
+| Nunca ler traces | "Funcionou, eu acho" | Leia os spans antes de escalar |
+| Testar em hardware não suportado | Falhas de inicialização confusas | Use Linux KVM ou macOS em Apple Silicon |
+
+Mais um hábito que vale a pena formar cedo na sua jornada de como jogar no Void Platform: mantenha um registro escrito curto do que cada agente tinha permissão de tocar. Quando uma execução se comporta mal, essa nota mais o trace transformam um mistério em uma verificação de cinco minutos.
+
+## FAQ
+
+**Preciso de Linux para aprender a jogar no Void Platform?**
+Não. O runtime suporta Linux com KVM e macOS em Apple Silicon. Se você está em um Mac Intel, use uma máquina Linux, já que essa combinação não está entre as plataformas listadas.
+
+**Como uma microVM difere de um contêiner para cargas de trabalho de agentes?**
+Um contêiner compartilha o kernel do host, então uma configuração incorreta pode expor o host. Cada execução no Void-Box recebe seu próprio kernel convidado, sem limite compartilhado e sem acesso ambiente a segredos ou dispositivos do host.
+
+**O que minha primeira lista de capacidades deve incluir?**
+Comece com uma montagem de sistema de arquivos, rede negada por padrão e um teto de recursos. Adicione ferramentas apenas quando uma tarefa falhar sem elas, e nunca conceda acesso que você não conseguiria detectar depois.
+
+**Onde a curva de aprendizado de como jogar no Void Platform fica íngreme?**
+Quase sempre em pipelines de múltiplos estágios. Execuções únicas são diretas; coordenar várias delas é onde a visibilidade do grafo de execução e as declarações consistentes de capacidades começam a compensar.
