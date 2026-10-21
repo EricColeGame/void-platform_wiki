@@ -25,7 +25,7 @@ export const siteConfig: SiteConfig = {
   tagline: "Controls, Wall Jumps, Dashes & Level Guides",
   description: "Explore Void Platform with gameplay basics, wall-jump and dash controls, coin-collecting tips, spike hazards, and practical level guides for new players.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://void-platform.wiki",
-  supportEmail: `support@${new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://void-platform.wiki").hostname.replace(/^www\./, "")}`,
+  supportEmail: "support@void-platform.wiki",
   gameUrl: "https://zewp.com/bbobop/voidplatform.html",
   heroVideoId: "TTGLGQcvKIg",
   locales: ["en", "es", "pt", "de", "fr"],

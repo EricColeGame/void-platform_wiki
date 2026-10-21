@@ -28,9 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const adsenseId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID;
   return {
     metadataBase: new URL(siteUrl),
-    applicationName: "Void Platform Wiki",
+    applicationName: siteConfig.name,
     title: { default: "Void Platform Wiki", template: "%s" },
-    description: "Explore Void Platform with gameplay basics, wall-jump and dash controls, coin-collecting tips, spike hazards, and practical level guides for new players.",
+    description: siteConfig.description,
     manifest: "/manifest.json",
     icons: {
       icon: [
@@ -45,8 +45,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Void Platform" },
     formatDetection: { telephone: false },
     category: "games",
-    openGraph: { type: "website", locale, url: siteUrl, siteName: siteConfig.name, images: [{ url: image }] },
-    twitter: { card: "summary_large_image", images: [image] },
+    openGraph: { type: "website", locale, url: `${siteUrl}/${locale}`, siteName: siteConfig.name, title: siteConfig.name, description: siteConfig.description, images: [{ url: image, width: 1600, height: 900, alt: siteConfig.name }] },
+    twitter: { card: "summary_large_image", title: siteConfig.name, description: siteConfig.description, images: [image] },
     ...(adsenseId ? { other: { "google-adsense-account": adsenseId } } : {}),
   };
 }
@@ -59,10 +59,10 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteConfig.name,
-    url: siteUrl,
-    logo: `${siteUrl}/android-chrome-512x512.png`,
-    image: `${siteUrl}/images/hero.webp`,
+    "name": siteConfig.name,
+    "url": siteUrl,
+    "logo": `${siteUrl}/android-chrome-512x512.png`,
+    "image": `${siteUrl}/images/hero.webp`,
   };
 
   const adsenseId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID;
