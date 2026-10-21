@@ -34,7 +34,7 @@
       ],
       "primaryCta": "Beginner Guide",
       "secondaryCta": "Platform Mechanics",
-      "tertiaryCta": "Play in Browser",
+      "tertiaryCta": "Play Void Platform in Browser",
       "videoLabel": "Gameplay preview"
     },
     "updates": {
@@ -424,7 +424,7 @@
       "title": "Ready to Master Void Platform?",
       "description": "Learn wall jumps, dash timing, spike hazards, and coin routes with practical level guides built for new and returning players.",
       "primary": "Read the Beginner Guide",
-      "secondary": "Play in Browser"
+      "secondary": "Play Void Platform in Browser"
     }
   },
   "guide": {
@@ -480,9 +480,9 @@
     "legal": "Legal",
     "copyright": "2026 Void Platform Wiki. Not affiliated with the original game creator or publisher.",
     "description": "Browser-based precision platformer with wall jumps, dashes, spike hazards, and coin collection.",
-    "playGame": "Play Void Platform",
-    "officialDiscord": "Official Discord",
-    "officialYoutube": "Official YouTube",
+    "playGame": "Play Void Platform in Browser",
+    "officialDiscord": "Community Guide",
+    "officialYoutube": "Watch Gameplay Preview",
     "vvBuilder": "Gameplay Controls",
     "beginnerGuide": "Beginner Guide",
     "raceGuides": "Mechanics",
