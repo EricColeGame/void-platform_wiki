@@ -247,10 +247,41 @@ const GROUP_TITLES: Record<string, string> = {
 };
 
 // locale → 分组标题映射
-const GROUP_TITLES_BY_LOCALE: Record<string, Record<string, string>> = {};
+const GROUP_TITLES_BY_LOCALE: Record<string, Record<string, string>> = {
+  es: {
+    community: "Comunidad",
+    guide: "Primeros pasos",
+    mechanics: "Mecánicas",
+    modes: "Modos de juego",
+    progression: "Progresión",
+    technical: "Guías técnicas",
+    tutorial: "Tutoriales",
+  },
+  pt: {
+    community: "Comunidade",
+    guide: "Primeiros passos",
+    mechanics: "Mecânicas",
+    modes: "Modos de jogo",
+    progression: "Progressão",
+    technical: "Guias técnicos",
+    tutorial: "Tutoriais",
+  },
+  ja: {
+    community: "コミュニティ",
+    guide: "はじめに",
+    mechanics: "メカニクス",
+    modes: "ゲームモード",
+    progression: "進行",
+    technical: "技術ガイド",
+    tutorial: "チュートリアル",
+  },
+};
 
 // locale → "Overview" 翻译
 const OVERVIEW_LABEL_BY_LOCALE: Record<string, string> = {
+  en: "Overview",
+  es: "Resumen",
+  pt: "Visão geral",
   ja: "一覧",
 };
 

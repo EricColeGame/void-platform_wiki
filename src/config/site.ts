@@ -28,6 +28,6 @@ export const siteConfig: SiteConfig = {
   supportEmail: "support@void-platform.wiki",
   gameUrl: "https://zewp.com/bbobop/voidplatform.html",
   heroVideoId: "TTGLGQcvKIg",
-  locales: ["en", "es", "pt", "de", "fr"],
+  locales: ["en", "es", "pt", "ja"],
   defaultLocale: "en",
 };

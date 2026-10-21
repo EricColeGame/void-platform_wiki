@@ -1,1 +1,494 @@
-{}
+{
+  "site": {
+    "name": "Void Platform Wiki",
+    "shortName": "Void Platform",
+    "tagline": "Guias de salto na parede, dash, espinhos e moedas",
+    "description": "Explore Void Platform com noções básicas de jogabilidade, controles de salto na parede e dash, dicas para coletar moedas, perigos de espinhos e guias práticos de níveis para novos jogadores.",
+    "legalNotice": "Wiki de fãs não oficial. Feita por jogadores, para jogadores."
+  },
+  "nav": {
+    "guide": "Guia",
+    "mechanics": "Mecânicas",
+    "progression": "Progressão",
+    "tutorial": "Tutorial",
+    "modes": "Modos",
+    "community": "Comunidade",
+    "technical": "Técnico",
+    "menu": "Menu",
+    "toggleTheme": "Alternar tema"
+  },
+  "home": {
+    "meta": {
+      "title": "Void Platform Wiki - Guia, controles e dicas",
+      "description": "Explore Void Platform com noções básicas de jogabilidade, controles de salto na parede e dash, dicas para coletar moedas, perigos de espinhos e guias práticos de níveis para novos jogadores."
+    },
+    "hero": {
+      "eyebrow": "Plataforma de precisão",
+      "title": "Void Platform Wiki",
+      "description": "Explore um desafiador jogo de plataforma com saltos na parede, dash, espinhos e coleta de moedas. Encontre dicas de jogabilidade e controles para dominar cada nível.",
+      "stats": [
+        "Jogo de navegador",
+        "Salto na parede e dash",
+        "Coleta de moedas",
+        "Plataforma de precisão"
+      ],
+      "primaryCta": "Guia para iniciantes",
+      "secondaryCta": "Mecânicas de plataforma",
+      "tertiaryCta": "Jogar no navegador",
+      "videoLabel": "Prévia da jogabilidade"
+    },
+    "updates": {
+      "title": "Últimas atualizações",
+      "browse": "Ver todos os guias",
+      "viewAll": "Ver tudo"
+    },
+    "start": {
+      "eyebrow": "Comece aqui",
+      "title": "Sua jornada em Void Platform",
+      "cards": [
+        {
+          "number": "1",
+          "title": "Guia para iniciantes",
+          "description": "Aprenda o ciclo central de Void Platform: mova-se, pule, use o salto na parede e o dash, e alcance o primeiro checkpoint."
+        },
+        {
+          "number": "2",
+          "title": "Movimento em plataformas",
+          "description": "Estude as fases de pausa, deslocamento e retorno para embarcar nas plataformas móveis no momento mais seguro."
+        },
+        {
+          "number": "3",
+          "title": "Mecânicas de queda",
+          "description": "Use o tempo coyote, o buffer de salto e os redirecionamentos no ápice para aterrissar limpo e se recuperar das mortes no vazio."
+        },
+        {
+          "number": "4",
+          "title": "Dicas de sobrevivência",
+          "description": "Evite áreas de espinhos, aterrisse perto do centro das plataformas e aprenda o espaçamento entre âncoras antes de tentar uma rota mais difícil."
+        }
+      ]
+    },
+    "popular": {
+      "eyebrow": "Páginas populares",
+      "title": "Em alta agora",
+      "quickLinks": [
+        "Noções básicas de Void Platform",
+        "Movimento em plataformas",
+        "Mecânicas de queda",
+        "Um jogador"
+      ],
+      "cards": [
+        {
+          "badge": "Iniciante",
+          "title": "Guia para iniciantes de Void Platform",
+          "description": "Aprenda o ciclo da primeira partida: leia o nível, cronometre o salto, use o dash e alcance o próximo checkpoint.",
+          "href": "/guide/void-platform-beginner-guide"
+        },
+        {
+          "badge": "Noções básicas",
+          "title": "Como jogar Void Platform",
+          "description": "Fique à vontade com o movimento, os saltos na parede, o timing do dash e os controles por trás de cada rota.",
+          "href": "/guide/void-platform-how-to-play"
+        },
+        {
+          "badge": "Mecânicas",
+          "title": "Movimento em plataformas de Void Platform",
+          "description": "Estude as fases de pausa, deslocamento e retorno das plataformas móveis antes de se comprometer com um salto.",
+          "href": "/mechanics/void-platform-platform-movement"
+        },
+        {
+          "badge": "Mecânicas",
+          "title": "Mecânicas de queda de Void Platform",
+          "description": "Entenda a gravidade, o tempo coyote, o buffer de salto, a morte no vazio e o respawn nas âncoras.",
+          "href": "/mechanics/void-platform-falling-mechanics"
+        },
+        {
+          "badge": "Mecânicas",
+          "title": "Física de plataformas de Void Platform",
+          "description": "Veja como arcos de salto, caixas de colisão, plataformas unidirecionais e mortes justas se encaixam.",
+          "href": "/mechanics/void-platform-platform-physics"
+        },
+        {
+          "badge": "Modo",
+          "title": "Modo um jogador de Void Platform",
+          "description": "Prepare uma partida solo, distribua suas tentativas e evite os erros que arruínam uma run limpa.",
+          "href": "/modes/void-platform-single-player"
+        },
+        {
+          "badge": "Dicas",
+          "title": "Dicas e truques de Void Platform",
+          "description": "Use o tempo coyote, saltos em buffer, redirecionamentos no ápice e reinícios deliberados para salvar partidas.",
+          "href": "/guide/void-platform-tips"
+        },
+        {
+          "badge": "Progressão",
+          "title": "Guia de progressão de Void Platform",
+          "description": "Passe da primeira conclusão para rotas mais difíceis com um plano consistente de âncoras e técnicas de movimento.",
+          "href": "/progression/void-platform-progression-guide"
+        },
+        {
+          "badge": "Comunidade",
+          "title": "Comunidade de Void Platform",
+          "description": "Encontre discussões da comunidade, rotas compartilhadas e respostas para dúvidas comuns de configuração.",
+          "href": "/community/void-platform-community"
+        }
+      ]
+    },
+    "aboutGame": {
+      "title": "O que é Void Platform?",
+      "paragraphs": [
+        "Void Platform é um jogo de plataforma de precisão para navegador baseado em saltos na parede, dash e movimento cronometrado por plataformas flutuantes. Cada nível pede que você leia um salto, se comprometa com um arco e se recupere rapidamente quando uma rota termina em espinhos ou no vazio.",
+        "O ciclo principal é simples: atravesse vãos, evite espinhos e colete moedas enquanto avança para o próximo checkpoint. Nossos guias explicam controles, timing de movimento, mecânicas de queda e estratégias de sobrevivência para que novos jogadores transformem tentativas repetidas em conclusões consistentes."
+      ],
+      "stats": [
+        {
+          "label": "Plataforma",
+          "value": "Navegador"
+        },
+        {
+          "label": "Gênero",
+          "value": "Plataforma de precisão"
+        },
+        {
+          "label": "Movimento",
+          "value": "Salto na parede e dash"
+        },
+        {
+          "label": "Objetivo",
+          "value": "Coletar moedas"
+        },
+        {
+          "label": "Perigos",
+          "value": "Espinhos e vazio"
+        }
+      ],
+      "cta": "Explorar todos os guias"
+    },
+    "explore": {
+      "title": "Explore a wiki de Void Platform",
+      "description": "Navegue por oito centros de guias de Void Platform que cobrem a primeira partida, movimento, queda, progressão, níveis de desafio, controles, atualizações e perguntas frequentes.",
+      "modules": [
+        {
+          "order": 1,
+          "name": "Guia para iniciantes de Void Platform",
+          "description": "Aprenda o ciclo da primeira partida em Void Platform: leia o nível, cronometre o salto, use o dash e alcance o próximo checkpoint sem desperdiçar tentativas.",
+          "href": "/guide/void-platform-beginner-guide",
+          "displayType": "step-by-step",
+          "highlights": [
+            {
+              "label": "1",
+              "detail": "Comece com uma run curta e teste a altura do salto e a distância do dash antes de se comprometer com um vão."
+            },
+            {
+              "label": "2",
+              "detail": "Observe cada plataforma por um ciclo completo para saber quando ela para e quando se move."
+            },
+            {
+              "label": "3",
+              "detail": "Use saltos na parede para recuperar altura e o dash para atravessar vãos que um salto normal não vence."
+            },
+            {
+              "label": "4",
+              "detail": "Aterrisse perto do centro das plataformas móveis; nas bordas, o impulso pode levar você para o vazio."
+            },
+            {
+              "label": "5",
+              "detail": "Trate espinhos e fossos abertos como pontos de reinício e aprenda a posição da âncora de respawn antes de avançar."
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "name": "Guia de jogabilidade de Void Platform",
+          "description": "Entenda o ciclo central de Void Platform: atravesse plataformas flutuantes, colete moedas, evite espinhos e mantenha uma rota limpa do início ao checkpoint.",
+          "href": "/guide/void-platform-gameplay",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Movimento",
+              "detail": "Encadeie saltos, saltos na parede e dashes para atravessar plataformas flutuantes."
+            },
+            {
+              "label": "Moedas",
+              "detail": "Colete moedas pela rota sem perder tempo para alinhar o próximo salto."
+            },
+            {
+              "label": "Espinhos",
+              "detail": "Trate as áreas de espinhos como perigos letais e aproxime-se das bordas em baixa velocidade."
+            },
+            {
+              "label": "Âncoras",
+              "detail": "Aprenda onde ficam as âncoras de respawn para que uma rota falha custe uma tentativa, não a run inteira."
+            },
+            {
+              "label": "Rotas",
+              "detail": "Observe o ciclo completo de uma plataforma antes de embarcar para se comprometer durante a pausa."
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "name": "Dicas e truques de Void Platform",
+          "description": "Dicas práticas de Void Platform para saltos mais limpos, embarque mais seguro nas plataformas e recuperação mais rápida após uma rota perdida.",
+          "href": "/guide/void-platform-tips",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Coyote",
+              "detail": "Um salto tardio ainda é registrado brevemente depois de sair da borda, então não pressione repetidamente por pânico."
+            },
+            {
+              "label": "Buffer",
+              "detail": "Pressione salto pouco antes de aterrissar para enfileirar o próximo pulo no contato."
+            },
+            {
+              "label": "Ápice",
+              "detail": "Mude de direção perto do topo do arco, onde o controle aéreo é mais forte."
+            },
+            {
+              "label": "Pausa",
+              "detail": "Embarque em plataformas móveis durante a pausa, não quando elas começam a acelerar."
+            },
+            {
+              "label": "Reiniciar",
+              "detail": "Use um reinício deliberado no vazio para voltar à última âncora depois de uma rota ruim."
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "name": "Guia de progressão de Void Platform",
+          "description": "Planeje a escalada da primeira conclusão limpa até rotas mais difíceis de Void Platform aprendendo âncoras, técnicas de movimento e linhas repetíveis.",
+          "href": "/progression/void-platform-progression-guide",
+          "displayType": "step-by-step",
+          "highlights": [
+            {
+              "label": "1",
+              "detail": "Complete a rota inicial sem dash para aprender o espaçamento natural dos saltos."
+            },
+            {
+              "label": "2",
+              "detail": "Adicione um dash após um salto na parede para ampliar um vão sem ultrapassar o ponto de aterrissagem."
+            },
+            {
+              "label": "3",
+              "detail": "Pratique rotas de âncoras em um checkpoint conhecido até que o reinício se torne automático."
+            },
+            {
+              "label": "4",
+              "detail": "Revisite níveis anteriores em busca de linhas mais limpas e rotas de moedas em vez de forçar terreno novo."
+            },
+            {
+              "label": "5",
+              "detail": "Encadeie técnicas de movimento em uma run contínua quando cada salto for confiável isoladamente."
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "name": "Níveis e desafios de Void Platform",
+          "description": "Compare os tipos de desafio que definem as runs de Void Platform, de vãos estáticos e lançadeiras lineares a elevadores, arcos de pêndulo, plataformas em fases e perseguidores.",
+          "href": "/mechanics",
+          "displayType": "tier-grid",
+          "highlights": [
+            {
+              "label": "S",
+              "detail": "Plataformas perseguidoras e em fases — o ciclo pune leituras tardias."
+            },
+            {
+              "label": "A",
+              "detail": "Arcos de pêndulo e elevadores verticais — o ajuste no ar decide o pouso."
+            },
+            {
+              "label": "B",
+              "detail": "Lançadeiras lineares — compreensíveis após um ciclo completo."
+            },
+            {
+              "label": "C",
+              "detail": "Cornijas estáticas e vãos largos — pura distância de salto."
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "name": "Guia de controles de Void Platform",
+          "description": "Uma referência clara das ações que impulsionam cada rota de Void Platform: movimento horizontal, salto, salto na parede, dash e reinício.",
+          "href": "/guide/void-platform-how-to-play",
+          "displayType": "code-cards",
+          "highlights": [
+            {
+              "label": "Mover",
+              "detail": "Use a esquerda e a direita para alinhar o próximo pouso antes de saltar."
+            },
+            {
+              "label": "Pular",
+              "detail": "Segure o salto para um arco mais alto e solte cedo para pulos curtos."
+            },
+            {
+              "label": "Salto na parede",
+              "detail": "Salte em direção a uma parede e empurre-a para recuperar altura."
+            },
+            {
+              "label": "Dash",
+              "detail": "Use o dash para atravessar um vão que um salto normal não vence."
+            },
+            {
+              "label": "Reiniciar",
+              "detail": "Reinicie a run ou volte à última âncora após morrer no vazio."
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "name": "Guia de atualizações de Void Platform",
+          "description": "Acompanhe as notas de patch e mudanças de regras que podem alterar rotas, ciclos de plataforma, colisões e tempo de respawn de Void Platform.",
+          "href": "/community/void-platform-updates",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Patches",
+              "detail": "Revise as notas após cada atualização, porque mudanças de balanceamento afetam mais as rotas solo."
+            },
+            {
+              "label": "Ciclos",
+              "detail": "Reaprenda o timing das plataformas após um patch em vez de supor que o ciclo antigo ainda vale."
+            },
+            {
+              "label": "Correções",
+              "detail": "Fique atento a correções de colisão e respawn que mudam o comportamento de um salto ou âncora."
+            },
+            {
+              "label": "Modos",
+              "detail": "Novas regras de desafio podem adicionar janelas de tempo mais rígidas a rotas conhecidas."
+            }
+          ]
+        },
+        {
+          "order": 8,
+          "name": "Perguntas frequentes de Void Platform",
+          "description": "Respostas rápidas às perguntas mais comuns sobre Void Platform: jogo no navegador, controles, saltos malsucedidos, mortes no vazio e rotas de moedas.",
+          "href": "/tutorial",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Navegador",
+              "detail": "Void Platform funciona no navegador, então não há etapa de instalação."
+            },
+            {
+              "label": "Controles",
+              "detail": "O timing do salto, do salto na parede e do dash define cada rota de Void Platform."
+            },
+            {
+              "label": "Mortes",
+              "detail": "Tocar o vazio encerra a tentativa e devolve você à última âncora."
+            },
+            {
+              "label": "Moedas",
+              "detail": "Colete moedas pela rota sem abrir mão de uma linha de saltos limpa."
+            },
+            {
+              "label": "Ajuda",
+              "detail": "Comece pelo guia para iniciantes de Void Platform quando um nível continuar bloqueando você."
+            }
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "title": "Perguntas frequentes de Void Platform",
+      "description": "Respostas rápidas às perguntas mais comuns sobre movimento, controles, perigos e progressão de Void Platform.",
+      "items": [
+        {
+          "question": "O que é Void Platform?",
+          "answer": "Void Platform é um jogo de plataforma de precisão para navegador baseado em saltos na parede, dash, espinhos e coleta de moedas. Cada run pede que você leia um padrão de plataformas, se comprometa com um salto e se recupere rapidamente após uma rota perdida."
+        },
+        {
+          "question": "Void Platform exige download?",
+          "answer": "Void Platform funciona no navegador, então você pode começar uma run sem instalar um cliente separado. Abra a página do jogo e use os controles de movimento e salto para começar."
+        },
+        {
+          "question": "Quais controles Void Platform usa?",
+          "answer": "Void Platform usa movimento horizontal, salto, salto na parede e dash. O timing do salto importa mais que a velocidade: segure para um arco mais alto, solte cedo para pulos curtos e use o dash só depois de alinhar o pouso."
+        },
+        {
+          "question": "Por que meu salto em Void Platform continua falhando?",
+          "answer": "A maioria dos saltos malsucedidos em Void Platform vem de embarcar tarde em uma plataforma móvel, corrigir tarde demais na queda ou soltar a direção após o ápice. Observe um ciclo completo da plataforma, comprometa-se na pausa e gire perto do topo do arco."
+        },
+        {
+          "question": "Como sobreviver mais tempo em Void Platform?",
+          "answer": "Trate espinhos e o vazio aberto como pontos de reinício, aterrisse perto do centro das plataformas móveis e aprenda o espaçamento entre âncoras de respawn. Um reinício deliberado é mais rápido que forçar uma rota ruim."
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Pronto para dominar Void Platform?",
+      "description": "Aprenda saltos na parede, timing de dash, perigos de espinhos e rotas de moedas com guias práticos de níveis para jogadores novos e veteranos.",
+      "primary": "Ler o guia para iniciantes",
+      "secondary": "Jogar no navegador"
+    }
+  },
+  "guide": {
+    "overviewTitle": "Guia para iniciantes de Void Platform",
+    "overviewDescription": "Comece pelos controles, saltos na parede, dashes e ciclo central de plataforma de Void Platform antes de avançar para rotas avançadas."
+  },
+  "mechanics": {
+    "overviewTitle": "Mecânicas de plataforma de Void Platform",
+    "overviewDescription": "Saiba como Void Platform lida com plataformas aderentes, queda, movimento e física para que cada salto seja previsível."
+  },
+  "progression": {
+    "overviewTitle": "Guia de progressão de Void Platform",
+    "overviewDescription": "Acompanhe conquistas, desbloqueios, segredos e requisitos de final de Void Platform com orientação clara passo a passo."
+  },
+  "tutorial": {
+    "overviewTitle": "Tutoriais de sobrevivência de Void Platform",
+    "overviewDescription": "Use tutoriais práticos de Void Platform para sobreviver aos perigos, alcançar o vazio e controlar plataformas sob pressão."
+  },
+  "modes": {
+    "overviewTitle": "Modos de jogo de Void Platform",
+    "overviewDescription": "Compare os modos de sobrevivência, desafio e um jogador de Void Platform e escolha a run que combina com seus objetivos."
+  },
+  "community": {
+    "overviewTitle": "Comunidade e atualizações de Void Platform",
+    "overviewDescription": "Siga os guias da comunidade de Void Platform, discussões no Reddit, cobertura da data de lançamento e notas de atualização."
+  },
+  "technical": {
+    "overviewTitle": "Guia técnico de Void Platform",
+    "overviewDescription": "Confira requisitos, plataformas compatíveis e detalhes de download de Void Platform antes de começar a jogar."
+  },
+  "shared": {
+    "wikiNavigation": "Navegação da wiki",
+    "activeCodes": "Novidades da comunidade",
+    "updated": "Atualizado",
+    "viewAllCodes": "Ver novidades da comunidade",
+    "playOnRoblox": "Jogar no navegador",
+    "inThisSection": "Nesta seção",
+    "tableOfContents": "Índice",
+    "nextSteps": "Próximos passos",
+    "needHelp": "Precisa de ajuda?",
+    "relatedReading": "Leituras relacionadas",
+    "relatedGuides": "Guias relacionados",
+    "readMore": "Ler mais",
+    "officialMedia": "Conteúdo oficial",
+    "home": "Início",
+    "noGuidesAvailable": "Ainda não há guias disponíveis. Volte em breve!"
+  },
+  "footer": {
+    "aboutTitle": "Void Platform Wiki",
+    "about": "Void Platform Wiki é um hub de guias independente feito por fãs que cobre saltos na parede, dashes, espinhos, rotas de moedas e guias práticos de níveis.",
+    "quickLinks": "Links rápidos",
+    "guides": "Guias",
+    "legal": "Jurídico",
+    "copyright": "2026 Void Platform Wiki. Não afiliada ao criador ou publicador original do jogo.",
+    "description": "Jogo de plataforma de precisão para navegador com saltos na parede, dashes, espinhos e coleta de moedas.",
+    "playGame": "Jogar Void Platform",
+    "officialDiscord": "Discord oficial",
+    "officialYoutube": "YouTube oficial",
+    "vvBuilder": "Controles de jogabilidade",
+    "beginnerGuide": "Guia para iniciantes",
+    "raceGuides": "Mecânicas",
+    "bossGuides": "Progressão",
+    "buildGuide": "Tutoriais",
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Serviço"
+  }
+}
