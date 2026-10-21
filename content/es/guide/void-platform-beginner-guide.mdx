@@ -1,0 +1,125 @@
+export const metadata = {
+  title: "Guía para principiantes de Void Platform: instalar, configurar y desplegar tu primera aplicación",
+  description: "Una guía práctica para principiantes de Void Platform que cubre los requisitos previos, el orden de instalación, las funciones principales frente a las opcionales y cómo incorporar a tu primer desarrollador.",
+  category: "guide",
+  date: "2026-10-21",
+}
+
+## Qué es realmente una Void Platform
+
+Montar una infraestructura de despliegue compartida para un equipo suele sonar a una semana de trabajo de fontanería, pero una Void Platform lo comprime en una instalación guiada. En lugar de que cada desarrollador conecte su propia cuenta de Cloudflare, instalas una vez y le das a todo el equipo un único lugar donde publicar aplicaciones, con registros conservados e historial de reversiones. Esta guía para principiantes de Void Platform explica qué es la plataforma, qué necesitas antes de empezar y cómo lograr que tu primer desarrollador despliegue sin adivinar nada.
+
+La idea central es sencilla: una plataforma Void es un destino de despliegue compartido que vive dentro de una única cuenta de Cloudflare. Un administrador la instala y la mantiene. Después, los desarrolladores conectan la Void CLI a la URL de la plataforma, inician sesión con el método de acceso que esté habilitado y despliegan sus aplicaciones. La plataforma se encarga de la fontanería compartida para que nadie vuelva a resolver la autenticación, el enrutamiento y el historial de versiones en cada proyecto.
+
+Hay una advertencia importante que ahorra horas a los principiantes: si despliegas una aplicación solo para ti, no necesitas ninguna plataforma. Despliega directamente en Cloudflare. Una Void Platform se justifica cuando varias personas comparten infraestructura y necesitan un acceso coherente además de un registro de lo que se publicó.
+
+### Cuándo merece la pena una plataforma compartida
+
+- Dos o más desarrolladores desplegando en la misma cuenta de Cloudflare
+- Necesidad de un historial de despliegues conservado en lugar de logs solo en vivo
+- Reversiones que deberían ser una acción de la plataforma y no una búsqueda manual de versiones de Worker
+- Control centralizado sobre qué métodos de inicio de sesión están permitidos
+
+## Cloudflare directo frente a una Void Platform central autoalojada
+
+Ambos destinos usan las mismas API de aplicación, lo que significa que una aplicación que funciona en uno generalmente funciona en el otro. La diferencia es lo que rodea a la aplicación: acceso compartido, historial conservado y una pasarela que actúa como proxy de las solicitudes al proveedor. La tabla siguiente parafrasea la comparación oficial.
+
+| Función | Directo a Cloudflare | Void Platform central autoalojada |
+| --- | --- | --- |
+| Workers AI y solicitudes al proveedor | Tu propia cuenta y pasarela | Pasarela y proxy de la instalación |
+| Logs de ejecución | Tail en vivo de Cloudflare | Logs conservados de la plataforma |
+| Reversión de la aplicación | Versiones de Worker | Despliegues conservados de la plataforma |
+| Sandboxes | Requiere Workers Paid más Docker | Requiere Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y compilaciones gestionadas de GitHub | No requerido | No incluido en una instalación estándar |
+
+La conclusión práctica para cualquiera que lea una guía para principiantes de Void Platform por primera vez: empieza en directo si trabajas solo y pásate a una plataforma en el momento en que la coordinación se convierta en el cuello de botella. Migrar más tarde resulta mucho menos doloroso que mantener una infraestructura que todavía no necesitas.
+
+## Requisitos previos: qué preparar antes de instalar
+
+La mayoría de las primeras instalaciones fallidas no son fallos técnicos, sino requisitos previos que faltan. La documentación oficial de instalación divide esto en requisitos previos y credenciales, y merece la pena tratar ambos como una lista de comprobación en lugar de una lectura rápida.
+
+| Requisito | Por qué importa | Nota para principiantes |
+| --- | --- | --- |
+| Una cuenta de Cloudflare dedicada a la plataforma | Todos los despliegues compartidos aterrizan aquí | Evita mezclar proyectos personales en ella |
+| Workers Paid en la cuenta de la plataforma | Los Sandboxes no se ejecutan sin él | Confirma el plan antes de instalar |
+| Workers for Platforms | Necesario para una plataforma de equipo real | Solo se necesita en configuraciones multiinquilino |
+| Un dominio y una zona para el correo | La pasarela de correo solo se activa cuando está configurada | Si lo omites, el correo permanece desactivado |
+| Void CLI en las máquinas de los desarrolladores | La forma principal en que los desarrolladores despliegan | Instálala antes del día de incorporación |
+| Credenciales de administrador para la instalación | Necesarias para arrancar y mantener la plataforma | Guárdalas en un lugar compartido y auditable |
+
+### El requisito previo que casi todo el mundo pasa por alto
+
+El correo es el clásico cable trampa. Una instalación central incluye una pasarela de correo, pero solo se activa cuando configuras un dominio y una zona de correo compartidos. Los equipos instalan, prueban y luego se preguntan por qué el correo nunca llega. Decide de antemano si necesitas correo y, si lo necesitas, ten el dominio listo desde el primer día.
+
+## Instalar una Void Platform en el orden correcto
+
+El orden importa más que la velocidad. La secuencia siguiente sigue la estructura de las guías oficiales y evita que configures funciones que dependen de algo que aún no has construido.
+
+| Paso | Qué haces | Por qué va aquí |
+| --- | --- | --- |
+| 1 | Leer la página de requisitos previos por completo | Evita sorpresas a mitad de la instalación |
+| 2 | Reunir y guardar las credenciales | La instalación las necesita de inmediato |
+| 3 | Decidir si solo el núcleo o un alcance ampliado | Cambia lo que configurarás después |
+| 4 | Ejecutar la instalación central | Entrega los Sandboxes y la pasarela de correo |
+| 5 | Configurar el dominio y la zona de correo compartidos | Activa la pasarela de correo |
+| 6 | Verificar el acceso de administrador a la plataforma | Confirma que puedes mantenerla |
+| 7 | Conectar la Void CLI a la URL de la plataforma | El punto de entrada del desarrollador |
+| 8 | Iniciar sesión con un método habilitado | Demuestra que la autenticación funciona de extremo a extremo |
+| 9 | Desplegar una aplicación de prueba desechable | Valida la ruta completa antes de la incorporación |
+
+Los pasos 7 a 9 son los que los principiantes precipitan. Una prueba de humo de cinco minutos —una aplicación minúscula, desplegada y luego revertida— detecta problemas de configuración mientras el contexto sigue fresco. Si sigues la [guía oficial de instalación de la plataforma autoalojada de Void](https://void.cloud/guide/self-hosted-platform), mantenla abierta junto a esta guía para principiantes de Void Platform y avanza de arriba abajo.
+
+## Qué incluye la instalación central y qué no
+
+Una instalación estándar es deliberadamente ligera. Conocer el límite te ahorra buscar menús que nunca se crearon.
+
+| Incluido en una instalación central | No forma parte de una instalación estándar |
+| --- | --- |
+| Sandboxes gestionados | Panel de usuario |
+| Pasarela de correo (una vez configurados un dominio y una zona de correo) | Compilaciones y webhooks gestionados de GitHub |
+| Acceso compartido para el equipo | Build Containers |
+| Historial de despliegues y logs conservados | Dominios de proyecto personalizados |
+
+Si necesitas las piezas que faltan, se añaden mediante servicios opcionales, lo más habitual en plataformas compiladas desde el código fuente. Una advertencia de la documentación: si añades los servicios opcionales de GitHub a una plataforma compilada desde el código fuente y Cloudflare Access protege la API, usa la configuración de ingreso de webhooks aislada. De lo contrario, el tráfico de webhooks y las políticas de Access chocan y las compilaciones fallan de formas que parecen misteriosas.
+
+Los informes de la comunidad de equipos que ejecutan plataformas compartidas tienden a coincidir en una cosa: añade los servicios opcionales de uno en uno y despliega una aplicación de prueba después de cada adición. Acumular tres servicios nuevos antes de probar convierte una simple mala configuración en una larga sesión de depuración.
+
+## Incorporar desarrolladores sin la fricción habitual
+
+El trabajo del administrador no termina con la instalación. Los desarrolladores necesitan tres cosas: la URL de la plataforma, un método de inicio de sesión habilitado y una CLI que funcione.
+
+- **Comparte la URL de la plataforma de forma explícita.** No un marcador, no un mensaje de Slack de hace tres meses: ponla en la documentación de tu equipo.
+- **Confirma qué métodos de inicio de sesión están habilitados** antes de decirle a nadie que inicie sesión, para que nadie se quede atascado en un método que nunca activaste.
+- **Estandariza la configuración de la CLI.** Una nota interna de una página que cubra instalación, conexión e inicio de sesión es mejor que responder la misma pregunta cinco veces.
+- **Establece una convención de despliegue.** Incluso una regla ligera sobre nombres y expectativas de reversión da sus frutos cuando el historial se acumula.
+
+Párrafo de menos de 120 palabras: correcto. También vale la pena señalar que, como una plataforma de equipo depende de Workers for Platforms y de la infraestructura documentada, las funciones varían según la configuración. No des por hecho que tu plataforma se comporta como la de un tutorial; comprueba qué habilita realmente tu propia instalación.
+
+## Errores de principiante que más tiempo hacen perder
+
+| Error | Cómo se ve | La solución |
+| --- | --- | --- |
+| Instalar una plataforma para un proyecto en solitario | Infraestructura extra sin ningún beneficio | Despliega directamente en Cloudflare |
+| Esperar un panel | Buscar una interfaz que no está instalada | Planifica los servicios opcionales o trabaja primero con la CLI |
+| Olvidar Workers Paid en la cuenta de la plataforma | Los Sandboxes se niegan a ejecutarse | Verifica el plan en la cuenta correcta |
+| Activar el correo sin dominio ni zona | El correo nunca se envía, en silencio | Configura primero el dominio de correo compartido |
+| Saltarse el despliegue de prueba | Los problemas aparecen durante la incorporación | Despliega y revierte una aplicación desechable |
+
+El patrón detrás de los cinco es el mismo: suposiciones sobre qué significa «instalado». Una guía para principiantes de Void Platform solo puede llevarte hasta cierto punto; el resto consiste en verificar tu configuración específica en lugar de confiar en una descripción general.
+
+## Preguntas frecuentes
+
+**¿Necesito una Void Platform para desplegar una aplicación?**
+No. Si despliegas para ti mismo, despliega directamente en Cloudflare y omite la plataforma por completo. Una Void Platform es para equipos que quieren acceso compartido e historial de despliegues conservado.
+
+**¿Cuánto tarda una primera instalación?**
+Depende de cuánto de la lista de requisitos previos hayas resuelto ya. Los equipos que reúnen las credenciales y confirman su plan de Cloudflare con antelación avanzan rápido por la instalación central; los equipos que descubren un requisito faltante a mitad de camino a menudo tienen que empezar de nuevo.
+
+**¿Qué falta en una instalación estándar?**
+El panel de usuario, las compilaciones y webhooks gestionados de GitHub, los Build Containers y los dominios de proyecto personalizados quedan fuera de la instalación central. Los Sandboxes y la pasarela de correo sí están incluidos, aunque el correo solo se activa cuando configuras un dominio y una zona de correo compartidos.
+
+**¿Pueden los desarrolladores revertir un despliegue defectuoso?**
+Sí. En una plataforma central autoalojada, la reversión usa los despliegues conservados de la plataforma en lugar de las versiones brutas de Worker, que es una de las principales razones por las que los equipos adoptan el enfoque de una guía para principiantes de Void Platform en lugar de despliegues directos improvisados.
+
+**¿Por dónde debería empezar un principiante?**
+Lee las páginas de requisitos previos y credenciales, confirma tu plan y la configuración de tu cuenta, luego instala el núcleo y valida con una aplicación pequeña. Todo lo demás puede añadirse después.

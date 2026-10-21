@@ -1,0 +1,119 @@
+export const metadata = {
+  title: "Void Platform Ending Explained: What Happens After the Final Setup Step",
+  description: "A clear look at the Void Platform ending: what your core install includes, what it skips, and how to wrap up, roll back, or hand off cleanly.",
+  category: "progression",
+  date: "2026-10-21",
+}
+
+The Void Platform ending is less of a finale and more of a handoff — the point where your shared deployment setup stops being a project and starts being infrastructure. Getting there matters because the last steps decide whether developers can sign in and ship on their own, or whether every release still routes through you. This guide walks through what a Void Platform ending actually looks like, what the core installation includes, what it deliberately leaves out, and how to close things out cleanly.
+
+## What the Void Platform Ending Really Means
+
+A Void platform is a shared deployment layer: your team deploys apps into one Cloudflare account that you, as the administrator, install and maintain. Developers don't touch the plumbing. They point the Void CLI at the platform's URL, sign in through whichever login method you've enabled, and deploy.
+
+So the "ending" isn't a shutdown. It's the moment your install becomes self-service. The admin work shifts from building to maintaining, and the success metric changes from "did the deploy finish?" to "did anyone need to ask me for help?"
+
+That framing matters because two very different journeys can both reach an ending.
+
+| Path | Who it's for | What the ending looks like |
+| --- | --- | --- |
+| Direct to Cloudflare | Someone deploying an app for themselves | No platform install at all; you go straight to Cloudflare |
+| Core self-hosted platform | A team sharing one account | Install completes, developers connect and deploy independently |
+
+If you're building for yourself, skip the platform entirely — the documentation is explicit that you don't need to install one first. The Void Platform ending only becomes a milestone when other people depend on the install.
+
+## What You Have When the Setup Ends
+
+The core installation is deliberately lean. It ships with managed Sandboxes and an email gateway. Email isn't live by default, though — it switches on once you configure a shared mail domain and zone.
+
+Everything else that a mature platform might offer is treated as optional, and that distinction is the single most useful thing to understand before you declare the install finished. The table below compares what each deployment target gives you.
+
+| Feature | Direct to Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your own account and gateway | The installation's gateway and proxy |
+| Runtime logs | Live tail from Cloudflare | Logs retained on the platform |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Needs Workers Paid plus Docker | Needs Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard install |
+
+Both targets use the same application APIs, which is why the ending feels anticlimactic. Nothing about how an app behaves changes. What changes is who owns the history — retained logs and retained deployments are the platform's real payoff.
+
+## What the Ending Does Not Include
+
+A common source of disappointment at the Void Platform ending is assuming "installed" means "complete." It doesn't. Several features people expect from a deployment platform are outside the core install.
+
+- **User dashboard** — not part of a standard installation.
+- **Managed GitHub builds and webhooks** — available only as optional services.
+- **Build Containers** — not included in the core.
+- **Custom project domains** — not included in the core.
+
+None of these are failures. They're scope decisions, and knowing them in advance keeps you from promising a dashboard to your team that the platform was never going to serve.
+
+If you build from source and add the optional GitHub services, there's one configuration detail worth flagging: when Access protects the API, follow the isolated webhook ingress setup. Skipping that step is the kind of thing that surfaces weeks later as silently failing builds.
+
+## A Clean Void Platform Ending: Step-by-Step Checklist
+
+The official [Void self-hosted platform installation guide](https://void.cloud/guide/self-hosted-platform) breaks the setup into prerequisites, credentials, and configuration. The ending is where you verify that all three actually converged. Use this sequence.
+
+| Step | Action | What "done" looks like |
+| --- | --- | --- |
+| 1 | Confirm prerequisites are satisfied | Every requirement checked off before install, not after |
+| 2 | Provision credentials | Admin and service credentials stored somewhere the team can reach |
+| 3 | Enable a login method | At least one sign-in path active for developers |
+| 4 | Configure the shared mail domain and zone | Email gateway goes live instead of sitting idle |
+| 5 | Connect the CLI to the platform URL | A test deploy succeeds from a developer machine |
+| 6 | Decide on optional services | GitHub builds, dashboard, and custom domains explicitly in or out |
+| 7 | Write the handoff note | Someone other than you can deploy without asking questions |
+
+Step 5 is the real test. If a developer can connect the Void CLI to the platform URL, authenticate, and push an app without your involvement, the Void Platform ending is genuinely complete. Everything before that is preparation.
+
+Step 7 is the one most teams skip. A short note covering the platform URL, enabled login methods, mail zone ownership, and who holds admin credentials saves hours later.
+
+## Ending, Rolling Back, or Moving On
+
+Once the platform is live, "ending" takes on a second meaning: what happens when a deployment needs to be undone. This is where the shared platform earns its keep over a direct-to-Cloudflare setup.
+
+On a direct deployment, rollback means working with Worker versions. On a core self-hosted platform, you roll back through retained platform deployments, and you have retained platform logs to explain what went wrong in the first place.
+
+| Situation | Recommended path | Why |
+| --- | --- | --- |
+| Solo experiment, no team involved | Deploy directly to Cloudflare | No install overhead, no maintenance |
+| A release broke production | Roll back via retained platform deployments | Full history stays on the platform |
+| Need to explain an incident | Retained platform logs | Live tail alone doesn't persist |
+| Adding GitHub-based builds | Enable optional services, isolate webhook ingress | Keeps builds working behind Access |
+| Team grows past the core | Plan for Workers for Platforms infrastructure | A team platform requires it |
+
+If your team outgrows the core, the ending of one phase becomes the start of another. A team platform requires Workers for Platforms and the documented infrastructure, and features depend heavily on how the installation is configured.
+
+## Requirements to Confirm Before You Call It Finished
+
+Requirements are easy to satisfy on day one and easy to forget by month three. Confirm each of these before you sign off.
+
+| Requirement | Where it applies | Why it matters at the ending |
+| --- | --- | --- |
+| Workers Paid | Platform account, and Docker for direct sandboxes | Sandboxes won't run without it |
+| Docker | Direct-to-Cloudflare sandbox use | Local dependency that's easy to overlook |
+| Workers for Platforms | Team-scale platform deployments | Required for a shared team platform |
+| Shared mail domain and zone | Email gateway | Email stays disabled until configured |
+| Isolated webhook ingress | Source-built platforms with GitHub services | Prevents broken builds behind Access |
+
+Community reports from teams running shared deployment layers tend to converge on the same lesson: the install is the easy part, and the maintenance expectations are what actually determine whether the platform sticks. Player experience with self-hosted tooling generally echoes that — the tools that survive are the ones with a clear owner.
+
+Treat the Void Platform ending as a maintenance commitment rather than a finish line. Assign an owner, document the platform URL and login methods, and revisit optional services on a schedule instead of adding them ad hoc.
+
+## FAQ
+
+**Is the Void Platform ending the same as shutting the platform down?**
+No. In practice, the Void Platform ending refers to the completion of installation and handoff — when the platform is live, developers can self-serve, and the admin role shifts to maintenance. Shutting down is a separate, much rarer decision.
+
+**What's included in a core installation?**
+Managed Sandboxes and an email gateway. Email only becomes active after you configure a shared mail domain and zone. The user dashboard, GitHub builds and webhooks, build Containers, and custom project domains are not part of the core install.
+
+**Do I need a platform if I'm deploying for myself?**
+No. Deploying directly to Cloudflare is the simpler route when you're the only user. The Void Platform ending only becomes relevant once a team shares one account and needs retained logs and deployment history.
+
+**How do I roll back after the setup is finished?**
+Use retained platform deployments on a self-hosted platform, or Worker versions if you deployed directly. Pair the rollback with retained platform logs so you can explain the failure, not just undo it.
+
+**What if my team outgrows the core installation?**
+You'll need Workers for Platforms and the documented infrastructure. At that point, the ending of your core setup becomes the beginning of a team platform build, and the feature set depends entirely on how you configure it.

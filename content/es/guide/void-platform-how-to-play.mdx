@@ -1,0 +1,136 @@
+export const metadata = {
+  title: "Void Platform: cómo jugar — Guía para principiantes de ejecuciones seguras de agentes de IA",
+  description: "Aprende cómo jugar en Void Platform con un recorrido práctico: instala el runtime, declara capacidades, ejecuta agentes aislados en microVM y lee las trazas.",
+  category: "guide",
+  date: "2026-10-21",
+}
+
+## Qué es realmente Void Platform
+
+Si buscaste "Void Platform how to play", probablemente esperabas un juego, y en cierto sentido encontraste uno. Void Platform es un runtime de código abierto que coloca cada ejecución de un agente de IA dentro de su propia microVM desechable, con las reglas declaradas antes del primer movimiento. Sin kernel compartido, sin acceso ambiental a tu máquina y sin conjeturas sobre lo que tocó el agente cuando la ronda termina.
+
+Esta guía de Void Platform how to play te lleva desde la instalación hasta tu primera ejecución contenida, y después te muestra cómo leer la telemetría que indica si las cosas salieron limpias. La idea central es que la generación nunca fue la parte difícil. El control sí lo es. Una vez que un agente puede abrir shells, editar archivos y llamar APIs, la pregunta útil deja de ser "¿ayudó?" y pasa a ser "¿qué lo sigue conteniendo cuando se equivoca?".
+
+Ese cambio de enfoque es lo que hace que la plataforma se sienta menos como una herramienta y más como un juego con reglas fijas.
+
+| Pieza | Qué es | Por qué importa |
+| --- | --- | --- |
+| Void-Box | Runtime de microVM desechable | Cada ejecución recibe un límite dedicado |
+| Kernel invitado | Kernel aislado dentro de la VM | Ningún kernel compartido con el host |
+| Puerta de capacidades | Declaración explícita de comandos, archivos, red y límites | Nada es ambiental ni implícito |
+| OCI rootfs | Imagen más overlays y snapshot/restore | Invitado reproducible en cada ocasión |
+| Telemetría OTLP | Trazas, métricas y eventos estructurados | La ejecución sigue siendo inspeccionable después |
+| Void-Control | Capa de operador para muchas ejecuciones | Coordina pipelines e inspecciona etapas |
+
+El modelo mental es refrescantemente simple: el agente decide qué hacer, y el runtime decide qué puede tocar, dónde se ejecuta y qué puedes inspeccionar más tarde. Las capacidades se declaran antes de la ejecución, cada ejecución entra en su propio límite, y los logs, las trazas y las salidas permanecen observables en todo momento.
+
+## Antes de tu primera ejecución: qué necesitas
+
+La configuración es deliberadamente pequeña. No hay ningún plano de control que levantar ni cuenta de proveedor que crear: el proyecto tiene licencia Apache 2.0 y está diseñado para ser neutral respecto al proveedor, así que el mismo runtime funciona en local o en hardware remoto.
+
+| Requisito | Detalles |
+| --- | --- |
+| Sistema operativo anfitrión | Linux con KVM, o macOS en Apple Silicon |
+| Versión actual | v0.2.0 (la última en el momento de escribir) |
+| Instalación | Script de instalación de una línea publicado en el sitio oficial |
+| Licencia | Apache 2.0, código abierto |
+| Compatibilidad con agentes | Agentes CLI existentes, o agentes remotos en el mismo runtime |
+| Dónde se ejecuta | En local o en remoto, tú eliges |
+
+Dos notas prácticas antes de empezar. Primera: descarga el instalador solo desde el [sitio oficial de Void Platform](https://voidplatform.ai/) y lee el script antes de pasarlo a una shell; eso es higiene básica, no desconfianza. Segunda: revisa tu hardware. La plataforma indica Linux KVM y macOS en Apple Silicon, así que un Mac Intel antiguo no es un host compatible. Si tu portátil es Intel, ejecuta el runtime en una máquina Linux en su lugar.
+
+## Void Platform how to play: tu primera ejecución aislada
+
+La forma más rápida de aprender Void Platform how to play es elegir una tarea lo bastante pequeña como para terminarla de una sentada. Una sola pregunta de investigación, un refactor pequeño o una limpieza de archivos con script funcionan bien. Resiste la tentación de empezar con tu pipeline más complicado.
+
+| Paso | Acción | Cómo se ve un buen resultado |
+| --- | --- | --- |
+| 1 | Instalar el runtime | El instalador termina y el runtime responde |
+| 2 | Elegir un agente CLI | Ya conoces cómo se comporta este agente |
+| 3 | Escribir una lista corta de capacidades | Cada entrada tiene una razón que puedes decir en voz alta |
+| 4 | Lanzar la ejecución | Arranca una microVM nueva y aparece una shell PTY interactiva |
+| 5 | Trabajar dentro de la shell | El agente se mantiene dentro del alcance declarado |
+| 6 | Inspeccionar la salida | Las trazas, los logs y los artefactos se conservan |
+| 7 | Dejar que la VM salga | El límite se cierra y nada queda vivo |
+
+### Elige una tarea que quepa en una caja
+
+Una buena primera ejecución es lo bastante acotada como para que puedas revisar el resultado a ojo. Por ejemplo, envolver un agente de programación y pedirle que resuma un repositorio es una tarea bien delimitada: necesita acceso de lectura a un directorio, ninguna red saliente y un techo de CPU modesto. Si el agente pide más que eso, has aprendido algo útil sobre la tarea, no sobre la herramienta.
+
+El snapshot y el restore importan aquí. Como el runtime restaura desde snapshots en lugar de arrancar una VM completa cada vez, las iteraciones se mantienen lo bastante rápidas como para que experimentar no se sienta como una obligación.
+
+## Las reglas del juego: declarar capacidades
+
+La disciplina en los prompts no es aislamiento. Cualquier cosa que el agente ingiera puede redirigir las instrucciones, y por eso cualquier tutorial honesto de Void Platform how to play empieza por los permisos y no por los prompts. Los permisos deben aplicarse desde el runtime, no inferirse de las buenas intenciones.
+
+| Capacidad | Qué otorga | Punto de partida sensato |
+| --- | --- | --- |
+| Montajes de sistema de archivos | Lectura o escritura en rutas específicas | Un directorio de trabajo, solo lectura cuando sea posible |
+| Salida de red | Conexiones salientes | Denegar por defecto y luego permitir hosts concretos |
+| Montajes de herramientas y skills | CLIs y skills visibles para el agente | Solo lo que la tarea necesita de verdad |
+| Límites de recursos | Techos de CPU y memoria | Fija un techo incluso para experimentos desechables |
+| Secretos | Credenciales dentro del invitado | Ninguno por defecto; tokens de corta duración si es inevitable |
+
+Antes de aprobar cualquier capacidad, hazte tres preguntas. ¿Esta tarea falla sin ella? ¿Qué es lo peor que podría hacer una instrucción inyectada con ella? ¿Y me daría cuenta si ocurriera? Si la tercera respuesta es no, lo que te falta es observabilidad, no permisos.
+
+## Por qué el límite aguanta donde los contenedores no
+
+Los contenedores pueden endurecerse contra la mayoría de los ataques conocidos, y muchas empresas hacen exactamente eso. La diferencia está en el valor por defecto. Un agente basado en contenedor comparte el kernel del host, así que una sola mala configuración tiene un radio de impacto amplio. La razón por la que un recorrido de Void Platform how to play vuelve una y otra vez al aislamiento es que la contención debe sobrevivir al fallo, no solo a una buena configuración.
+
+| Ataque | Agente basado en contenedor | Ejecución en Void-Box |
+| --- | --- | --- |
+| Inyección de prompt | Los secretos ambientales del entorno pueden filtrarse | Ningún secreto ambiental del host |
+| Escape por socket de Docker | Un socket montado otorga control total del host | No existe ningún socket |
+| Contenedor privilegiado | El disco y los dispositivos del host son alcanzables | Ningún dispositivo del host por defecto |
+| Escape de cgroup | Puede ejecutar un binario en el host | Solo el kernel invitado |
+| SSRF de metadatos | El servicio de metadatos de la nube puede entregar credenciales | Los metadatos son inalcanzables |
+
+Lee esa tabla como una declaración de diseño y no como un marcador. La idea es que, cuando una ejecución se desvía, el resultado debe ser un incidente contenido con evidencia visible, no un acceso ambiental a tu portátil.
+
+## Leer el marcador: trazas, métricas y logs
+
+La observabilidad es la parte de Void Platform how to play que los principiantes se saltan y los operadores experimentados nunca omiten. Una ejecución no termina cuando el agente deja de escribir; termina cuando puedes explicar qué pasó.
+
+| Señal | Qué obtienes | Pregunta que responde |
+| --- | --- | --- |
+| Trazas OTLP | Spans por etapa correlacionados con la ejecución y la etapa | ¿Dónde se fue realmente el tiempo? |
+| Métricas OTLP | Tokens, coste y duración por etapa | ¿Cuánto me ha costado esta ejecución? |
+| Eventos estructurados | box.started, box.completed, stage.error | ¿Qué pasó y en qué orden? |
+| Telemetría procfs vía vsock | CPU y memoria desde dentro del invitado | ¿La ejecución alcanzó su techo? |
+| Artefactos | Salidas, logs y eventos estructurados | ¿Qué produjo? |
+
+- **Las trazas pertenecen a la ejecución**, no a un sandbox compartido, así que la correlación no es ambigua.
+- **Los artefactos sobreviven a la VM**, lo que significa que puedes auditar una ejecución mucho después de que el invitado haya desaparecido.
+- **Los eventos de límite provienen de la actividad host–invitado**, así que estás leyendo evidencia en lugar de reconstruir una historia.
+
+## Subir de nivel: coordinar muchas ejecuciones con Void-Control
+
+La contención es por ejecución, pero el trabajo real son muchas ejecuciones. Void-Control es la capa de operador que lanza ejecuciones de Void-Box, las coordina entre etapas y muestra qué tocó cada una. Está pensada primero para la terminal: diriges las ejecuciones desde la línea de comandos y luego profundizas en cualquier etapa sin perder contexto. La visibilidad del grafo de ejecución hace que las relaciones y rutas entre etapas se lean de un vistazo, que es la diferencia entre depurar un pipeline y adivinarlo.
+
+Empieza con un pipeline de dos etapas —investigación y luego redacción, por ejemplo— antes de construir algo más largo. Cada etapa recibe su propio límite, lo que mantiene los fallos locales y hace que el grafo sea fácil de razonar.
+
+## Hábitos que separan las ejecuciones limpias de las desordenadas
+
+| Error | Síntoma | Solución |
+| --- | --- | --- |
+| Reutilizar una caja de larga vida | Los permisos se arrastran entre tareas | Una ejecución por tarea, siempre |
+| Conceder demasiada salida de red | El agente alcanza cosas que nunca necesitó | Denegar por defecto, permitir hosts concretos |
+| Omitir los límites de recursos | Comportamiento ruidoso dentro del invitado | Fija techos de CPU y memoria desde el principio |
+| No leer nunca las trazas | "Funcionó, creo" | Lee los spans antes de escalar |
+| Probar en hardware no compatible | Fallos de arranque confusos | Usa Linux KVM o macOS en Apple Silicon |
+
+Hay otro hábito que vale la pena formar pronto en tu recorrido de Void Platform how to play: mantén un registro escrito breve de qué se le permitió tocar a cada agente. Cuando una ejecución se comporta mal, esa nota más la traza convierten un misterio en una comprobación de cinco minutos.
+
+## FAQ
+
+**¿Necesito Linux para aprender Void Platform how to play?**
+No. El runtime es compatible con Linux con KVM y con macOS en Apple Silicon. Si estás en un Mac Intel, usa una máquina Linux en su lugar, ya que esa combinación no está entre las plataformas indicadas.
+
+**¿En qué se diferencia una microVM de un contenedor para cargas de trabajo de agentes?**
+Un contenedor comparte el kernel del host, así que una mala configuración puede exponer el host. Cada ejecución en Void-Box recibe su propio kernel invitado, sin límite compartido y sin acceso ambiental a los secretos o dispositivos del host.
+
+**¿Qué debería incluir mi primera lista de capacidades?**
+Empieza con un montaje de sistema de archivos, la red denegada por defecto y un techo de recursos. Añade herramientas solo cuando una tarea falle sin ellas, y nunca concedas un acceso que no pudieras detectar después.
+
+**¿Dónde se vuelve empinada la curva de aprendizaje de Void Platform how to play?**
+Casi siempre en los pipelines de varias etapas. Las ejecuciones individuales son sencillas; coordinar varias es donde la visibilidad del grafo de ejecución y las declaraciones de capacidades consistentes empiezan a dar sus frutos.

@@ -1,0 +1,125 @@
+export const metadata = {
+  title: "Void Platform Survival Strategy: A Practical Guide to Keeping Your Self-Hosted Deployment Platform Alive",
+  description: "A practical Void Platform survival strategy: what to install, what to monitor, how to keep rollbacks and logs working, and how to scale to a team.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## Why a Void Platform Survival Strategy Starts Before You Install Anything
+
+A Void platform turns a shared Cloudflare account into a deployment target your whole team can use — and like any shared piece of infrastructure, it only stays useful if somebody plans for its upkeep. A real Void Platform survival strategy is less about heroics during an outage and more about the boring decisions you make on day one: which features you install, what you monitor, and how fast you can get back to a known-good deploy.
+
+Without that plan, a setup that works fine for one developer quietly becomes a liability for ten. This guide walks through the practical side of a Void Platform survival strategy, from picking the right deployment target to scheduling the maintenance that keeps logs, rollbacks, and sandboxes available when you actually need them.
+
+## Pick the Right Target First: Direct Cloudflare or a Shared Platform
+
+The single biggest survival decision happens before installation. If you're deploying an app for yourself, you deploy straight to Cloudflare and skip the platform entirely. A platform exists to add shared access and retained deployment history for a team.
+
+Both paths use the same application APIs, so the difference is operational, not technical. Building a platform you don't need adds moving parts that can fail; skipping one when you have a team removes the safety net that makes recovery possible.
+
+| Capability | Deploying directly to Cloudflare | Core self-hosted Void platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your account and your gateway | Routed through the installation gateway and proxy |
+| Runtime logs | Live tail from Cloudflare | Logs retained on the platform |
+| Application rollback | Worker version history | Retained platform deployments |
+| Sandboxes | Requires Workers Paid plus Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not needed | Not included in a standard install |
+| Shared team access | Not provided | Built in |
+
+A quick rule of thumb: if more than one person deploys, or if you've ever asked "what did we ship last Tuesday?", the shared platform earns its keep.
+
+## Know Exactly What the Core Installation Does and Doesn't Give You
+
+Most self-inflicted outages come from assuming a feature is included when it isn't. The core installation is deliberately lean: it ships managed Sandboxes and an email gateway. Email only starts working once you configure a shared mail domain and zone — until then, the gateway exists but has nothing to send from.
+
+The user dashboard, GitHub builds and webhooks, build Containers, and custom project domains are all outside the core install. Plan for each one explicitly rather than discovering the gap mid-sprint.
+
+| Component | In a standard install? | Survival impact if unplanned |
+| --- | --- | --- |
+| Managed Sandboxes | Yes | Runtime environments available without extra wiring |
+| Email gateway | Yes, after a shared mail domain and zone are configured | Notifications silently fail until the zone exists |
+| User dashboard | No | Developers rely on the CLI and API only |
+| GitHub builds and webhooks | No — optional, source-built | Merges don't auto-deploy; you deploy manually |
+| Build Containers | No | Builds must happen outside the platform |
+| Custom project domains | No | Apps live on default hostnames until added |
+
+If you build a platform from source and add the optional GitHub services, use the isolated webhook ingress setup whenever Cloudflare Access protects the API. Mixing an Access-protected API with a plain webhook endpoint is one of the most common ways a working platform breaks after a security hardening pass.
+
+## The Five Pillars of a Void Platform Survival Strategy
+
+Treat these as the load-bearing walls. Each one maps to a specific failure mode, and each has a first thing to check when something feels wrong.
+
+| Pillar | What fails without it | First thing to check |
+| --- | --- | --- |
+| Identity and access | Developers can't sign in or, worse, the wrong people can | Which login methods are enabled on the platform |
+| Deployment history | No clean rollback target during an incident | Whether retained deployments are actually accumulating |
+| Observability | You learn about breakage from users, not logs | Whether platform logs are retained and readable |
+| Runtime capacity | Sandboxes refuse to start under load | Workers Paid status on the platform account and Docker availability |
+| Email path | Invites, alerts, and resets never arrive | The shared mail domain and zone configuration |
+
+**Access.** Every developer connects the Void CLI to the platform URL and signs in through an enabled login method. Keep that list short and current — a departed teammate with an active login is a survival problem, not an HR one.
+
+**History.** Retained deployments are your recovery mechanism. A platform without rollback history forces you to rebuild from source under pressure, which is exactly when mistakes compound.
+
+**Observability.** Live tails are great during debugging and useless after the fact. Retained platform logs are what let you reconstruct an incident the next morning.
+
+**Capacity.** Sandboxes need Workers Paid on the platform account, and direct-to-Cloudflare sandboxes additionally need Docker. Confirm entitlements before a launch, not during one.
+
+**Email.** Nothing about a mail gateway works until the shared domain and zone are configured. Do it on installation day so you're not debugging DNS during an outage.
+
+## Set a Maintenance Cadence You'll Actually Follow
+
+A Void Platform survival strategy fails most often through neglect rather than bad architecture. Small, scheduled checks beat occasional deep cleanups.
+
+| Cadence | Task | Why it matters |
+| --- | --- | --- |
+| Weekly | Confirm the CLI connects and a test deploy succeeds | Catches credential and login-method drift early |
+| Weekly | Skim retained logs for recurring errors | Turns vague instability into a specific fix |
+| Monthly | Verify rollback works on a low-risk app | A rollback path you've never tested isn't a path |
+| Monthly | Review who can sign in | Shrinks the blast radius of stale accounts |
+| Quarterly | Re-read the prerequisites and credentials for your install | Configuration requirements change as the platform evolves |
+| After any change | Re-test deploys, logs, and email end to end | Most breakage follows a config change, not a code change |
+
+The quarterly review is where most teams find surprises — an expired credential, a login method nobody remembers enabling, or a zone that was never finished.
+
+## A Risk Matrix for When the Platform Misbehaves
+
+Keep this table somewhere your team can find it. It won't diagnose everything, but it shortens the first ten minutes of an incident.
+
+| Symptom | Likely cause | First move |
+| --- | --- | --- |
+| The CLI can't reach the platform | Wrong URL, or no enabled login method | Confirm the platform URL, then check login methods |
+| Deploys succeed but logs are missing | Logs not retained where you're looking | Check platform log retention instead of a live tail |
+| No rollback target for a recent release | Deployment history not retained for that app | Inspect the retained deployments list before rebuilding |
+| Sandboxes won't start | Workers Paid missing, or Docker unavailable | Verify the plan on the platform account |
+| Email never arrives | Shared mail domain or zone not configured | Finish the mail domain and zone setup |
+| GitHub webhooks fail after hardening | Access protecting the API without isolated ingress | Move to the isolated webhook ingress pattern |
+
+## Scaling Up: What a Team Platform Actually Requires
+
+A team platform is a bigger commitment than a personal install. It requires Workers for Platforms and the documented infrastructure, and the exact feature set depends on how you configure the installation. Budget for that before you promise a dashboard, automated GitHub builds, or custom domains to your developers.
+
+| Requirement | Applies to | Survival note |
+| --- | --- | --- |
+| Workers for Platforms | Team platforms | Core infrastructure, not an add-on |
+| Workers Paid on the platform account | Sandboxes | Confirm before onboarding developers |
+| Documented infrastructure | Team platforms | Deviating creates undocumented failure modes |
+| Isolated webhook ingress | Optional GitHub services behind Access | Prevents silent webhook failures |
+
+The official [Void platform installation guide](https://void.cloud/guide/self-hosted-platform) is the reference to keep bookmarked — it covers prerequisites and credentials, and it's the source of truth when your configuration drifts from the documented path.
+
+The most durable version of a Void Platform survival strategy is boring: install only what you need, retain history and logs, test rollback before you need it, and review access on a schedule. Do that, and the platform stays a deployment tool instead of an outage generator.
+
+## FAQ
+
+**Do I need to install a platform if I'm the only developer?**
+No. Deploying directly to Cloudflare uses the same application APIs and skips the platform overhead entirely. A Void Platform survival strategy only becomes worth the effort when you need shared access and retained deployment history for a team.
+
+**What's the fastest recovery in a Void Platform survival strategy?**
+Rolling back to a retained deployment. That's why testing rollback monthly on a low-risk app matters — the recovery path has to work before the incident, not during it.
+
+**Is email included in a standard installation?**
+The email gateway is part of the core install, but it only works after you configure a shared mail domain and zone. Treat that configuration as part of installation, not a follow-up task.
+
+**Why did my GitHub webhooks break after enabling Access?**
+If Cloudflare Access protects the API, optional GitHub services need the isolated webhook ingress setup. Without it, webhook calls get blocked and builds stop triggering — a failure that's easy to miss until someone asks why nothing deployed.

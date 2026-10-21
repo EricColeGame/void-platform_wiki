@@ -1,0 +1,114 @@
+export const metadata = {
+  title: "Void Platform Platform Challenge: Install, Configure, and Deploy Apps",
+  description: "Work through the Void Platform platform challenge: install a self-hosted platform in Cloudflare, connect the CLI, and plan the optional services.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## What the Void Platform Platform Challenge Actually Involves
+
+Setting up shared infrastructure for a team is rarely a single command, and the **Void Platform platform challenge** is really about sequencing the pieces correctly. Get the order right, and your developers point the Void CLI at a URL, sign in, and ship apps into one shared Cloudflare account. Get it wrong, and you spend an afternoon untangling credentials and half-configured services.
+
+This guide walks through the **Void Platform platform challenge** from start to finish: who does what, which requirements gate the install, and how to plan for the features that a standard installation deliberately leaves out.
+
+The first decision is whether you need a platform at all. A Void platform is a shared deployment target — one Cloudflare account, one platform URL, many developers. The administrator installs and maintains it. Developers connect the Void CLI to that URL, authenticate through an enabled login method, and deploy. If you're deploying an app only for yourself, skip the platform entirely and deploy directly to Cloudflare.
+
+The roles are simple, but mixing them up is the most common early mistake:
+
+| Role | What they own | Tool they touch |
+| --- | --- | --- |
+| Administrator | Installing, maintaining, and configuring the platform; managing the shared Cloudflare account | Platform installation |
+| Developer | Connecting the CLI, signing in, deploying apps | Void CLI |
+| Solo builder | Shipping an app with no shared layer | Direct Cloudflare deployment |
+
+A core installation ships with managed Sandboxes and an email gateway. The email side switches on only when you configure a shared mail domain and zone, so plan that step rather than assuming mail works out of the box.
+
+## Direct Cloudflare vs. a Core Self-Hosted Platform
+
+Both deployment targets use the same application APIs, which means an app doesn't need to be rewritten when you move from one to the other. What changes is everything around the app: shared access, retained deployment history, and how requests are routed.
+
+| Capability | Direct to Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your own account and gateway | Installation gateway and proxy |
+| Runtime logs | Live Cloudflare tail | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Requires Workers Paid and Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard installation |
+
+That table is the heart of the **Void Platform platform challenge**: the platform doesn't make deployment possible, it makes deployment *shared and recoverable*. Live tails and Worker versions work fine for one person. Retained logs and retained platform deployments are what let a team debug an incident the next morning and roll back without guesswork.
+
+If you're running this for a team rather than a few colleagues, budget for the bigger footprint: a team platform requires Workers for Platforms and the documented infrastructure. Features depend on how the installation is configured, so record your choices somewhere your successor can find them.
+
+## Prerequisites and Credentials: Clearing the First Hurdle
+
+Most failed installs fail before the install starts. Read the prerequisites page and the credentials page end to end, gather everything in one place, then begin. The [official Void self-hosted platform installation guide](https://void.cloud/guide/self-hosted-platform) is the source of truth here, and it's short enough that skimming costs more time than reading.
+
+| Requirement | What it unlocks | When you need it |
+| --- | --- | --- |
+| Workers Paid on the platform account | Managed Sandboxes | Before any Sandbox-dependent app goes live |
+| Workers for Platforms plus documented infrastructure | A team platform | Only if you're serving a team, not a solo setup |
+| An enabled login method | Developer sign-in through the CLI | Before you hand out the platform URL |
+| A shared mail domain and zone | Email gateway | Only if your apps send mail |
+| Collected credentials | The installation itself | Before step one |
+
+Three tips that save real time:
+
+- **Decide the login method first.** It determines what you tell developers on day one, and changing it later means re-onboarding everyone.
+- **Treat the shared Cloudflare account as production.** Every developer on the platform inherits its limits and its blast radius.
+- **Write down the platform URL.** It's the one piece of information every developer needs and the one most often buried in a chat thread.
+
+## Step-by-Step Through the Void Platform Platform Challenge
+
+With prerequisites in hand, the install itself is the short part. The **Void Platform platform challenge** is mostly about the steps around it.
+
+| Step | Action | You're done when |
+| --- | --- | --- |
+| 1 | Confirm the target: direct Cloudflare or a self-hosted platform | You can justify the platform to your team |
+| 2 | Work through prerequisites and credentials | Every credential is in hand |
+| 3 | Install the core platform | Managed Sandboxes and the email gateway exist |
+| 4 | Enable a login method | A developer can authenticate |
+| 5 | Configure a shared mail domain and zone | Email is actually enabled |
+| 6 | Share the URL and run a test deploy | One developer ships an app successfully |
+| 7 | Add optional services deliberately | Each addition has an owner |
+
+When a developer reports a problem, work backward from the symptom rather than reinstalling:
+
+| Symptom | Likely cause | Check first |
+| --- | --- | --- |
+| Developer can't sign in | No login method enabled, or the CLI points at the wrong URL | Platform URL and enabled login methods |
+| Email never sends | Shared mail domain and zone not configured | Mail domain and zone settings |
+| Sandboxes won't start | Workers Paid missing on the platform account | Plan on the platform account |
+| GitHub webhooks fail behind Access | Webhook ingress isn't isolated | The isolated webhook ingress setup |
+
+That last row matters more than it looks. Source-built platforms that add the optional GitHub services should follow the isolated webhook ingress setup when Access protects the API — otherwise webhooks get blocked by the same protection that keeps your API safe.
+
+## Planning for What the Core Install Leaves Out
+
+A standard installation is intentionally lean. Knowing what isn't included keeps you from filing a bug against a missing feature:
+
+| Feature | In a core install? | Plan it when |
+| --- | --- | --- |
+| Managed Sandboxes | Yes | Immediately, if apps need sandboxed execution |
+| Email gateway | Yes, once configured | When apps send transactional mail |
+| User dashboard | No | You want a UI instead of CLI-only workflows |
+| GitHub builds and webhooks | No | You want push-to-deploy |
+| Build Containers | No | Your builds need a containerized environment |
+| Custom project domains | No | Apps need their own hostnames |
+
+This is the fork in the **Void Platform platform challenge** where teams diverge. Some stay on the core install indefinitely and drive everything through the CLI. Others build from source to add the GitHub services, which brings the webhook ingress question back onto the table. Neither path is wrong — but deciding deliberately beats discovering the gap during a launch.
+
+Two practical habits help here. First, keep a short written inventory of what your installation includes, because "features depend on configuration" is easy to say and hard to remember six months later. Second, when you add an optional service, note who owns it and how it's tested. Optional services that nobody owns tend to rot quietly.
+
+## Frequently Asked Questions
+
+**Do I need to take on the Void Platform platform challenge if I'm deploying alone?**
+No. If you're deploying an app for yourself, deploy directly to Cloudflare. You get the same application APIs without installing or maintaining a platform first.
+
+**What's actually included in a core installation?**
+Managed Sandboxes and an email gateway. Email is enabled when you configure a shared mail domain and zone. The user dashboard, GitHub builds and webhooks, build Containers, and custom project domains are not part of the core installation.
+
+**Can I add GitHub builds later?**
+Yes, but it means running a source-built platform rather than the core install. If Access protects your API, follow the isolated webhook ingress setup so webhooks still reach the platform.
+
+**What's the most common mistake in the Void Platform platform challenge?**
+Treating it as an install-only task. The install is short; the planning around login methods, mail configuration, optional services, and who owns each piece is what determines whether the platform holds up.

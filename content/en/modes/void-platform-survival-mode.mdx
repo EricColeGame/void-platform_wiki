@@ -1,0 +1,124 @@
+export const metadata = {
+  title: "Void Platform Survival Mode: Keeping Self-Hosted Deployments Alive Under Pressure",
+  description: "Void Platform survival mode keeps self-hosted deployments alive with retained logs, rollback history, redundant access, and a runbook for bad releases.",
+  category: "modes",
+  date: "2026-10-21",
+}
+
+Most outages on a shared deployment platform aren't caused by the code you ship — they're caused by the visibility and rollback paths nobody kept. Void Platform survival mode is the operating posture you adopt when a release goes sideways and you need to restore service using only what the platform actually retains. Get it right and a bad deploy costs minutes; skip it and the same deploy costs a weekend. This guide breaks down what Void Platform survival mode covers, which capabilities survive a standard installation, and how to build a runbook your team can follow when the pressure is real.
+
+## What Void Platform Survival Mode Means in Practice
+
+Survival mode is not a panic button. It's a deliberately minimal way of running a platform when normal operations break down: keep serving traffic, keep evidence, and get back to the last known good state without guessing.
+
+Three capabilities carry almost all of that weight. Retained platform logs tell you what happened after the live tail is gone. Retained platform deployments give you something concrete to roll back to. Working sign-in paths and a functioning gateway make sure you can actually reach the controls while you're fixing things.
+
+| Pillar | What it protects | Where it comes from |
+| --- | --- | --- |
+| Retained runtime logs | Post-incident evidence and root cause | Platform-level log retention, not the live tail |
+| Retained deployments | Fast, predictable rollback | Platform deployment history |
+| Access and routing | Your ability to act at all | Enabled login methods plus the installation gateway |
+| Sandbox capacity | Isolated execution during recovery | Workers Paid on the platform account |
+| Email delivery | Notifications and account flows | A shared mail domain and zone you configure |
+
+A single developer deploying a personal app doesn't need any of this — going straight to Cloudflare is simpler and cheaper. Void Platform survival mode becomes relevant the moment multiple people deploy into one shared target and nobody can afford to lose the history of what changed.
+
+### What survival mode is not
+
+It isn't a switch you enable. There's no checkbox labeled "survival." It's the sum of the retention, access, and routing decisions an administrator makes during installation and then rehearses.
+
+It also isn't a substitute for monitoring. Logs you never open are just storage. The value shows up only when someone has already decided who reads them and what triggers a rollback.
+
+## The Survival Baseline: What a Core Installation Actually Includes
+
+A standard installation is intentionally lean. It ships managed Sandboxes and an email gateway; email only starts working once an administrator configures a shared mail domain and zone. Everything else is optional and has to be added deliberately.
+
+That means the user dashboard, managed GitHub builds and webhooks, build Containers, and custom project domains are outside the core. If your survival plan assumes any of them exist, verify it before you need it.
+
+| Feature | Direct to Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your own account and gateway | The installation's gateway and proxy |
+| Runtime logs | Live tail only | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Needs Workers Paid and Docker | Needs Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not part of a standard install |
+
+The practical takeaway: both targets expose the same application APIs, so developers connect the Void CLI to the platform URL, sign in through an enabled login method, and deploy the same way. What changes is what the platform remembers afterward — and memory is exactly what survival mode runs on. The [official Void self-hosted platform guide](https://void.cloud/guide/self-hosted-platform) documents the full installation path and prerequisites.
+
+## Where Survival Mode Breaks: Six Failure Points and Fixes
+
+Most teams discover their gaps in the worst possible order. Here are the six that show up most often, along with the fix an administrator can apply before an incident.
+
+| Failure point | How it shows up | Fix |
+| --- | --- | --- |
+| No retained log destination | The live tail closes and the evidence disappears | Confirm platform log retention is active and someone knows where to look |
+| Rollback by Worker version only | You can revert code but not the deployment context around it | Rely on retained platform deployments as the primary path |
+| Single login method | Nobody can authenticate during an identity provider issue | Enable more than one login method and keep a documented admin path |
+| Email gateway unconfigured | Invites and notifications silently fail | Set up the shared mail domain and zone during installation, not after |
+| Webhook ingress exposed | GitHub services sit behind an Access-protected API with no route in | Use the isolated webhook ingress setup when Access protects the API |
+| Sandbox capacity assumed | Recovery jobs stall because the account tier won't run them | Confirm Workers Paid on the platform account up front |
+
+The pattern is consistent: none of these are exotic failures. They're configuration decisions that felt optional on a calm Tuesday. Void Platform survival mode is mostly the discipline of treating them as mandatory.
+
+### A worked example
+
+Say a deploy at 5 p.m. raises error rates on two services. In a platform without retention, the responder sees a live tail, screenshots what they can, and starts bisecting by redeploying — slow and risky.
+
+With retention in place, the same responder pulls the retained logs for the deployment window, confirms the change, and restores the previous retained deployment. Same incident, two very different afternoons. The difference is preparation, not talent.
+
+## Building a Void Platform Survival Mode Runbook
+
+A runbook is the artifact that turns survival mode from an idea into a procedure. Keep it short enough that someone can follow it while stressed, and specific enough that it doesn't require judgment calls at 2 a.m.
+
+| Step | Action | Success signal |
+| --- | --- | --- |
+| 1 | Confirm the incident window and affected services | A timestamped scope everyone agrees on |
+| 2 | Pull retained platform logs for that window | A concrete change or error signature |
+| 3 | Identify the last known good retained deployment | A named deployment, not a guess |
+| 4 | Roll back and verify with a smoke test | Error rates return to baseline |
+| 5 | Notify developers through a channel that doesn't depend on the platform | Confirmation received outside the platform |
+| 6 | Write a short post-incident note while logs are still fresh | A dated entry with the root cause |
+
+Beyond the steps, a few pre-incident checks are worth repeating on a schedule:
+
+- Verify that every developer can sign in through at least one working method.
+- Confirm the email gateway still delivers after any mail domain or zone change.
+- Check that the CLI still points at the correct platform URL after infrastructure moves.
+- Review which optional services you actually rely on, and document who owns them.
+- Rehearse one rollback per quarter so the muscle memory exists before it's needed.
+
+Teams that rehearse tend to compress the gap between detection and recovery dramatically, simply because nobody is reading documentation for the first time mid-incident. That's the whole point of Void Platform survival mode: converting decisions into habits.
+
+## Scaling Survival Mode to a Team Platform
+
+As the number of developers grows, the platform stops being a convenience and becomes shared infrastructure. At that point a team platform requires Workers for Platforms and the documented infrastructure around it, and the available features depend heavily on how the installation was configured.
+
+This is where administrators need to be honest about scope. A source-built platform that adds the optional GitHub services is a different animal from a core install, and it needs the isolated webhook ingress setup whenever Access protects the API. Mixing the two configurations in your head is how outages get longer than they should be.
+
+| Situation | Normal operations | Survival mode |
+| --- | --- | --- |
+| Deploy frequency | Multiple deploys per day, reviewed | Freeze new deploys until baseline is restored |
+| Log access | Live tail for quick checks | Retained logs for the incident window |
+| Rollback | Convenience feature | Primary recovery tool |
+| Access | Standard SSO flow | Backup login method plus documented admin path |
+| Communication | Chat inside the platform | Channel independent of the platform |
+| Documentation | Assumed knowledge | Written runbook, followed literally |
+
+Void Platform survival mode at team scale is less about tooling and more about clarity: who declares an incident, who rolls back, who talks to stakeholders, and where the evidence lives. Assign those roles before you need them and the rest follows.
+
+## FAQ
+
+**Is Void Platform survival mode a built-in feature I can enable?**
+No. It's an operating posture built from capabilities a core platform provides — retained logs, retained deployments, managed Sandboxes, and an email gateway. You assemble it through installation choices and rehearsal.
+
+**What's missing from a standard installation that survival mode might need?**
+The user dashboard, managed GitHub builds and webhooks, build Containers, and custom project domains are all outside the core. Email also stays inactive until a shared mail domain and zone are configured.
+
+**Do I need a platform at all for a single app?**
+Not necessarily. Deploying directly to Cloudflare is the simpler path when you're the only developer. Void Platform survival mode matters once several people deploy into one shared account and history needs to survive a bad release.
+
+**What does running this at team scale require?**
+A team platform requires Workers for Platforms and the documented infrastructure, with features depending on the installation's configuration. Plan for it before headcount forces the migration.
+
+**How often should the runbook be tested?**
+Quarterly is a reasonable rhythm for most teams: one rehearsal rollback, one access check, and one review of which optional services you've come to depend on.

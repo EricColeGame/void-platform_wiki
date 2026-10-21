@@ -1,0 +1,111 @@
+export const metadata = {
+  title: "Void Platform Progression Guide: From Direct Deploys to a Team Platform",
+  description: "Plan your rollout with this Void Platform progression guide: direct Cloudflare deploys, core self-hosting, optional services, and team scale.",
+  category: "progression",
+  date: "2026-10-21",
+}
+
+## What "Progression" Actually Means on a Void Platform
+
+Most teams don't install a shared deployment platform on day one — they grow into one. This Void Platform progression guide maps that growth path, from a single developer shipping straight to Cloudflare to a maintained platform with retained logs, rollback history, and team-wide access. Following a clear Void Platform progression guide matters because every stage changes what you own: your credentials, your account limits, and how much operational surface you take on.
+
+A Void platform is a shared deployment layer. An administrator installs and maintains it, and developers connect the Void CLI to its URL, sign in through an enabled login method, and deploy their apps into a shared Cloudflare account. Progression here isn't about unlocking content — it's about the order in which you adopt capabilities, so you never run infrastructure you don't yet need.
+
+| Stage | What you run | Best for | What changes for you |
+| --- | --- | --- | --- |
+| Stage 0 | Direct Cloudflare deployment | Solo developers, personal apps | Nothing to maintain; live logs only |
+| Stage 1 | Core self-hosted platform | Small teams needing shared access | Managed Sandboxes, email gateway, retained history |
+| Stage 2 | Core plus optional services | Teams needing GitHub builds, custom domains, a dashboard | More moving parts and more configuration choices |
+| Stage 3 | Team platform on Workers for Platforms | Larger organizations | Documented infrastructure and configuration-dependent features |
+
+## Stage 0: Start With a Direct Cloudflare Deploy
+
+If you're deploying an app for yourself, deploy directly to Cloudflare — you don't need to install a platform first. This is the correct starting point, not a shortcut. Both deployment targets use the same application APIs, which means the app you build at Stage 0 is the same app you move onto a platform later. Nothing gets rewritten.
+
+What you give up at Stage 0 is mostly *institutional memory*. There's no shared access for teammates, runtime logs are a live Cloudflare tail rather than retained platform logs, and rollback works through Worker versions instead of a retained deployment history. For a solo project that's a fine trade. For a team, it becomes friction fast.
+
+The table below is the clearest way to see where the line sits — it's the comparison any honest Void Platform progression guide has to start with:
+
+| Feature | Direct Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your account and gateway | Installation gateway and proxy |
+| Runtime logs | Live Cloudflare tail | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Requires Workers Paid and Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard installation |
+
+Read that table carefully and a pattern appears: the platform doesn't replace Cloudflare, it *adds* a shared control plane on top of it. Sandboxes still need a paid Workers plan. The dashboard and managed GitHub builds still aren't part of a standard installation. Progression means adding that control plane deliberately, not assuming it arrives fully formed.
+
+## Stage 1: Install the Core Platform
+
+This is the middle of any Void Platform progression guide, and the stage where most mistakes happen — usually because someone skipped the prerequisites. Before touching an install command, work through the official [Void self-hosted platform installation guide](https://void.cloud/guide/self-hosted-platform) and confirm both the prerequisites and the credentials you'll need. An install that stalls halfway is harder to clean up than one that never started.
+
+The core installation is intentionally lean. It includes managed Sandboxes and an email gateway. Email is not on by default — it's enabled when you configure a shared mail domain and zone. That single detail trips up a surprising number of administrators who assume a working install means working email.
+
+| Step | What you do | Why it matters |
+| --- | --- | --- |
+| 1 | Review the documented prerequisites | Prevents a half-built platform you have to unwind |
+| 2 | Collect the required credentials | The install needs to act on your Cloudflare account |
+| 3 | Install the core platform | Gives you managed Sandboxes and the email gateway |
+| 4 | Configure a shared mail domain and zone | Turns the email gateway on |
+| 5 | Confirm Workers Paid on the platform account | Required for Sandboxes to run |
+| 6 | Enable a login method and share the platform URL | Developers need a way in |
+| 7 | Onboard developers onto the Void CLI | Turns a server into a shared workflow |
+
+Step 7 is the one people underestimate. A platform nobody can sign into is just an expensive URL. Community reports from teams running shared deployment platforms consistently point to onboarding as the real bottleneck — developers need the platform URL, a working login method, and a two-minute explanation of how the CLI connects. Write that down once and you'll stop answering the same question every week.
+
+## Stage 2: Add Only the Optional Services You Need
+
+Once the core is stable, you enter the expansion phase of the Void Platform progression guide. Several capabilities exist but are deliberately excluded from a standard installation: the user dashboard, GitHub builds and webhooks, build Containers, and custom project domains.
+
+| Component | In a standard installation? | What to know before adding it |
+| --- | --- | --- |
+| Managed Sandboxes | Yes | Requires Workers Paid on the platform account |
+| Email gateway | Yes, once configured | Needs a shared mail domain and zone |
+| User dashboard | No | Add when developers need a self-serve view |
+| GitHub builds and webhooks | No | Source-built platforms should follow the isolated webhook ingress setup when Access protects the API |
+| Build Containers | No | Adds build infrastructure you must maintain |
+| Custom project domains | No | Add when projects need their own hostnames |
+
+Two rules make this stage painless. First, add one optional service at a time and verify it before moving on — when three things change at once, you can't tell which one broke. Second, treat the GitHub services carefully: if you build the platform from source and add them while Cloudflare Access protects the API, the isolated webhook ingress setup isn't optional. Skipping it produces webhooks that silently never arrive.
+
+## Stage 3: Scale Into a Team Platform
+
+The final stage of a Void Platform progression guide is where the platform stops being a convenience and becomes infrastructure. A team platform requires Workers for Platforms and the documented infrastructure that goes with it. Features depend heavily on how the installation is configured, so two organizations running "the same" platform may have quite different capability sets.
+
+Before you commit, re-walk your earlier decisions. The prerequisites and credentials that were fine for a five-person team may not cover a larger group. Ask who owns the platform administratively, who holds the Cloudflare credentials, and what happens when the person who installed it goes on vacation. Cloudflare's [Workers for Platforms documentation](https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/) is the right reference for understanding the underlying model before you expand.
+
+## Common Progression Pitfalls
+
+A Void Platform progression guide is only useful if it helps you avoid the failures other people already hit. Here are the ones that show up most often, mapped to their causes:
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Email never sends | Shared mail domain and zone not configured | Configure both, then re-test the gateway |
+| Webhooks never arrive | Access protecting the API without isolated ingress | Follow the isolated webhook ingress setup |
+| Sandboxes won't run | No Workers Paid plan on the platform account | Upgrade the platform account |
+| Teammates can't get in | No login method enabled | Enable one and distribute the platform URL |
+| No rollback history | You're still on direct Cloudflare deploys | Move to the platform, or use Worker versions |
+| Missing dashboard or custom domains | Expected features that aren't in the core install | Add the optional services explicitly |
+
+| Readiness check | Stage 0 | Stage 1 | Stage 2 | Stage 3 |
+| --- | --- | --- | --- | --- |
+| Platform installed and maintained | — | ✔ | ✔ | ✔ |
+| Shared login method live | — | ✔ | ✔ | ✔ |
+| Email gateway configured | — | Optional | ✔ | ✔ |
+| Optional services reviewed | — | — | ✔ | ✔ |
+| Workers for Platforms in place | — | — | — | ✔ |
+
+## FAQ
+
+**Do I need a Void Platform to deploy an app?**
+No. If you're deploying an app for yourself, deploy directly to Cloudflare. A platform becomes worthwhile when you need shared access, retained logs, and a deployment history your team can roll back through.
+
+**What's the difference between a core install and a full one?**
+The core installation gives you managed Sandboxes and an email gateway. The dashboard, GitHub builds and webhooks, build Containers, and custom project domains sit outside it and must be added deliberately.
+
+**Does this Void Platform progression guide apply to solo developers?**
+Partly. Stages 2 and 3 will be overkill for one person. Stage 0 is genuinely the right answer for solo work, and the same application APIs mean you lose nothing by staying there until a team appears.
+
+**How do I know when to move to a team platform?**
+When shared access and deployment history stop being nice-to-haves. At that point, plan for Workers for Platforms and the documented infrastructure — and expect features to vary based on how your installation is configured.

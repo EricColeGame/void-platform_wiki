@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Movimiento de plataformas en Void Platform: tiempos, patrones y consejos profesionales",
+  description: "Aprende cómo funciona el movimiento de plataformas de Void Platform: tiempos de ciclo, tipos de patrones, ventanas de salto y consejos de planificación de rutas para mantener las partidas con vida.",
+  category: "mechanics",
+  date: "2026-10-21",
+}
+
+El hueco parece saltable hasta que la plataforma bajo tus pies empieza a desplazarse. El movimiento de plataformas de Void Platform es la parte de la mecánica que decide si cruzas ese abismo o caes al vacío, y casi nunca tiene que ver con la velocidad bruta. Entender cómo se desplazan estas plataformas, cuándo se detienen y cómo interactúa tu arco de salto con su ciclo es lo que separa una partida limpia de una pantalla de reaparición. Si aciertas con el ritmo, el movimiento de plataformas de Void Platform se convierte en progreso gratis por un espacio que de otro modo sería imposible. Si fallas, cada salto parece una moneda al aire.
+
+Esta guía desglosa la mecánica en partes legibles: los tipos de patrones, las ventanas de tiempo, las decisiones de ruta y los ejercicios que hacen que la sincronización sea automática.
+
+## Qué prueba realmente el movimiento de plataformas de Void Platform
+
+Una plataforma sobre el vacío es una superficie suspendida sobre un plano de muerte: un pozo sin fondo, un campo de lava, un lecho de pinchos, lo que haya elegido el diseñador del nivel. Lo que la separa de una plataforma móvil normal es la consecuencia. No hay suelo debajo. Un salto fallido en una plataforma normal te cuesta un segundo; un salto fallido aquí te cuesta el intento completo.
+
+Por eso, el movimiento de plataformas de Void Platform es menos una prueba de distancia de salto y más una prueba de observación. La plataforma te está diciendo su horario en el momento en que aparece. Tu trabajo es leer ese horario antes de comprometer tus pies.
+
+Los informes de la comunidad describen el mismo patrón de fallo una y otra vez: los jugadores culpan a su distancia de salto cuando el verdadero problema era el momento de subirse. Aterrizaron en la plataforma medio segundo demasiado tarde, la plataforma aceleró y el impulso los llevó fuera del borde lejano. El salto estaba bien. La lectura, no.
+
+| Comportamiento de la plataforma | Cómo se mueve | Qué prueba realmente |
+|---|---|---|
+| Borde estático | No se mueve en absoluto | Distancia de salto pura |
+| Lanzadera lineal | Va y viene por una pista fija | Sincronización de la ventana para subirse |
+| Ascensor vertical | Sube y baja en bucle | Paciencia y lectura del ciclo |
+| Arco de péndulo | Oscila desde un pivote fijo | Ajuste en pleno salto |
+| Plataforma intermitente | Aparece y desaparece con un ritmo | Memorización de patrones |
+| Plataforma perseguidora | Se acerca o se aleja de ti | Leer la intención, no solo la sincronización |
+
+## Leer el ciclo: el motor detrás del movimiento de plataformas de Void Platform
+
+Toda plataforma móvil sobre el vacío ejecuta un ciclo. El ciclo puede ser un bucle simple, una secuencia activada por un disparador o una simulación física, pero desde el lado del jugador siempre tiene fases reconocibles. Aprender a nombrarlas hace que la mecánica sea enseñable en lugar de mística.
+
+| Fase del ciclo | Qué ves | Mejor acción |
+|---|---|---|
+| Aproximación | La plataforma aparece en pantalla | Precolócate en el borde de la cornisa |
+| Pausa | La plataforma se detiene o frena brevemente | Súbete ahora: ventana más segura |
+| Desplazamiento | La plataforma se mueve a toda velocidad | Mantente centrado, evita los bordes |
+| Regreso | La plataforma vuelve hacia su punto de inicio | Aguanta el viaje o sáltate pronto |
+| Desaparición | La plataforma se desvanece, cae o se derrumba | Nunca estés de pie sobre ella |
+
+La fase de pausa es la pieza de información más valiosa del movimiento de plataformas de Void Platform. La mayoría de los jugadores salta en el instante en que ve una plataforma, lo que significa que se suben justo cuando acelera. Esperar un compás a la pausa cuesta casi nada y convierte un aterrizaje difícil en uno gratis.
+
+Un segundo hábito que vale la pena cultivar: observa un ciclo completo antes de comprometerte. Muchas plataformas se desincronizan después de un disparador —un interruptor, un punto de control, la muerte de un enemigo— y el ritmo que aprendiste en la aproximación puede que ya no se aplique. Un ciclo desperdiciado es más barato que una partida desperdiciada.
+
+## Ventanas de salto y sincronización de entradas
+
+El movimiento de plataformas de Void Platform depende de un puñado de técnicas de entrada que la mayoría de los juegos de plataformas incorporan en silencio. Saber que existen cambia cómo pulsas los botones.
+
+- **Tiempo coyote (coyote time)** — un breve periodo de gracia después de salir de una cornisa durante el cual un salto todavía se registra. Existe para perdonar entradas tardías, no para depender de él.
+- **Buffer de salto (jump buffering)** — un salto pulsado justo antes de aterrizar se ejecuta igualmente al contacto. Esencial para cadenas de saltos entre plataformas que nunca se detienen del todo.
+- **Altura de salto variable** — soltar el botón antes acorta el arco. Útil bajo techos bajos y para huecos cortos en los que un salto completo se pasa de largo.
+- **Flotación en el ápice (apex hang)** — la breve suspensión en la parte superior de un arco de salto, cuando el control horizontal es más fácil.
+
+| Técnica | Qué soluciona | Dónde te salva |
+|---|---|---|
+| Tiempo coyote | Entradas de salto tardías | Salir de una cornisa mientras una plataforma se aleja |
+| Buffer de salto | Entradas de salto tempranas | Cadenas rápidas entre plataformas de salto corto |
+| Altura de salto variable | Pasarse de largo | Pasillos estrechos sobre superficies móviles |
+| Flotación en el ápice | Mal control en el aire | Ajustarte a una plataforma que se movió en pleno vuelo |
+
+La regla práctica: pulsa salto justo antes de lo que crees que necesitas y mantén el botón durante todo el arco. La mayoría de los saltos fallidos sobre el vacío son tardíos, no tempranos.
+
+## Planificación de rutas a través del vacío
+
+Cuando la sincronización ya es cómoda, el movimiento de plataformas de Void Platform se convierte en un problema de rutas. Cada sección de vacío ofrece al menos dos caminos: el paciente y el rápido. Saber cuál es cuál —y cuándo vale la pena arriesgarse con el rápido— es donde se ganan las partidas.
+
+| Opción de ruta | Dificultad | Compensación |
+|---|---|---|
+| Montar la plataforma hasta su borde lejano | Baja | Lenta pero predecible |
+| Subirse en el paso de regreso | Media | Ahorra un ciclo, necesita una lectura limpia |
+| Encadenar dos plataformas a mitad del recorrido | Alta | Sincronización ajustada, sin ventana de recuperación |
+| Saltarse la plataforma con una técnica de movimiento avanzada | Muy alta | Solo para speedruns; normalmente es reinicio si fallas |
+
+Tres hábitos de planificación que dan resultado de inmediato:
+
+1. **Elige tu punto de aterrizaje antes de saltar.** Apunta al centro de la plataforma, no al borde cercano. Los aterrizajes centrados sobreviven a la aceleración; los aterrizajes en el borde, no.
+2. **Identifica la salida de emergencia.** Si una plataforma está a punto de desaparecer, ¿hay una superficie segura a un salto de distancia? Si no, vete antes.
+3. **Cuenta los ciclos en voz alta.** Contar convierte un ritmo inconsciente en uno consciente, y los ritmos conscientes sobreviven al pánico.
+
+Para poner en contexto cómo encaja esta mecánica en el género en general, la [historia de los juegos de plataformas en Wikipedia](https://en.wikipedia.org/wiki/Platform_game) traza cómo las superficies móviles evolucionaron de simples ascensores a los puzles de sincronización por capas que vemos hoy.
+
+## Errores comunes que terminan las partidas
+
+La mayoría de los fallos en el movimiento de plataformas de Void Platform vienen de cuatro hábitos. Ninguno tiene que ver con techos de habilidad: tienen que ver con decisiones tomadas bajo presión.
+
+| Error | Por qué falla | Solución |
+|---|---|---|
+| Saltar en el momento en que aparece la plataforma | Te subes justo cuando acelera | Espera a la fase de pausa |
+| Quedarte en el borde exterior | El movimiento te lleva más allá del límite | Aterriza en el centro, mantente en el centro |
+| Saltar por pánico tras un resbalón | Cancelas un arco que podrías recuperar | Mantén la entrada, gira en su lugar |
+| Asumir que todos los ciclos son idénticos | Las plataformas activadas se desincronizan | Observa un bucle completo primero |
+
+Hay un quinto error más sutil: tratar el vacío como el enemigo. Los jugadores que temen al pozo saltan antes, se tensan y acortan sus arcos. El pozo no te está persiguiendo. La plataforma es lo único que importa, y tiene un horario.
+
+## Ejercicios de práctica que construyen la sincronización
+
+El movimiento de plataformas de Void Platform mejora más rápido con repetición corta y enfocada que con intentos largos. Cuatro ejercicios cubren la mayor parte de la habilidad:
+
+| Ejercicio | Preparación | Objetivo |
+|---|---|---|
+| Conteo de ciclos | Quédate en la cornisa y cuenta bucles completos | Predecir la ventana para subirte sin mirar hacia abajo |
+| Subida a ciegas | Mantén la cámara en la siguiente plataforma mientras te subes | Desarrollar sincronización periférica |
+| Cruce sin saltar | Cruza una sección usando solo plataformas | Aprender rutas en lugar de reflejos |
+| Salida deliberada | Salta a mitad del recorrido y recupérate | Eliminar la respuesta de miedo |
+
+Diez minutos de conteo de ciclos suelen valer más que una hora de intentos completos. La mecánica recompensa la predicción, y la predicción es una habilidad entrenable.
+
+## FAQ
+
+**¿El movimiento de plataformas de Void Platform es diferente del de las plataformas móviles normales?**
+El movimiento es similar, pero las apuestas no. Como no hay suelo bajo una plataforma sobre el vacío, cada decisión de subida conlleva un reinicio completo. Eso empuja la mecánica lejos del reflejo y hacia la lectura del ciclo.
+
+**¿Cómo calculo el momento de los saltos a plataformas que desaparecen?**
+Trata la desaparición como el final del ciclo y trabaja hacia atrás. Súbete al inicio de la ventana visible, cruza de inmediato y nunca planees estar de pie en la plataforma cuando se desvanezca.
+
+**¿Por qué sigo resbalando de las plataformas móviles?**
+Casi siempre porque aterrizaste cerca del borde. El movimiento de plataformas de Void Platform arrastra tu impulso, así que un aterrizaje descentrado se amplifica cuando la plataforma acelera. Apunta al centro.
+
+**¿Puedo saltarme por completo las secciones de movimiento de plataformas de Void Platform?**
+A veces, con técnicas avanzadas, pero el atajo suele ser más difícil que la ruta prevista. Aprende primero el ciclo y luego decide si el atajo merece el riesgo de reinicio.
+
+Domina el ritmo y el vacío dejará de ser una amenaza. Se convierte en un horario que ya conoces.

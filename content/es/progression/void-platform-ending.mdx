@@ -1,0 +1,119 @@
+export const metadata = {
+  title: "El final de Void Platform explicado: qué ocurre tras el último paso de configuración",
+  description: "Una mirada clara al final de Void Platform: qué incluye tu instalación principal, qué omite y cómo cerrar, revertir o entregar todo de forma limpia.",
+  category: "progression",
+  date: "2026-10-21",
+}
+
+El final de Void Platform es menos un desenlace y más un traspaso: el punto en el que la configuración de despliegue compartida deja de ser un proyecto y empieza a ser infraestructura. Llegar ahí importa porque los últimos pasos deciden si los desarrolladores pueden iniciar sesión y publicar por su cuenta, o si cada lanzamiento sigue pasando por ti. Esta guía repasa cómo es realmente el final de Void Platform, qué incluye la instalación principal, qué deja fuera a propósito y cómo cerrar todo de forma limpia.
+
+## Qué significa realmente el final de Void Platform
+
+Una plataforma Void es una capa de despliegue compartida: tu equipo despliega aplicaciones en una única cuenta de Cloudflare que tú, como administrador, instalas y mantienes. Los desarrolladores no tocan la fontanería. Apuntan la CLI de Void a la URL de la plataforma, inician sesión con el método de acceso que hayas habilitado y despliegan.
+
+Así que el «final» no es un apagado. Es el momento en que tu instalación pasa a ser de autoservicio. El trabajo del administrador pasa de construir a mantener, y la métrica de éxito cambia de «¿terminó el despliegue?» a «¿alguien tuvo que pedirme ayuda?».
+
+Ese enfoque importa porque dos recorridos muy distintos pueden llegar ambos a un final.
+
+| Ruta | Para quién es | Cómo se ve el final |
+| --- | --- | --- |
+| Directo a Cloudflare | Alguien que despliega una aplicación para sí mismo | Ninguna instalación de plataforma; vas directo a Cloudflare |
+| Plataforma principal autoalojada | Un equipo que comparte una cuenta | La instalación se completa, los desarrolladores se conectan y despliegan de forma independiente |
+
+Si estás construyendo para ti mismo, sáltate la plataforma por completo: la documentación es explícita en que no necesitas instalar una primero. El final de Void Platform solo se convierte en un hito cuando otras personas dependen de la instalación.
+
+## Qué tienes cuando termina la configuración
+
+La instalación principal es deliberadamente ligera. Incluye Sandboxes gestionados y una pasarela de correo electrónico. Sin embargo, el correo no está activo por defecto: se activa cuando configuras un dominio y una zona de correo compartidos.
+
+Todo lo demás que podría ofrecer una plataforma madura se trata como opcional, y esa distinción es lo más útil que hay que entender antes de declarar terminada la instalación. La siguiente tabla compara lo que te da cada destino de despliegue.
+
+| Función | Directo a Cloudflare | Plataforma principal autoalojada |
+| --- | --- | --- |
+| Workers AI y solicitudes a proveedores | Tu propia cuenta y pasarela | La pasarela y el proxy de la instalación |
+| Registros en tiempo de ejecución | Tail en vivo desde Cloudflare | Registros retenidos en la plataforma |
+| Reversión de aplicaciones | Versiones de Worker | Despliegues retenidos en la plataforma |
+| Sandboxes | Requiere Workers Paid más Docker | Requiere Workers Paid en la cuenta de la plataforma |
+| Panel de usuario y compilaciones de GitHub gestionadas | No requeridos | No incluidos en una instalación estándar |
+
+Ambos destinos usan las mismas API de aplicaciones, y por eso el final se siente anticlimático. Nada cambia en cómo se comporta una aplicación. Lo que cambia es quién es dueño del historial: los registros retenidos y los despliegues retenidos son la verdadera recompensa de la plataforma.
+
+## Qué no incluye el final
+
+Una fuente habitual de decepción en el final de Void Platform es suponer que «instalado» significa «completo». No es así. Varias funciones que la gente espera de una plataforma de despliegue quedan fuera de la instalación principal.
+
+- **Panel de usuario** — no forma parte de una instalación estándar.
+- **Compilaciones y webhooks de GitHub gestionados** — disponibles solo como servicios opcionales.
+- **Build Containers** — no incluidos en el núcleo.
+- **Dominios de proyecto personalizados** — no incluidos en el núcleo.
+
+Ninguna de estas ausencias es un fallo. Son decisiones de alcance, y conocerlas de antemano evita que prometas a tu equipo un panel que la plataforma nunca iba a ofrecer.
+
+Si compilas desde el código fuente y añades los servicios opcionales de GitHub, hay un detalle de configuración que conviene señalar: cuando Access protege la API, sigue la configuración de entrada de webhooks aislada. Saltarse ese paso es el tipo de cosa que aparece semanas después en forma de compilaciones que fallan en silencio.
+
+## Un final limpio de Void Platform: lista de comprobación paso a paso
+
+La [guía oficial de instalación de la plataforma autoalojada de Void](https://void.cloud/guide/self-hosted-platform) divide la configuración en requisitos previos, credenciales y configuración. El final es donde verificas que los tres convergieron realmente. Usa esta secuencia.
+
+| Paso | Acción | Cómo se ve «terminado» |
+| --- | --- | --- |
+| 1 | Confirmar que se cumplen los requisitos previos | Cada requisito marcado antes de instalar, no después |
+| 2 | Aprovisionar credenciales | Credenciales de administrador y de servicio guardadas en un lugar accesible para el equipo |
+| 3 | Habilitar un método de inicio de sesión | Al menos una vía de acceso activa para los desarrolladores |
+| 4 | Configurar el dominio y la zona de correo compartidos | La pasarela de correo se activa en lugar de quedarse inactiva |
+| 5 | Conectar la CLI a la URL de la plataforma | Un despliegue de prueba funciona desde la máquina de un desarrollador |
+| 6 | Decidir sobre los servicios opcionales | Compilaciones de GitHub, panel y dominios personalizados explícitamente dentro o fuera |
+| 7 | Escribir la nota de traspaso | Alguien distinto de ti puede desplegar sin hacer preguntas |
+
+El paso 5 es la prueba real. Si un desarrollador puede conectar la CLI de Void a la URL de la plataforma, autenticarse y publicar una aplicación sin tu intervención, el final de Void Platform está genuinamente completo. Todo lo anterior es preparación.
+
+El paso 7 es el que más equipos se saltan. Una nota breve que cubra la URL de la plataforma, los métodos de inicio de sesión habilitados, la propiedad de la zona de correo y quién tiene las credenciales de administrador ahorra horas más adelante.
+
+## Terminar, revertir o seguir adelante
+
+Una vez que la plataforma está activa, «final» adquiere un segundo significado: qué ocurre cuando hay que deshacer un despliegue. Aquí es donde la plataforma compartida se justifica frente a una configuración directa a Cloudflare.
+
+En un despliegue directo, revertir significa trabajar con versiones de Worker. En una plataforma principal autoalojada, reviertes mediante los despliegues retenidos en la plataforma, y tienes los registros retenidos para explicar qué salió mal en primer lugar.
+
+| Situación | Ruta recomendada | Por qué |
+| --- | --- | --- |
+| Experimento en solitario, sin equipo | Desplegar directamente en Cloudflare | Sin sobrecarga de instalación ni mantenimiento |
+| Una versión rompió producción | Revertir mediante los despliegues retenidos en la plataforma | El historial completo permanece en la plataforma |
+| Necesitas explicar un incidente | Registros retenidos en la plataforma | El tail en vivo por sí solo no persiste |
+| Añadir compilaciones basadas en GitHub | Habilitar servicios opcionales, aislar la entrada de webhooks | Mantiene las compilaciones funcionando detrás de Access |
+| El equipo crece más allá del núcleo | Planificar la infraestructura de Workers for Platforms | Una plataforma de equipo lo requiere |
+
+Si tu equipo supera el núcleo, el final de una fase se convierte en el comienzo de otra. Una plataforma de equipo requiere Workers for Platforms y la infraestructura documentada, y las funciones dependen en gran medida de cómo se configure la instalación.
+
+## Requisitos que confirmar antes de darlo por terminado
+
+Los requisitos son fáciles de cumplir el primer día y fáciles de olvidar al tercer mes. Confirma cada uno de estos antes de dar el visto bueno.
+
+| Requisito | Dónde aplica | Por qué importa en el final |
+| --- | --- | --- |
+| Workers Paid | Cuenta de la plataforma, y Docker para sandboxes directos | Los sandboxes no funcionan sin ello |
+| Docker | Uso de sandboxes directo a Cloudflare | Dependencia local fácil de pasar por alto |
+| Workers for Platforms | Despliegues de plataforma a escala de equipo | Necesario para una plataforma de equipo compartida |
+| Dominio y zona de correo compartidos | Pasarela de correo | El correo sigue desactivado hasta que se configura |
+| Entrada de webhooks aislada | Plataformas compiladas desde código fuente con servicios de GitHub | Evita compilaciones rotas detrás de Access |
+
+Los informes de la comunidad de equipos que gestionan capas de despliegue compartidas tienden a converger en la misma lección: la instalación es la parte fácil, y las expectativas de mantenimiento son lo que realmente determina si la plataforma perdura. La experiencia de los jugadores con herramientas autoalojadas suele reflejar lo mismo: las herramientas que sobreviven son las que tienen un propietario claro.
+
+Trata el final de Void Platform como un compromiso de mantenimiento y no como una meta. Asigna un responsable, documenta la URL de la plataforma y los métodos de inicio de sesión, y revisa los servicios opcionales de forma programada en lugar de añadirlos de forma improvisada.
+
+## Preguntas frecuentes
+
+**¿El final de Void Platform es lo mismo que apagar la plataforma?**
+No. En la práctica, el final de Void Platform se refiere a la finalización de la instalación y el traspaso: cuando la plataforma está activa, los desarrolladores pueden autoservirse y el rol de administrador pasa a ser de mantenimiento. Apagarla es una decisión aparte y mucho menos frecuente.
+
+**¿Qué incluye una instalación principal?**
+Sandboxes gestionados y una pasarela de correo electrónico. El correo solo se activa después de configurar un dominio y una zona de correo compartidos. El panel de usuario, las compilaciones y webhooks de GitHub, los Build Containers y los dominios de proyecto personalizados no forman parte de la instalación principal.
+
+**¿Necesito una plataforma si despliego para mí mismo?**
+No. Desplegar directamente en Cloudflare es la ruta más sencilla cuando eres el único usuario. El final de Void Platform solo cobra relevancia cuando un equipo comparte una cuenta y necesita registros retenidos e historial de despliegues.
+
+**¿Cómo revierto después de terminar la configuración?**
+Usa los despliegues retenidos en la plataforma si es autoalojada, o las versiones de Worker si desplegaste directamente. Combina la reversión con los registros retenidos en la plataforma para poder explicar el fallo, no solo deshacerlo.
+
+**¿Y si mi equipo supera la instalación principal?**
+Necesitarás Workers for Platforms y la infraestructura documentada. En ese punto, el final de tu configuración principal se convierte en el comienzo de la construcción de una plataforma de equipo, y el conjunto de funciones depende por completo de cómo la configures.

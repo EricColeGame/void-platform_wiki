@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Void Platform Release Date: What to Expect and How to Get Started Today",
+  description: "A practical guide to the Void Platform release date, self-hosted setup, core features, and how teams can prepare before rollout day arrives.",
+  category: "community",
+  date: "2026-10-21",
+}
+
+## Why the Void Platform Release Date Matters More Than You Think
+
+If you've been refreshing the Void documentation waiting for one clean launch announcement, you're not alone. The Void Platform release date matters because it's the moment your team can stop deploying apps one at a time and start shipping into a shared, governed environment with retained deployment history. In practice, the Void Platform release date isn't a single square on a calendar — it's the day your own installation goes live and your developers point the Void CLI at it.
+
+That distinction changes how you plan. Teams that treat the Void Platform release date as a marketing event tend to sit and wait. Teams that treat it as an infrastructure milestone start checking prerequisites, credentials, and account settings early — and they're deploying while everyone else is still reading.
+
+## What a Void Platform Actually Is
+
+A Void platform is a shared deployment target. Your team deploys apps into one Cloudflare account that an administrator installs and maintains. Developers never touch Cloudflare directly — they connect the Void CLI to the platform's URL, sign in through whichever login method the administrator enabled, and push their apps.
+
+Void is clear that a platform isn't mandatory for solo work. If you're deploying an app only for yourself, you deploy straight to Cloudflare and skip the platform layer entirely. The platform exists for what a single developer doesn't need: shared access, a common gateway for Workers AI and provider requests, and deployment history that outlives the current Worker version.
+
+The core installation is deliberately lean. It ships with managed Sandboxes and an email gateway, and email only switches on once you configure a shared mail domain and zone. Several features people assume are standard — the user dashboard, GitHub builds and webhooks, build Containers, and custom project domains — are not part of a core install.
+
+| Capability | In a core installation? | Notes |
+| --- | --- | --- |
+| Managed Sandboxes | Yes | Requires Workers Paid on the platform account |
+| Email gateway | Yes | Enabled after a shared mail domain and zone are configured |
+| Shared team access | Yes | The main reason to run a platform at all |
+| Retained deployment history | Yes | Enables rollback to earlier platform deployments |
+| User dashboard | No | Not included in a standard installation |
+| GitHub builds and webhooks | No | Optional; requires additional setup |
+| Build Containers | No | Not part of the core installation |
+| Custom project domains | No | Not part of the core installation |
+
+One detail worth flagging for administrators: if you build a platform from source and add the optional GitHub services, Void recommends the isolated webhook ingress setup when Cloudflare Access protects the API. Skipping that step is a common source of confusing webhook failures after go-live.
+
+## What the Void Platform Release Date Means for Self-Hosted Teams
+
+Here's the part that surprises people: there's no store page to refresh. Because the platform is self-hosted, the Void Platform release date splits into two separate events, and conflating them is where timelines slip.
+
+The first event is upstream — when Void publishes or updates the platform code and the accompanying documentation. The second event is yours: the day your installation is configured, credentialed, and handed to developers. Only the second one puts apps into production.
+
+| Release event | What it means | Who controls it | How to confirm |
+| --- | --- | --- | --- |
+| Upstream availability | Void's platform code and install guide are current | Void | Check the official installation guide and its prerequisites pages |
+| Infrastructure readiness | Cloudflare account, Workers Paid plan, and login method are in place | Your administrator | Account and access review |
+| Configuration complete | Email gateway, domains, and optional services are wired up | Your administrator | Test deploy through the Void CLI |
+| Team go-live | Developers can sign in and deploy | You | First successful shared deployment |
+
+Community reports from administrators running shared deployments rarely center on a countdown. They center on configuration drift — a login method that was never enabled, a mail zone that was never attached, a webhook ingress that was skipped. Those are the things that actually delay a launch, not the upstream publish date.
+
+The practical takeaway: treat the Void Platform release date as the day your checklist is empty, not the day a banner appears on a website.
+
+## Direct-to-Cloudflare vs. the Platform: Which Release Do You Need?
+
+Both targets use the same application APIs, which makes the decision easier than it first appears. The question is whether you need shared access and retained history, or whether you just need your app running.
+
+| Feature | Direct to Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your account and gateway | Installation gateway and proxy |
+| Runtime logs | Live Cloudflare tail | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Requires Workers Paid and Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard installation |
+
+Read that table as a decision tool. If you're a solo developer shipping one app, direct deployment gives you everything you need with less overhead. If you're a team that needs a shared gateway, a durable log trail, and rollback that doesn't depend on remembering which Worker version was good, the platform is the right target — and a team platform requires Workers for Platforms plus the documented infrastructure.
+
+Feature availability also depends on how a given installation is configured. Two teams running "the same" platform can have very different surfaces if one enabled the optional GitHub services and the other didn't.
+
+## How to Prepare Before the Void Platform Release Date Arrives
+
+The most useful thing you can do while waiting is shrink the gap between "available" and "live." Work through this list in order — each row unblocks the next.
+
+| Step | What to do | Owner | Why it matters |
+| --- | --- | --- | --- |
+| 1 | Read the prerequisites section of the official guide end to end | Administrator | Catches plan and infrastructure gaps early |
+| 2 | Confirm Workers Paid is active on the platform account | Administrator | Required for Sandboxes and team platform features |
+| 3 | Prepare and validate credentials | Administrator | Most install failures trace back to credentials |
+| 4 | Choose and enable a login method | Administrator | Developers can't connect the CLI without it |
+| 5 | Decide on the email gateway and configure a shared mail domain and zone | Administrator | Email stays off until this is done |
+| 6 | Plan webhook ingress if you're adding GitHub services | Administrator | Isolated ingress is required when Access protects the API |
+| 7 | Distribute the platform URL and CLI instructions to developers | Team lead | Removes the "how do I connect?" round trip |
+| 8 | Agree on a rollback and log retention policy | Team lead | Makes the retained history actually useful |
+
+A few actionable tips that save real time:
+
+- **Test with one throwaway app first.** Have a single developer deploy a trivial app through the CLI before the whole team migrates. It surfaces login and gateway issues in minutes.
+- **Write down the login method.** If developers sign in through an enabled method that isn't documented, every new hire becomes a support ticket.
+- **Don't assume the dashboard exists.** If your team expects a web UI, confirm what your installation actually includes before promising it.
+- **Keep a direct-deploy path documented.** Solo experiments can still go straight to Cloudflare, which keeps the shared platform clean.
+
+For the authoritative setup details, work from the [official Void self-hosted platform installation guide](https://void.cloud/guide/self-hosted-platform) rather than secondhand summaries — it's the source that stays current.
+
+## How to Tell Which Release You're Actually Running
+
+Because installations are configured independently, "are we current?" is a question you answer by inspecting behavior, not by reading a version badge.
+
+| Signal | What you see on a core platform | What it tells you |
+| --- | --- | --- |
+| Runtime logs | Retained platform logs | The platform log pipeline is wired up |
+| Application rollback | Rollback to retained platform deployments | Deployment history is being stored |
+| Sandboxes | Available | Workers Paid is active on the platform account |
+| Email | Gateway active after domain and zone setup | Shared mail configuration succeeded |
+| Dashboard | Absent unless separately added | You're on a standard, non-extended install |
+
+If several of those signals are missing, you're not running a complete core installation — and that's a much more useful finding than any release date. Pair the check with a quick review of your prerequisites and credentials against the official documentation, since configuration, not time, is what separates a working platform from a stalled one.
+
+## Frequently Asked Questions
+
+**Is there an official Void Platform release date I can put on the calendar?**
+
+There's no single universal date, because the platform is self-hosted. Void publishes the code and installation guidance, but your effective Void Platform release date is the day your administrator finishes configuration and your developers can deploy through the CLI.
+
+**Do I need a platform at all, or can I just deploy my app?**
+
+If you're deploying for yourself, deploy directly to Cloudflare — a platform isn't required. Install one when a team needs shared access, a common AI gateway, retained logs, and rollback to earlier platform deployments.
+
+**What's missing from a standard installation that teams usually expect?**
+
+The user dashboard, GitHub builds and webhooks, build Containers, and custom project domains are not part of a core installation. Managed Sandboxes and an email gateway are included, though email only activates after you configure a shared mail domain and zone.
+
+**What most often delays a Void Platform release date in practice?**
+
+Configuration, not availability. Community reports consistently point to unenabled login methods, unprepared credentials, missing mail zones, and skipped isolated webhook ingress as the real blockers — all of which you can resolve before rollout day.

@@ -1,0 +1,131 @@
+export const metadata = {
+  title: "Void Platform: Como Chegar ao Void, Fazer Login e Implantar Seu Primeiro App",
+  description: "Um tutorial passo a passo sobre a Void Platform: como chegar ao Void, conectar a CLI, habilitar um método de login e implantar seu primeiro app em uma conta compartilhada da Cloudflare.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## O que "Chegar ao Void" Realmente Significa
+
+A Void Platform é a camada compartilhada que permite que uma equipe inteira implante apps em uma única conta da Cloudflare — e saber como chegar ao Void é a diferença entre uma primeira implantação em cinco minutos e uma tarde perdida. Se você já recebeu a URL de uma plataforma e uma CLI e ouviu "é só conectar", você já sabe que a peça que falta é contexto. Este guia aborda a Void Platform: como chegar ao Void como o administrador que a instala, e como o desenvolvedor que faz login, vincula a CLI e coloca um app no ar.
+
+A expressão "chegar ao Void" é usada de forma bastante vaga, então ajuda dividi-la em três camadas distintas. A maioria das tentativas malsucedidas acontece porque alguém resolveu uma camada e presumiu que as outras duas já estavam tratadas.
+
+| Camada | Como aparece na prática | Quem normalmente é responsável |
+| --- | --- | --- |
+| Alcance de rede | A plataforma tem uma URL que responde a requisições | Administrador |
+| Alcance de autenticação | Pelo menos um método de login está habilitado, para que uma pessoa possa entrar | Administrador |
+| Alcance de ferramental | A Void CLI aponta para essa URL e está autenticada | Desenvolvedor |
+
+Se qualquer uma dessas três estiver faltando, a plataforma existe, mas permanece efetivamente inacessível. Percorra-as em ordem.
+
+## Antes de Começar: Pré-requisitos e Requisitos de Acesso
+
+Uma plataforma Void não é um serviço hospedado no qual você simplesmente faz login — é algo que um administrador instala e mantém. Isso significa que os pré-requisitos se dividem claramente entre a infraestrutura de que você precisa na conta da plataforma e as credenciais de que você precisa no lado do cliente.
+
+| Requisito | Por que importa | Observações |
+| --- | --- | --- |
+| Uma conta Cloudflare para a plataforma | A plataforma implanta apps em uma conta compartilhada | A instalação principal tem como alvo uma única conta compartilhada |
+| Workers Paid na conta da plataforma | Necessário para Sandboxes gerenciados | Os Sandboxes fazem parte da instalação principal |
+| Docker (caminho de implantação direta) | Necessário localmente quando você mesmo executa os Sandboxes | Não é necessário se você apenas consome uma plataforma compartilhada |
+| Um domínio e uma zona de e-mail compartilhados | Os recursos de gateway de e-mail ficam desativados até serem configurados | O e-mail só é habilitado depois que o domínio e a zona são definidos |
+| Credenciais de administrador | Necessárias para instalar e manter a plataforma | Documentadas no guia de credenciais |
+| Um método de login habilitado | Sem ele, ninguém consegue concluir um login | Definido durante ou imediatamente após a instalação |
+| A Void CLI em cada máquina de desenvolvedor | A principal forma de os desenvolvedores chegarem à plataforma | Conecte-a à URL da plataforma |
+
+Algumas dicas práticas antes de começar:
+
+- Leia os guias de pré-requisitos e credenciais na [documentação oficial de instalação do Void](https://void.cloud/guide/self-hosted-platform) antes de abrir um terminal — eles são curtos e evitam a maior parte do retrabalho.
+- Decida desde o início se você está construindo um alvo individual ou uma plataforma de equipe. Uma plataforma de equipe precisa do Workers for Platforms além da infraestrutura documentada, o que é uma construção consideravelmente maior.
+- Tenha sua zona DNS pronta se o e-mail for importante para o seu fluxo de trabalho. Adaptar um domínio de e-mail depois significa revisitar a instalação.
+- Mantenha a URL da plataforma em algum lugar permanente. Relatos da comunidade de administradores que operam plataformas de implantação compartilhadas citam consistentemente "a CLI estava apontando para a URL errada" como o problema mais comum no primeiro dia.
+
+## Void Platform: Como Chegar ao Void, Passo a Passo
+
+A sequência abaixo reflete a ordem pretendida: instalar primeiro, configurar os serviços compartilhados em segundo, e só então liberar o acesso para os desenvolvedores. Pular direto para a etapa da CLI é o motivo mais comum de as pessoas concluírem que a plataforma está quebrada.
+
+### Etapa 1 — Instale a plataforma principal
+
+Um administrador instala e mantém a plataforma; os desenvolvedores não instalam nada no lado do servidor. A instalação principal inclui Sandboxes gerenciados e um gateway de e-mail, mas várias coisas que as pessoas esperam — um dashboard de usuário, builds e webhooks gerenciados do GitHub, Containers de build e domínios personalizados de projeto — deliberadamente não fazem parte dela. Espere que o núcleo seja enxuto.
+
+### Etapa 2 — Configure o domínio e a zona de e-mail compartilhados
+
+O gateway de e-mail vem na instalação principal, mas permanece inerte até você configurar um domínio e uma zona de e-mail compartilhados. Se você pular isso, nada dá erro de forma evidente — você simplesmente nunca tem comportamento de e-mail. Trate isso como parte da instalação, não como um extra opcional.
+
+### Etapa 3 — Habilite um método de login
+
+O login acontece "por meio de um método de login habilitado", o que significa que a plataforma só oferece o que o administrador ativou. Confirme que pelo menos um método funciona de ponta a ponta antes de convidar desenvolvedores, de preferência fazendo login você mesmo em uma janela privada do navegador.
+
+### Etapa 4 — Conecte a Void CLI à URL da plataforma
+
+Cada desenvolvedor aponta a Void CLI para a URL da plataforma. Este é o momento de "chegar ao Void" no sentido cotidiano — a CLI encontra a plataforma ou não encontra. Se a API estiver atrás da proteção do Access, observe que plataformas construídas a partir do código-fonte que adicionam os serviços opcionais do GitHub devem seguir a configuração de ingresso isolado de webhooks em vez de abrir uma brecha na API protegida.
+
+### Etapa 5 — Faça login e implante
+
+Faça login pelo método habilitado e depois implante. Ambos os alvos de implantação — Cloudflare direto e uma plataforma compartilhada — usam as mesmas APIs de aplicação, então tudo o que você aprendeu implantando diretamente continua valendo.
+
+| Etapa | Responsável | Resultado |
+| --- | --- | --- |
+| 1. Instalar o núcleo | Administrador | A plataforma existe e está em execução |
+| 2. Configurar domínio/zona de e-mail | Administrador | O gateway de e-mail fica ativo |
+| 3. Habilitar método de login | Administrador | Pessoas conseguem se autenticar |
+| 4. Conectar a CLI | Desenvolvedor | O ferramental consegue encontrar a plataforma |
+| 5. Fazer login e implantar | Desenvolvedor | O primeiro app está no ar |
+
+## Cloudflare Direto ou Plataforma Compartilhada? Escolhendo a Rota Certa
+
+Nem todo mundo precisa de uma plataforma. Se você está implantando um app puramente para si mesmo, a orientação é direta: implante diretamente na Cloudflare e pule completamente a instalação da plataforma. Uma plataforma se justifica quando você quer acesso compartilhado e histórico retido para toda a equipe.
+
+| Recurso | Direto na Cloudflare | Plataforma auto-hospedada principal |
+| --- | --- | --- |
+| Workers AI e requisições a provedores | Sua própria conta e gateway | Gateway e proxy da instalação |
+| Logs de execução | Tail ao vivo da Cloudflare | Logs retidos da plataforma |
+| Rollback de aplicação | Versões do Worker | Implantações retidas da plataforma |
+| Sandboxes | Precisa de Workers Paid e Docker | Precisa de Workers Paid na conta da plataforma |
+| Dashboard de usuário e builds gerenciados do GitHub | Não necessário | Não incluído em uma instalação padrão |
+
+O padrão é claro: a implantação direta oferece imediatismo, enquanto a plataforma oferece retenção e acesso compartilhado. Escolha com base em se "quem implantou o quê, e quando" precisa de resposta daqui a seis semanas.
+
+## Recursos Opcionais Que Você Não Recebe de Fábrica
+
+Uma surpresa recorrente para novos administradores é que a plataforma que eles instalaram não é a plataforma que imaginavam. Aqui está a divisão honesta.
+
+| Capacidade | Está na instalação principal? | O que fazer em vez disso |
+| --- | --- | --- |
+| Sandboxes gerenciados | Sim | Nada — disponível por padrão |
+| Gateway de e-mail | Sim, depois de configurado | Defina o domínio e a zona de e-mail compartilhados |
+| Dashboard de usuário | Não | Conte com fluxos de trabalho via CLI |
+| Builds e webhooks do GitHub | Não | Adicione os serviços opcionais por meio de um build a partir do código-fonte |
+| Containers de build | Não | Adicione por meio de configuração opcional |
+| Domínios personalizados de projeto | Não | Planeje em torno do roteamento fornecido pela plataforma |
+
+Se você adicionar os serviços do GitHub por meio de um build a partir do código-fonte e sua API estiver protegida pelo Access, siga a orientação de ingresso isolado de webhooks — ela existe justamente para que os webhooks possam chegar sem enfraquecer a proteção da API.
+
+## Solução de Problemas: Quando Você Não Consegue Chegar ao Void
+
+A maioria dos relatos de "inacessível" se resolve em um punhado de causas. Combine o sintoma antes de começar a alterar a configuração.
+
+| Sintoma | Causa provável | Primeira coisa a tentar |
+| --- | --- | --- |
+| A CLI não encontra a plataforma | URL da plataforma errada | Verifique novamente a URL distribuída pelo admin |
+| A página de login não oferece nada | Nenhum método de login habilitado | Peça ao admin para habilitar um |
+| Os recursos de e-mail nunca são acionados | Domínio ou zona de e-mail compartilhados não configurados | Conclua a configuração do domínio e da zona de e-mail |
+| Os Sandboxes não iniciam | Workers Paid não está ativo na conta da plataforma | Confirme o plano na conta da plataforma |
+| Nenhum dashboard após o login | Não faz parte da instalação principal | Use o fluxo de trabalho da CLI |
+| Webhooks bloqueados atrás do Access | API protegida com serviços opcionais do GitHub | Aplique a configuração de ingresso isolado de webhooks |
+
+Dois hábitos evitam a maioria desses casos: verificar a URL antes de mexer na CLI e confirmar que um método de login funciona antes de integrar uma equipe. Todo o resto tende a ser um detalhe de configuração, e não uma plataforma quebrada.
+
+## FAQ
+
+**Preciso instalar uma plataforma Void para implantar meu próprio app?**
+Não. Se você está implantando um app para si mesmo, implante diretamente na Cloudflare — a plataforma é uma construção para equipes compartilhadas, não um pré-requisito.
+
+**Como os desenvolvedores chegam ao Void depois que a plataforma está instalada?**
+Eles conectam a Void CLI à URL da plataforma e fazem login por meio de um método de login habilitado. O papel do administrador é garantir que ambos existam antes que os desenvolvedores tentem.
+
+**Sou desenvolvedor, não admin. Do que eu realmente preciso na Void Platform — como chegar ao Void do meu lado?**
+Três coisas: a URL da plataforma, uma conta vinculada a um método de login habilitado e a CLI instalada localmente. Se qualquer uma delas estiver faltando, pergunte ao seu administrador em vez de depurar a CLI.
+
+**Por que minha plataforma parece menos capaz do que a documentação sugere?**
+Porque uma instalação padrão é intencionalmente enxuta. O dashboard de usuário, os builds e webhooks gerenciados do GitHub, os Containers de build e os domínios personalizados de projeto são adições opcionais — não padrões. Confirme o que sua instalação realmente inclui antes de presumir que algo está quebrado.

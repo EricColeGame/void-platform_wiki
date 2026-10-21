@@ -1,0 +1,121 @@
+export const metadata = {
+  title: "Void Platform How to Survive: A Practical Guide to Containing AI Agents",
+  description: "Learn Void Platform how to survive untrusted AI agent runs: declare capabilities, isolate each run in a microVM, and inspect traces when things go wrong.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## Why "Surviving" Is the Right Mindset
+
+Most tutorials about AI agents focus on making them do more. This one focuses on making sure they can't do too much. The moment an agent can open a shell, edit files, and call APIs, it stops being a text generator and starts acting with real authority — authority you did not personally review line by line. That is the gap Void Platform is built to close, and it is why the phrase **Void Platform how to survive** is less about staying alive and more about staying in control.
+
+The core idea is simple: one run equals one disposable microVM, with no shared kernel and no ambient access to your host machine. Instead of trusting the model's good behavior, you trust the boundary around it. Get that boundary right and a misbehaving agent becomes a contained incident with a paper trail. Get it wrong and you are one clever prompt injection away from a very bad afternoon.
+
+This guide covers **Void Platform how to survive** in a practical order: preparing the runtime, declaring capabilities, understanding what the isolation actually blocks, reading the telemetry afterward, and avoiding the mistakes that quietly undo all of it.
+
+## Void Platform How to Survive: The Setup Checklist
+
+Before you run anything interesting, set up the environment so that failure is cheap. Void Platform runs locally on Linux with KVM or on Apple Silicon macOS, and it is open source under Apache 2.0, so you can read exactly how the boundary is enforced rather than taking it on faith. The current release line is v0.2.0, installed through a short script on the official site.
+
+| Step | What to do | Why it matters for survival |
+| --- | --- | --- |
+| 1 | Install the runtime on a machine you consider disposable or well-backed-up | Keeps early experiments away from production credentials |
+| 2 | Confirm your platform supports hardware virtualization (KVM on Linux, Apple Silicon on macOS) | Without it, you are back to weaker isolation models |
+| 3 | Pull or build an OCI-compatible rootfs for the agent's environment | Reproducible guests mean reproducible incidents |
+| 4 | Start with a single interactive run before automating anything | You learn the failure modes cheaply, one run at a time |
+| 5 | Wire up OTLP trace and metric export to your observability stack | Evidence collected after the fact is evidence you may never get |
+| 6 | Only then move to multi-stage pipelines through the operator layer | Coordination without containment just multiplies risk |
+
+A useful habit: treat the first run of any new agent like a fire drill. Give it a trivial task, watch the trace, and confirm that the tools it reached for were the tools you declared. If something unexpected shows up in the trace, you have found a configuration problem before it found you.
+
+## Declaring Capabilities Is the Core Survival Skill
+
+The runtime is the control point. An agent decides what it wants to do; Void Platform decides what it is allowed to touch. That decision is made *before* execution, through declared capabilities covering commands, files, network access, and resource limits.
+
+| Capability scope | Safe default | Survival tip |
+| --- | --- | --- |
+| Filesystem | Only explicitly mounted paths | Mount a working directory, never a home directory |
+| Network egress | Deny by default, allow specific hosts | Block the cloud metadata address outright |
+| Commands and tools | Only the binaries the task needs | Do not hand a research agent a package manager |
+| Secrets | Injected per run, never ambient | Pass the one token needed, not a credentials file |
+| Compute and duration | Capped per run | Short caps turn runaway loops into cheap failures |
+| Host devices | None | A task that "needs" raw device access deserves a second look |
+
+Community reports from teams running CLI agents in isolated sandboxes tend to converge on the same lesson: the agents that cause trouble are rarely the ones doing something exotic. They are the ones that had a little more access than the task required, and used it exactly as instructed by whatever text they happened to ingest.
+
+That is also why prompt discipline alone does not count as isolation. Instructions can be redirected by untrusted input; permissions cannot, as long as the runtime enforces them. If you take one thing away from this **Void Platform how to survive** walkthrough, make it this: put the guardrail in the runtime, not in the system prompt.
+
+## What the Isolation Actually Blocks
+
+Shared environments erase the boundary. Long-lived sandboxes, container-first setups, and implicit permissions make it hard to reason about what an agent can actually reach — and harder still to prove it after an incident. The table below summarizes the failure modes the microVM boundary is designed to remove, framed as a comparison rather than a verdict.
+
+| Attack pattern | What goes wrong in a shared container | How a per-run microVM contains it |
+| --- | --- | --- |
+| Prompt injection from ingested content | Ambient secrets in the environment get read and exfiltrated | No host secrets exist inside the guest |
+| Container socket escape | A mounted runtime socket hands over full host control | No such socket is present in the guest |
+| Privileged container misuse | Host disks and devices become reachable | No host devices are exposed by default |
+| Cgroup release-agent tricks | A crafted cgroup setting executes code on the host | Execution stays inside the guest kernel |
+| Metadata service requests | Cloud credentials are harvested over the default network | The metadata endpoint is unreachable |
+
+Hardened containers can be defended against most of these, and plenty of teams do exactly that. The difference is posture: containers require you to remember to harden them every time, while Void Platform makes isolation the default and keeps a separate kernel between the agent and your machine. When you are thinking about **Void Platform how to survive** a genuinely hostile input, defaults beat discipline.
+
+## Observability: How to Survive the Aftermath
+
+Containment limits the blast radius. Observability tells you what happened inside it. Void Platform emits OTLP traces and metrics plus structured run events, so a finished run is inspectable rather than mysterious.
+
+| Signal | What it tells you | When to look at it |
+| --- | --- | --- |
+| Per-stage trace spans | Which stage ran, in what order, and how long it took | Any time an agent "just stopped" |
+| Token and cost metrics | Where budget is being burned per stage | Before scaling to pipelines |
+| Run lifecycle events | When a box started, completed, or errored | Immediately after a failed run |
+| Process telemetry | CPU and memory pressure inside the guest | When runs get killed unexpectedly |
+| Preserved artifacts | Outputs, logs, and structured events | During incident review |
+
+The practical version of **Void Platform how to survive** a bad run is a five-minute review ritual: pull the trace for the run, confirm which stages touched which declared tools, and check whether anything reached outside its scope. Because snapshots make restores fast, you can also re-run the same scenario with tighter capabilities and compare traces side by side — a genuine before-and-after that most sandbox setups cannot give you.
+
+## Scaling Up With the Operator Layer
+
+Containment is per run, but real work is many runs. Once a single run is reliably contained, the operator layer — Void-Control — lets you spawn and coordinate runs across stages, drive them from a terminal-first interface, and inspect an execution graph of how stages relate.
+
+The survival rule here is that scaling must not loosen the boundary. A few guardrails that hold up in practice:
+
+- **One stage, one purpose.** A stage that both researches the web and writes to a shared repository is a stage you cannot reason about.
+- **Keep capability sets narrow per stage.** The stage that reads untrusted pages should not be the stage holding deploy credentials.
+- **Inspect the graph before you inspect the logs.** Execution paths reveal surprises faster than raw output does.
+- **Re-run failed stages in a fresh guest.** Snapshots make this cheap; reuse makes it risky.
+
+Teams that treat each stage as its own containment unit tend to find that **Void Platform how to survive** a multi-stage pipeline is mostly an exercise in refusing to share state between stages that do not need it.
+
+## Common Mistakes That Undo the Boundary
+
+Even with good isolation, configuration habits can quietly reopen the door. These are the ones worth auditing for first.
+
+| Mistake | Symptom | Fix |
+| --- | --- | --- |
+| Mounting a broad host directory "just to be safe" | Agent can read files unrelated to the task | Mount a single working directory |
+| Reusing one long-lived guest for many tasks | Boundary reasoning gets fuzzy over time | One run, one microVM, always |
+| Leaving network egress wide open | Unexpected outbound requests in traces | Allow specific hosts only |
+| Skipping telemetry export until "later" | No evidence when something breaks | Configure OTLP before the first real run |
+| Trusting the system prompt as a security layer | Agent follows injected instructions | Enforce limits in the runtime |
+
+Player experience in the broader agent-sandboxing community echoes this: most incidents are configuration incidents. The runtime did its job; the mount was too wide, the token too broad, or the network too open.
+
+If you want to see how the boundary is actually implemented rather than take a blog post's word for it, the [Void Platform runtime and documentation](https://voidplatform.ai/) walks through the isolation model, the OCI rootfs approach, and the release notes directly.
+
+## FAQ
+
+**Is "Void Platform how to survive" about game survival mechanics?**
+No. In this context, surviving means keeping an untrusted AI agent's failures contained so they never reach your host machine, your credentials, or your production systems.
+
+**Do I need a separate machine to run agents safely?**
+Not strictly, but hardware virtualization support matters. Void Platform uses dedicated microVMs with no shared kernel, which gives you a real boundary even on a single development machine.
+
+**How do I know an agent stayed inside its capabilities?**
+Read the trace. Per-stage spans, run lifecycle events, and preserved artifacts show which tools were used and when. If a stage reached for something you did not declare, the run should have failed rather than succeeded quietly.
+
+**What is the fastest way to learn Void Platform how to survive a failed run?**
+Start with one interactive run, a single mounted directory, and network egress restricted to specific hosts. When it fails — and it will — you get a small, readable trace instead of a large, ambiguous one.
+
+## The Bottom Line
+
+Surviving agent execution is not about writing better prompts. It is about putting a boundary around the thing that acts, declaring what it may touch before it starts, and keeping evidence of everything it did. Do that consistently — one run, one microVM, narrow capabilities, telemetry on from day one — and the question shifts from "what could go wrong?" to "what did go wrong, and where's the trace?" That is a much better place to be, and it is exactly what a **Void Platform how to survive** approach is designed to give you.

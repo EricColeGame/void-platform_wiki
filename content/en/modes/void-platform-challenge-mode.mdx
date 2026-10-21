@@ -1,0 +1,114 @@
+export const metadata = {
+  title: "Void Platform Challenge Mode: Advanced Self-Hosted Deployment Scenarios Explained",
+  description: "A practical guide to Void Platform challenge mode: advanced self-hosted setups, sandboxes, retained logs, rollbacks, and team deployment workflows.",
+  category: "modes",
+  date: "2026-10-21",
+}
+
+The moment your team outgrows single-app deploys, the easy path disappears. Void Platform challenge mode is the shorthand we use for that harder tier of work: installing and maintaining a shared platform that other developers depend on, instead of pushing a worker straight into your own Cloudflare account. Get it right and everyone on the team connects through one URL, signs in with one approved method, and ships against a retained deployment history — which is why Void Platform challenge mode is really about turning a solo habit into dependable internal infrastructure.
+
+## What "Void Platform Challenge Mode" Means in Practice
+
+Let's clear something up first: there is no dashboard toggle or checkbox labeled challenge mode. The phrase is a working label for the advanced configuration tier — the setups where you are the administrator, not just a deployer. In that tier you own the install, the login methods, the mail domain, the upgrade path, and the on-call rotation when something breaks at 2 a.m.
+
+The distinction matters because the two paths use the same application APIs. A developer's day-to-day commands barely change. What changes is everything around them: who holds credentials, where logs live, how rollbacks work, and which optional services exist at all.
+
+| Dimension | Solo path (direct to Cloudflare) | Void Platform challenge mode (self-hosted) |
+| --- | --- | --- |
+| Who installs it | Nobody — you just deploy | An administrator installs and maintains the platform |
+| Who can deploy | You | Any developer with the platform URL and an enabled login |
+| Where AI/provider requests route | Your account and gateway | The installation's gateway and proxy |
+| Logs | Live tail in Cloudflare | Retained platform logs |
+| Rollback | Worker versions | Retained platform deployments |
+| Failure blast radius | One app | Every app on the platform |
+
+That last row is the whole game. On the solo path, a mistake costs you one deploy. In Void Platform challenge mode, a misconfigured ingress or an expired credential can stall an entire team.
+
+## Core Platform vs. Direct Cloudflare: What Actually Changes
+
+A standard installation is deliberately lean. It includes managed Sandboxes and an email gateway; email only switches on once you configure a shared mail domain and its zone. Several things people assume are "in the box" are not part of a core install at all: the user dashboard, managed GitHub builds and webhooks, build Containers, and custom project domains.
+
+If you build from source and add the optional GitHub services, pay attention to ingress. When Cloudflare Access protects the API, those webhook endpoints need the isolated webhook ingress pattern rather than riding on the main protected route. Skipping that step produces the classic symptom of builds that queue forever while the API looks perfectly healthy.
+
+| Feature | Direct Cloudflare | Core self-hosted platform |
+| --- | --- | --- |
+| Workers AI and provider requests | Your account and gateway | Installation gateway and proxy |
+| Runtime logs | Live Cloudflare tail | Retained platform logs |
+| Application rollback | Worker versions | Retained platform deployments |
+| Sandboxes | Requires Workers Paid and Docker | Requires Workers Paid on the platform account |
+| User dashboard and managed GitHub builds | Not required | Not included in a standard installation |
+
+One more planning note: a genuine team platform needs Workers for Platforms plus the documented infrastructure around it. Feature availability then depends entirely on how your installation is configured, so write down your choices before you hand the URL to developers.
+
+## Setting Up a Void Platform Challenge Mode Environment
+
+Treat the rollout as a sequence, not a checklist you can parallelize freely. Each step unlocks the next, and skipping ahead is where most of the pain comes from.
+
+| Step | Action | Why it comes in this order |
+| --- | --- | --- |
+| 1 | Confirm prerequisites, including Workers Paid on the platform account | Sandboxes will not run without it |
+| 2 | Prepare credentials for the platform and its supporting services | Everything downstream authenticates against these |
+| 3 | Install the core platform and verify it responds | Establishes the base URL developers will use |
+| 4 | Configure the shared mail domain and zone | Turns the email gateway from inert to active |
+| 5 | Decide which login methods are enabled | Developers cannot connect until one is available |
+| 6 | Connect the Void CLI to the platform URL and sign in | Proves the full path end to end |
+| 7 | Add optional services (GitHub builds, webhooks, containers) separately | Keeps core and extras independently debuggable |
+
+Two habits pay off here. First, test the CLI connection yourself before announcing the URL — a five-minute check saves a dozen confused messages. Second, document which optional services you enabled and where their ingress lives, because six months from now nobody will remember whether the webhook route was isolated.
+
+There is also a legitimate "don't" worth stating plainly: if you are deploying an app purely for yourself, skip the platform entirely and deploy directly to Cloudflare. Standing up shared infrastructure you do not need is the most common self-inflicted difficulty in Void Platform challenge mode.
+
+## Common Void Platform Challenge Mode Scenarios and Fixes
+
+Most failures in this tier are configuration mismatches rather than bugs. The table below maps symptoms to likely causes.
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Developer cannot sign in | No login method enabled, or CLI pointed at the wrong URL | Enable a login method and re-check the platform URL |
+| Email never sends | Shared mail domain or zone not configured | Complete the domain and zone setup for the gateway |
+| Sandboxes fail to start | Platform account lacks Workers Paid, or Docker missing where required | Verify plan status on the platform account |
+| Builds queue indefinitely | Webhooks unreachable behind Access | Move GitHub services to the isolated webhook ingress |
+| Custom domain returns nothing | Custom project domains are not part of a core install | Add the capability deliberately or use the default route |
+| "Where's the dashboard?" | Not included in a standard installation | Plan for it as an add-on, not a core assumption |
+
+Community reports from teams running self-hosted deployment platforms echo the same theme: the platform itself is rarely the problem, but the seam between the platform and the identity or ingress layer is where incidents cluster. Budget your monitoring attention accordingly.
+
+## Operating in Void Platform Challenge Mode: Logs, Rollbacks, and Observability
+
+Once the platform is live, your job shifts from installing to operating. Retained platform logs are the headline benefit — instead of chasing a live tail that vanishes when you close the terminal, you get history you can query after the fact. The same is true of rollbacks: retained platform deployments let you return to a previous release without reconstructing worker versions by hand.
+
+| Operational task | Solo path | Void Platform challenge mode |
+| --- | --- | --- |
+| Debugging a regression | Attach to a live tail | Search retained platform logs |
+| Rolling back | Pick a worker version | Promote a retained deployment |
+| Onboarding a developer | Share account access | Share the URL and an enabled login |
+| Auditing what shipped | Reconstruct manually | Read deployment history |
+
+### A short operating checklist
+
+- Rotate and store platform credentials outside chat threads and shared docs.
+- Verify the login method you depend on still works after any identity change.
+- Re-test the mail gateway after editing the shared domain or zone.
+- Keep optional services on their own ingress so a webhook outage does not touch core deploys.
+- Re-read the official [Void platform installation guide](https://void.cloud/guide/self-hosted-platform) after upgrades — configuration details evolve.
+- Pair Workers for Platforms documentation with your own runbook if you operate a team platform.
+
+One more piece of advice: rehearse a rollback before you need one. In Void Platform challenge mode, the difference between a ten-minute recovery and a two-hour incident is usually whether someone already knows which retained deployment to promote.
+
+## FAQ
+
+### Is Void Platform challenge mode an official feature?
+
+No. It is a practical label for the advanced, administrator-owned tier of a self-hosted Void Platform. The capabilities themselves are real — retained logs, retained deployments, managed Sandboxes, a gateway, and an email gateway — but the "challenge mode" name is shorthand for the harder configuration work, not a switch you flip.
+
+### Do I need a platform at all if I just want to deploy one app?
+
+No, and you probably shouldn't build one. Deploying directly to Cloudflare is the correct choice for personal projects. Void Platform challenge mode only makes sense when multiple developers need shared access, consistent sign-in, and deployment history.
+
+### Why is my user dashboard missing after installation?
+
+Because it is not part of a standard installation. The core install covers Sandboxes and the email gateway; the user dashboard, managed GitHub builds and webhooks, build Containers, and custom project domains are separate additions. Plan for them explicitly rather than assuming they arrive with the base platform.
+
+### What is the most common Void Platform challenge mode mistake?
+
+Pointing the CLI at the wrong URL or leaving every login method disabled. Both produce the same "nothing works" report from developers while the platform itself is running fine. Verify the URL and at least one enabled login method before you invite anyone.

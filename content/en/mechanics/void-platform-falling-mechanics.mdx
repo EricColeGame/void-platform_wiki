@@ -1,0 +1,123 @@
+export const metadata = {
+  title: "Void Platform Falling Mechanics: Gravity, Void Death, and Respawn Explained",
+  description: "A practical breakdown of Void Platform falling mechanics — gravity curves, coyote time, void death, respawn rules, and the movement tech that keeps runs alive.",
+  category: "mechanics",
+  date: "2026-10-21",
+}
+
+Falling is the one system in Void Platform that punishes you before you understand it. Most first-run deaths come from misreading how the game handles a missed ledge, not from enemies or puzzles — and that makes Void Platform falling mechanics the single most valuable system to learn early. Once you understand how gravity, air control, and void contact are resolved, the same jumps that felt random start feeling readable.
+
+## What Void Platform Falling Mechanics Actually Control
+
+Falling in Void Platform is not a single rule. It is a stack of four subsystems that resolve in order every frame: gravity acceleration, player input response, collision detection, and outcome resolution. When a jump feels "wrong," the cause is almost always one layer in that stack behaving differently than you assumed.
+
+The four layers do very different jobs:
+
+- **Gravity layer** — sets how fast you accelerate downward and whether there is a maximum fall speed.
+- **Input layer** — decides how much horizontal control you keep while airborne, and whether late jump presses are honored.
+- **Collision layer** — determines what counts as a landable surface versus a pass-through edge.
+- **Outcome layer** — resolves what happens when you leave the playable area entirely, including respawn placement.
+
+Community reports consistently point to the same thing: players who learn the outcome layer first improve fastest, because knowing where you will respawn changes how aggressively you can attempt a jump. The Void Platform falling mechanics are forgiving in some places and deliberately strict in others, and the strictness is usually concentrated in the outcome layer.
+
+## The Falling State Machine, Step by Step
+
+Void Platform falling mechanics run on a small state machine. Your character is always in exactly one of these states, and transitions happen automatically based on input and position. Understanding the transitions is what lets you predict a jump instead of reacting to it.
+
+| State | How You Enter It | What the Game Checks | Practical Effect |
+| --- | --- | --- | --- |
+| Grounded | Landing on a valid surface | Surface tag, slope angle | Full movement options restored |
+| Ledge release | Walking off an edge without jumping | Grace timer | Short window where a jump still registers |
+| Rising | Jump initiated | Jump buffering, input hold | Height scales with hold duration |
+| Apex | Vertical speed near zero | Air control multiplier | Easiest moment to steer |
+| Descending | Vertical speed turns positive | Fall speed cap | Steering becomes heavier |
+| Terminal | Fall speed cap reached | Cap value | Horizontal drift is minimal |
+| Void contact | Position leaves the playable bounds | Kill plane, respawn anchor | Run state resolved, respawn triggered |
+
+Two transitions carry most of the skill in Void Platform falling mechanics. The first is ledge release: a short grace window after walking off means a slightly late jump still works, which is why confident players jump late instead of early. The second is the apex, where air control is typically strongest — the moment to commit to a direction, not after you have already started dropping.
+
+### Why the Apex Matters More Than the Jump
+
+Most players treat the jump input as the important decision. In practice, the apex is where the outcome is decided. Because air control usually peaks near zero vertical speed, a direction change at the apex costs almost nothing, while the same change during a fast descent costs a lot of horizontal distance. If you only take one habit from these Void Platform falling mechanics, make it this: hold your direction, then adjust at the top of the arc.
+
+## Gravity, Terminal Velocity, and Air Control
+
+The numbers behind Void Platform falling mechanics are rarely shown in-game, but their relationships are consistent and observable. Gravity is not usually a single constant — it is often asymmetric, with a faster descent than ascent so that jumps feel snappy rather than floaty.
+
+| Variable | What It Governs | Why Designers Tune It | What You Notice in Play |
+| --- | --- | --- | --- |
+| Ascent gravity | Acceleration while rising | Shorter rise feels responsive | Jumps feel crisp, not floaty |
+| Descent gravity | Acceleration while falling | Faster return to ground | Landings feel heavy |
+| Fall speed cap | Maximum downward speed | Prevents tunneling through geometry | Long drops stop accelerating |
+| Air control | Horizontal authority while airborne | Balances precision vs. momentum | Steering weakens late in a fall |
+| Coyote window | Grace after leaving a ledge | Forgives late inputs | Late jumps still work |
+| Jump buffer | Grace before landing | Queues early inputs | Pressing jump just before landing works |
+
+The most common misread is the fall speed cap. Players assume a long drop will keep accelerating and therefore aim for a far platform; in reality, once the cap is reached, extra fall distance adds almost no horizontal drift. On long descents in Void Platform, you should commit to your landing spot early rather than steering through the whole drop.
+
+Air control deserves its own note. Many builds reduce horizontal authority as fall speed increases, which is why a mid-air correction works beautifully at the apex and does almost nothing two frames before landing. If a jump keeps failing at the same spot, test whether you are correcting too late — the answer is usually yes.
+
+## Void Death vs. Fall Damage: Two Different Outcomes
+
+New players often treat every drop as lethal. Void Platform falling mechanics actually resolve two separate outcomes, and confusing them leads to unnecessary caution.
+
+| Outcome | Trigger | Typical Result | How to Play Around It |
+| --- | --- | --- | --- |
+| Fall damage | Landing on a valid surface above a threshold | Health loss, possible stagger | Absorb height with short hops or slide landings |
+| Void death | Leaving the playable bounds entirely | Immediate run reset to last anchor | Accept the reset and re-approach from the anchor |
+| Soft landing | Landing below the threshold | No penalty | Use freely to reposition |
+| Anchor respawn | Any reset event | Return to last checkpoint or start | Learn anchor spacing before attempting risky routes |
+
+The distinction matters because void death is usually cleaner than fall damage. A void reset returns you to a known anchor with full state, while fall damage can leave you alive but compromised — sometimes in a worse position than the reset would have given you. Experienced players will occasionally take the void intentionally when a route has gone badly, because the anchor is more valuable than the health bar.
+
+Player experience reports also flag one recurring frustration: near-miss geometry. Edges that look landable but are tagged as pass-through will drop you into the void without warning. Until you learn which surfaces are cosmetic, approach unfamiliar ledges at low speed and confirm the landing before committing to a full run.
+
+## Advanced Falling Techniques Worth Practicing
+
+Once the basics are internalized, Void Platform falling mechanics open up a set of techniques that turn falls into movement. None of them require precise timing tricks outside the game's own rules — they are all applications of the state machine.
+
+| Technique | Input Pattern | What It Achieves | Difficulty |
+| --- | --- | --- | --- |
+| Late jump | Jump just after leaving a ledge | Maximum distance from a short runway | Low |
+| Apex redirect | Direction change near zero vertical speed | Sharp mid-air turns with little cost | Low |
+| Buffered landing | Jump pressed just before contact | Immediate re-jump on landing | Medium |
+| Capped drop | Steer early on a long descent | Predictable landing on far platforms | Medium |
+| Anchor routing | Deliberate void reset after a bad route | Fast recovery to a known position | Medium |
+| Edge skim | Low-speed approach to unknown ledges | Confirms landable surfaces safely | Low |
+
+Practice order matters. Late jump and apex redirect give the biggest immediate return, because they fix the two most common causes of failed jumps. Buffered landing is the next step and is best drilled on flat ground with repeated short hops before you try it over a void.
+
+## Troubleshooting: Why a Jump Keeps Failing
+
+When a specific jump in Void Platform falling mechanics refuses to work, the cause is usually one of a small set of issues. Diagnose by symptom rather than by re-attempting the same input.
+
+| Symptom | Likely Cause | Fix |
+| --- | --- | --- |
+| Jump "eats" your input | Pressed after the grace window closed | Jump earlier, or hold direction off the ledge |
+| Landing short every time | Correcting too late in the fall | Commit to direction at the apex |
+| Overshooting the platform | Holding direction through the whole arc | Release early, re-steer at the apex |
+| Falling through a visible edge | Surface is cosmetic, not landable | Test at low speed before committing |
+| Inconsistent respawn position | Anchor reached from an unusual angle | Approach the anchor from the intended direction |
+
+A few habits make all of this easier to learn:
+
+- **Record one failed jump** rather than repeating it blind — the pattern is easier to see than to feel.
+- **Practice on the shortest version** of a jump before the full route.
+- **Separate input errors from geometry errors** — one is fixable with timing, the other requires a new route.
+- **Learn anchor spacing** before pushing into unfamiliar territory.
+
+For broader context on how games implement gravity, momentum, and forgiving input windows, the [Wikipedia overview of platform game design](https://en.wikipedia.org/wiki/Platform_game) is a useful primer that maps cleanly onto what you observe in Void Platform.
+
+## FAQ
+
+**Are Void Platform falling mechanics the same across every area?**
+Mostly, yes. Gravity, air control, and the grace windows are global systems. What changes between areas is geometry and anchor placement, which is why a jump that works in one room can fail in another even with identical inputs.
+
+**Does holding the jump button change how far I fall?**
+Holding usually affects jump height on the way up, not fall speed on the way down. Once you are descending, the fall speed cap governs your drop, so extra holding does nothing.
+
+**Can I survive a fall into the void?**
+No. Void contact is a reset event, not a damage event. The upside is that the reset is clean and returns you to a known anchor, which is often better than surviving a heavy landing.
+
+**What is the fastest way to improve at Void Platform falling mechanics?**
+Learn the ledge-release grace window and the apex redirect first. Those two transitions account for most failed jumps, and both can be practiced on flat ground before you take them over a void.

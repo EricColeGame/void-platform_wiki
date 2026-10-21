@@ -1,0 +1,121 @@
+export const metadata = {
+  title: "Void Platform Updates: Why Agent Security Starts With Execution Control",
+  description: "Void Platform updates explained: what the team publishes, why execution control beats containers, and how microVM isolation shapes safer AI agents.",
+  category: "community",
+  date: "2026-10-21",
+}
+
+## Why Anyone Shipping AI Agents Should Read the Void Platform Updates Page
+
+Your security team probably did say no to AI agents — and according to the team behind VoidBox, they had a point. Void Platform updates have spent recent months making a blunt argument: the hard part of shipping autonomous agents is not the model, it is controlling what the agent is actually allowed to execute. If you are evaluating the platform, tracking Void Platform updates closely is the fastest way to understand both where the product is heading and the security reasoning underneath it.
+
+That matters because most teams adopt agent tooling in the wrong order. They pick a framework, wire up tools, and only later discover that "the agent runs code" is a sentence their security reviewers will not sign off on. The updates hub exists to close that gap early, before an architecture decision becomes an incident report.
+
+## What the Void Platform Updates Page Actually Tracks
+
+The updates hub at the official Void Platform site is deliberately narrow. It is not a marketing feed, and it does not read like a changelog. Instead, it mixes three kinds of writing: project updates, essays, and technical thinking. Each format answers a different question a buyer or engineer tends to have.
+
+| Content type | What you'll typically find | Who should read it first |
+|---|---|---|
+| Project updates | Direction of the product, what the team is building next, how the pieces fit | Engineering managers scoping a pilot |
+| Essays | Argument-driven posts on agent risk and organizational readiness | Security leads building an internal case |
+| Technical thinking | Architecture rationale, including isolation boundaries and execution control | Platform engineers implementing sandboxes |
+| Announcements | New writing and site-level changes to the updates feed | Anyone tracking the roadmap over time |
+
+Because the page is short by design, a single entry can carry a lot of signal. The most recent one is a good example of how the team uses the feed: not to announce a feature, but to reframe a problem.
+
+## The Headline Theme Running Through Recent Void Platform Updates
+
+The April 21, 2026 entry, "Your Security Team Said No to AI Agents. They Were Right," is the clearest statement of the platform's worldview so far. Its argument runs in three moves, and each one is worth understanding before you evaluate any agent sandbox vendor.
+
+First, the post reframes agent security as an **execution-control problem** rather than a prompt-filtering problem. Guardrails on inputs and outputs are useful, but they do not answer the question of what happens once an agent decides to run a command.
+
+Second, it argues that **containers are not a sufficient boundary** for untrusted, model-generated code. Containers share the host kernel, so a kernel-level escape or a misconfigured mount turns a sandbox into a foothold.
+
+Third, it explains why the team built VoidBox around **microVM isolation** — hardware-level virtualization that gives each workload its own guest kernel rather than a shared one.
+
+| Common assumption | The position laid out in recent Void Platform updates |
+|---|---|
+| "A container is a sandbox." | A container is a packaging and resource boundary; it shares the host kernel |
+| "Prompt injection is the main risk." | The bigger risk is what the agent executes after being influenced |
+| "Approvals catch bad actions." | Human review does not scale to high-volume autonomous loops |
+| "Isolation slows everything down." | Isolation is a design tradeoff, not an afterthought, and belongs in the architecture |
+
+## Containers vs. MicroVMs: The Comparison Behind the Argument
+
+If you only take one thing from the Void Platform updates feed, take the isolation comparison. It is the difference between "we ran the agent in Docker" and "we ran the agent somewhere it cannot reach our infrastructure."
+
+| Dimension | Container-based sandbox | MicroVM-based sandbox |
+|---|---|---|
+| Kernel | Shared with the host | Separate guest kernel per workload |
+| Isolation mechanism | Namespaces, cgroups, seccomp | Hardware virtualization |
+| Blast radius if compromised | Potentially the host and neighboring workloads | Confined to the microVM instance |
+| Startup cost | Very low | Higher, but measured in the same order of magnitude for modern stacks |
+| Best fit | Trusted internal services | Untrusted, model-generated execution |
+
+The practical takeaway for teams is not "delete your containers." It is that containers and microVMs answer different questions. Containers answer "how do I package and schedule this?" MicroVMs answer "how do I guarantee this code cannot touch anything I did not authorize?" When the code is written at runtime by a language model, the second question is the one that gets escalated to a CISO.
+
+## How to Read Void Platform Updates Without Missing the Signal
+
+The feed is short, which means the failure mode is not information overload — it is skimming an essay, nodding, and changing nothing. A better approach is to assign each entry to a concrete decision you are already making.
+
+- **Map every essay to an open architecture question.** If the post is about execution control, ask which of your agent's tools currently run with host-level permissions.
+- **Separate claims from evidence.** Technical thinking posts are arguments, not benchmarks. Treat them as a framing device and validate with your own threat model.
+- **Log the date and the framing.** Watching how the team describes the same problem over time tells you more about roadmap direction than any single announcement.
+- **Share the entry, not a summary.** Forwarding the original essay preserves the nuance that a Slack paraphrase will destroy.
+
+| Reader profile | What to prioritize | What to skip on a first pass |
+|---|---|---|
+| Security engineer | Essays on execution control and isolation boundaries | Site-level announcements |
+| Platform engineer | Technical thinking on microVM architecture | High-level positioning pieces |
+| Engineering manager | Project updates and direction | Deep architecture rationale |
+| Founder or exec | Essays that explain business risk | Implementation detail |
+
+## Community Reports: What Teams Ask Most About Void Platform Updates
+
+Community reports from teams evaluating agent sandboxes tend to circle the same handful of questions. The recurring theme is that people arrive expecting a feature list and leave with a threat-model discussion.
+
+| Recurring question | What community reports suggest |
+|---|---|
+| "Is a container enough if I lock it down?" | Teams that hardened containers still ended up re-evaluating the kernel-sharing assumption |
+| "How much latency does isolation add?" | Most teams report the architectural change is the hard part, not the runtime overhead |
+| "Do I need this for a read-only agent?" | The answer usually depends on whether the agent can write, install, or call out at all |
+| "Where do I start?" | Reading the essays before the product docs is the common recommendation |
+
+One pattern worth naming: teams that read the updates feed before running a pilot tend to scope the pilot around execution control from day one. Teams that skip it often run a proof of concept, get a security review rejection, and then restart with the same architecture questions the essays already answered.
+
+## Building a Habit Around Void Platform Updates
+
+The feed is not high-volume, so a lightweight routine is enough. The goal is to catch framing shifts early, because a shift in how a team describes a problem usually precedes a shift in what they ship.
+
+| Cadence | Action | Why it works |
+|---|---|---|
+| On publish | Read the full entry once, without skimming | Short posts reward close reading |
+| Monthly | Re-read the most recent essay against your current architecture | Surfaces drift between your stack and the stated threat model |
+| Quarterly | Summarize the direction for stakeholders | Turns reading into a decision document |
+| Before any pilot | Read the whole archive in one sitting | Cheap way to absorb the team's reasoning |
+
+Two more habits help. First, keep a short note on which claims you have independently validated and which you are taking on faith — that note becomes your security review evidence later. Second, resist the urge to treat an updates page as a roadmap commitment. Essays describe reasoning; they are not delivery dates.
+
+## What to Watch For Next
+
+Given the direction of recent Void Platform updates, the questions worth holding onto are concrete. How does the platform handle an agent that tries to reach the network? What does the audit trail look like when a microVM is torn down? And how much of the isolation story can a team verify on its own rather than accept on trust?
+
+Those are the questions that separate a useful evaluation from a demo. The updates feed is where the team has chosen to answer them in public — in essays and technical thinking rather than marketing copy — which is itself a signal about how they expect to be judged.
+
+## FAQ
+
+**How often are Void Platform updates published?**
+The feed is intentionally low-volume and mixes project updates with essays and technical writing. Rather than expecting a fixed schedule, treat each entry as a substantial piece worth reading in full.
+
+**Do Void Platform updates include release notes or version numbers?**
+The hub is framed around project updates, essays, and technical thinking rather than a traditional changelog. If you need version-level detail, pair the feed with the product documentation.
+
+**Why do Void Platform updates focus so heavily on containers versus microVMs?**
+Because the team frames agent security as an execution-control problem. Containers share the host kernel, so the argument is that a stronger boundary — microVM isolation — is what untrusted, model-generated code actually requires.
+
+**Where should a new reader start with Void Platform updates?**
+Start with the most recent essay, then work backward through the archive before running any pilot. Reading the reasoning first makes the product decisions much easier to evaluate.
+
+**Are Void Platform updates useful if we already use containers?**
+Yes. The writing is less about replacing containers and more about which workloads should never share a kernel with your infrastructure — a distinction that applies regardless of your current stack.

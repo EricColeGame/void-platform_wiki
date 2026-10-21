@@ -8,7 +8,14 @@
   },
   "nav": {
     "menu": "Menu",
-    "toggleTheme": "Toggle theme"
+    "toggleTheme": "Toggle theme",
+    "guide": "Guide",
+    "mechanics": "Mechanics",
+    "progression": "Progression",
+    "tutorial": "Tutorial",
+    "modes": "Modes",
+    "community": "Community",
+    "technical": "Technical"
   },
   "home": {
     "meta": {
@@ -420,13 +427,34 @@
       "secondary": "Play Void Platform in Browser"
     }
   },
-  "guide": {},
-  "mechanics": {},
-  "progression": {},
-  "tutorial": {},
-  "modes": {},
-  "community": {},
-  "technical": {},
+  "guide": {
+    "overviewTitle": "Void Platform Getting Started",
+    "overviewDescription": "Learn how to install Void Platform, connect the CLI, and ship your first shared deployment with confidence."
+  },
+  "mechanics": {
+    "overviewTitle": "Void Platform Mechanics",
+    "overviewDescription": "Understand the deployment model behind Void Platform, from shared authentication and routing to logs and rollback history."
+  },
+  "progression": {
+    "overviewTitle": "Void Platform Progression",
+    "overviewDescription": "Grow from a single direct deploy into a maintained team platform with release history, rollbacks, and repeatable workflows."
+  },
+  "tutorial": {
+    "overviewTitle": "Void Platform Tutorials",
+    "overviewDescription": "Follow step-by-step Void Platform tutorials for setup, sign-in, deployment, and safe agent execution."
+  },
+  "modes": {
+    "overviewTitle": "Void Platform Modes",
+    "overviewDescription": "Compare Void Platform workflows for solo deployments, shared team platforms, and advanced operational scenarios."
+  },
+  "community": {
+    "overviewTitle": "Void Platform Community",
+    "overviewDescription": "Find Void Platform release news, Reddit discussions, and community practices for running shared deployments."
+  },
+  "technical": {
+    "overviewTitle": "Void Platform Technical Guides",
+    "overviewDescription": "Review Void Platform requirements, download options, and technical details for self-hosted deployments."
+  },
   "shared": {
     "wikiNavigation": "Wiki Navigation",
     "activeCodes": "Community Updates",

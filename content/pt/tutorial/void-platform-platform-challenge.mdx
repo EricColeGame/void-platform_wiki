@@ -1,0 +1,114 @@
+export const metadata = {
+  title: "Desafio da Plataforma Void Platform: Instalar, Configurar e Implantar Aplicativos",
+  description: "Enfrente o desafio da plataforma Void Platform: instale uma plataforma auto-hospedada na Cloudflare, conecte a CLI e planeje os serviços opcionais.",
+  category: "tutorial",
+  date: "2026-10-21",
+}
+
+## O que o desafio da plataforma Void Platform realmente envolve
+
+Configurar infraestrutura compartilhada para uma equipe raramente é um único comando, e o **desafio da plataforma Void Platform** na verdade consiste em sequenciar as peças corretamente. Acerte a ordem e seus desenvolvedores apontam a CLI do Void para uma URL, fazem login e implantam aplicativos em uma única conta compartilhada da Cloudflare. Erre e você perde uma tarde desembaraçando credenciais e serviços semiconfigurados.
+
+Este guia percorre o **desafio da plataforma Void Platform** do início ao fim: quem faz o quê, quais requisitos condicionam a instalação e como planejar os recursos que uma instalação padrão deliberadamente deixa de fora.
+
+A primeira decisão é se você precisa de uma plataforma. Uma plataforma Void é um destino de implantação compartilhado — uma conta da Cloudflare, uma URL de plataforma, muitos desenvolvedores. O administrador instala e mantém a plataforma. Os desenvolvedores conectam a CLI do Void a essa URL, autenticam-se por meio de um método de login habilitado e implantam. Se você está implantando um aplicativo apenas para si mesmo, ignore a plataforma completamente e implante diretamente na Cloudflare.
+
+As funções são simples, mas confundi-las é o erro inicial mais comum:
+
+| Função | O que ela possui | Ferramenta que utiliza |
+| --- | --- | --- |
+| Administrador | Instalar, manter e configurar a plataforma; gerenciar a conta compartilhada da Cloudflare | Instalação da plataforma |
+| Desenvolvedor | Conectar a CLI, fazer login, implantar aplicativos | CLI do Void |
+| Construtor solo | Entregar um aplicativo sem camada compartilhada | Implantação direta na Cloudflare |
+
+Uma instalação core vem com Sandboxes gerenciados e um gateway de e-mail. O lado do e-mail só é ativado quando você configura um domínio e uma zona de e-mail compartilhados, então planeje essa etapa em vez de presumir que o e-mail funciona de imediato.
+
+## Cloudflare direto vs. uma plataforma auto-hospedada core
+
+Ambos os destinos de implantação usam as mesmas APIs de aplicação, o que significa que um aplicativo não precisa ser reescrito quando você passa de um para o outro. O que muda é tudo ao redor do aplicativo: acesso compartilhado, histórico de implantações retido e como as requisições são roteadas.
+
+| Capacidade | Direto na Cloudflare | Plataforma auto-hospedada core |
+| --- | --- | --- |
+| Workers AI e requisições a provedores | Sua própria conta e gateway | Gateway e proxy da instalação |
+| Logs de runtime | Tail ao vivo da Cloudflare | Logs retidos da plataforma |
+| Rollback de aplicação | Versões do Worker | Implantações retidas da plataforma |
+| Sandboxes | Requer Workers Paid e Docker | Requer Workers Paid na conta da plataforma |
+| Painel do usuário e builds gerenciados do GitHub | Não necessário | Não incluído em uma instalação padrão |
+
+Essa tabela é o cerne do **desafio da plataforma Void Platform**: a plataforma não torna a implantação possível, ela torna a implantação *compartilhada e recuperável*. Tails ao vivo e versões do Worker funcionam bem para uma pessoa. Logs retidos e implantações retidas da plataforma são o que permitem a uma equipe depurar um incidente na manhã seguinte e fazer rollback sem adivinhação.
+
+Se você está executando isso para uma equipe em vez de alguns colegas, reserve orçamento para a pegada maior: uma plataforma de equipe requer Workers for Platforms e a infraestrutura documentada. Os recursos dependem de como a instalação é configurada, então registre suas escolhas em algum lugar onde seu sucessor possa encontrá-las.
+
+## Pré-requisitos e credenciais: superando o primeiro obstáculo
+
+A maioria das instalações que falham falha antes de a instalação começar. Leia a página de pré-requisitos e a página de credenciais de ponta a ponta, reúna tudo em um só lugar e então comece. O [guia oficial de instalação da plataforma auto-hospedada Void](https://void.cloud/guide/self-hosted-platform) é a fonte da verdade aqui, e é curto o suficiente para que passar os olhos custe mais tempo do que ler.
+
+| Requisito | O que ele libera | Quando você precisa dele |
+| --- | --- | --- |
+| Workers Paid na conta da plataforma | Sandboxes gerenciados | Antes de qualquer aplicativo dependente de Sandbox entrar em produção |
+| Workers for Platforms mais a infraestrutura documentada | Uma plataforma de equipe | Somente se você estiver atendendo uma equipe, não uma configuração solo |
+| Um método de login habilitado | Login do desenvolvedor pela CLI | Antes de distribuir a URL da plataforma |
+| Um domínio e uma zona de e-mail compartilhados | Gateway de e-mail | Somente se seus aplicativos enviarem e-mail |
+| Credenciais reunidas | A própria instalação | Antes da etapa um |
+
+Três dicas que economizam tempo de verdade:
+
+- **Decida o método de login primeiro.** Ele determina o que você diz aos desenvolvedores no primeiro dia, e mudá-lo depois significa integrar todo mundo novamente.
+- **Trate a conta compartilhada da Cloudflare como produção.** Cada desenvolvedor na plataforma herda seus limites e seu raio de impacto.
+- **Anote a URL da plataforma.** É a única informação de que todo desenvolvedor precisa e a que mais costuma ficar enterrada em uma conversa de chat.
+
+## Passo a passo pelo desafio da plataforma Void Platform
+
+Com os pré-requisitos em mãos, a instalação em si é a parte curta. O **desafio da plataforma Void Platform** está principalmente nas etapas ao redor dela.
+
+| Etapa | Ação | Você terminou quando |
+| --- | --- | --- |
+| 1 | Confirme o destino: Cloudflare direto ou uma plataforma auto-hospedada | Você consegue justificar a plataforma para sua equipe |
+| 2 | Percorra os pré-requisitos e as credenciais | Todas as credenciais estão em mãos |
+| 3 | Instale a plataforma core | Sandboxes gerenciados e o gateway de e-mail existem |
+| 4 | Habilite um método de login | Um desenvolvedor consegue se autenticar |
+| 5 | Configure um domínio e uma zona de e-mail compartilhados | O e-mail está realmente habilitado |
+| 6 | Compartilhe a URL e faça uma implantação de teste | Um desenvolvedor entrega um aplicativo com sucesso |
+| 7 | Adicione serviços opcionais deliberadamente | Cada adição tem um responsável |
+
+Quando um desenvolvedor relatar um problema, trabalhe de trás para frente a partir do sintoma em vez de reinstalar:
+
+| Sintoma | Causa provável | Verifique primeiro |
+| --- | --- | --- |
+| Desenvolvedor não consegue fazer login | Nenhum método de login habilitado, ou a CLI aponta para a URL errada | URL da plataforma e métodos de login habilitados |
+| O e-mail nunca é enviado | Domínio e zona de e-mail compartilhados não configurados | Configurações de domínio e zona de e-mail |
+| Sandboxes não iniciam | Workers Paid ausente na conta da plataforma | Plano na conta da plataforma |
+| Webhooks do GitHub falham atrás do Access | A entrada de webhooks não está isolada | A configuração de entrada de webhooks isolada |
+
+A última linha importa mais do que parece. Plataformas construídas a partir do código-fonte que adicionam os serviços opcionais do GitHub devem seguir a configuração de entrada de webhooks isolada quando o Access protege a API — caso contrário, os webhooks são bloqueados pela mesma proteção que mantém sua API segura.
+
+## Planejando o que a instalação core deixa de fora
+
+Uma instalação padrão é intencionalmente enxuta. Saber o que não está incluído evita que você abra um bug contra um recurso ausente:
+
+| Recurso | Em uma instalação core? | Planeje quando |
+| --- | --- | --- |
+| Sandboxes gerenciados | Sim | Imediatamente, se os aplicativos precisarem de execução em sandbox |
+| Gateway de e-mail | Sim, depois de configurado | Quando os aplicativos enviarem e-mail transacional |
+| Painel do usuário | Não | Você quiser uma interface em vez de fluxos somente via CLI |
+| Builds e webhooks do GitHub | Não | Você quiser implantação por push |
+| Build Containers | Não | Seus builds precisarem de um ambiente conteinerizado |
+| Domínios personalizados de projeto | Não | Os aplicativos precisarem de seus próprios hostnames |
+
+Esta é a bifurcação no **desafio da plataforma Void Platform** em que as equipes se separam. Algumas permanecem na instalação core indefinidamente e conduzem tudo pela CLI. Outras constroem a partir do código-fonte para adicionar os serviços do GitHub, o que traz a questão da entrada de webhooks de volta à mesa. Nenhum caminho está errado — mas decidir deliberadamente é melhor do que descobrir a lacuna durante um lançamento.
+
+Dois hábitos práticos ajudam aqui. Primeiro, mantenha um breve inventário escrito do que sua instalação inclui, porque “os recursos dependem da configuração” é fácil de dizer e difícil de lembrar seis meses depois. Segundo, quando você adicionar um serviço opcional, anote quem é o responsável e como ele é testado. Serviços opcionais que ninguém possui tendem a apodrecer silenciosamente.
+
+## Perguntas frequentes
+
+**Preciso enfrentar o desafio da plataforma Void Platform se estiver implantando sozinho?**
+Não. Se você está implantando um aplicativo para si mesmo, implante diretamente na Cloudflare. Você obtém as mesmas APIs de aplicação sem instalar ou manter uma plataforma antes.
+
+**O que está realmente incluído em uma instalação core?**
+Sandboxes gerenciados e um gateway de e-mail. O e-mail é habilitado quando você configura um domínio e uma zona de e-mail compartilhados. O painel do usuário, os builds e webhooks do GitHub, os Build Containers e os domínios personalizados de projeto não fazem parte da instalação core.
+
+**Posso adicionar builds do GitHub depois?**
+Sim, mas isso significa executar uma plataforma construída a partir do código-fonte em vez da instalação core. Se o Access protege sua API, siga a configuração de entrada de webhooks isolada para que os webhooks ainda cheguem à plataforma.
+
+**Qual é o erro mais comum no desafio da plataforma Void Platform?**
+Tratá-lo como uma tarefa apenas de instalação. A instalação é curta; o planejamento em torno de métodos de login, configuração de e-mail, serviços opcionais e quem é responsável por cada peça é o que determina se a plataforma se sustenta.
