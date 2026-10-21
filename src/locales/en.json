@@ -7,13 +7,6 @@
     "legalNotice": "Non-official fan wiki. Made by players, for players."
   },
   "nav": {
-    "guide": "Guide",
-    "mechanics": "Mechanics",
-    "progression": "Progression",
-    "tutorial": "Tutorial",
-    "modes": "Modes",
-    "community": "Community",
-    "technical": "Technical",
     "menu": "Menu",
     "toggleTheme": "Toggle theme"
   },
@@ -427,34 +420,13 @@
       "secondary": "Play Void Platform in Browser"
     }
   },
-  "guide": {
-    "overviewTitle": "Void Platform Beginner Guide",
-    "overviewDescription": "Start with Void Platform controls, wall jumps, dashes, and the core platforming loop before moving into advanced routes."
-  },
-  "mechanics": {
-    "overviewTitle": "Void Platform Platform Mechanics",
-    "overviewDescription": "Learn how Void Platform handles sticky platforms, falling, movement, and physics so every jump is predictable."
-  },
-  "progression": {
-    "overviewTitle": "Void Platform Progression Guide",
-    "overviewDescription": "Track Void Platform achievements, unlocks, secrets, and ending requirements with clear step-by-step guidance."
-  },
-  "tutorial": {
-    "overviewTitle": "Void Platform Survival Tutorials",
-    "overviewDescription": "Use practical Void Platform tutorials to survive hazards, reach the void, and control platforms under pressure."
-  },
-  "modes": {
-    "overviewTitle": "Void Platform Game Modes",
-    "overviewDescription": "Compare Void Platform survival, challenge, and single-player modes and choose the run that fits your goals."
-  },
-  "community": {
-    "overviewTitle": "Void Platform Community & Updates",
-    "overviewDescription": "Follow Void Platform community guides, Reddit discussions, release-date coverage, and update notes."
-  },
-  "technical": {
-    "overviewTitle": "Void Platform Technical Guide",
-    "overviewDescription": "Check Void Platform requirements, supported platforms, and download details before you start playing."
-  },
+  "guide": {},
+  "mechanics": {},
+  "progression": {},
+  "tutorial": {},
+  "modes": {},
+  "community": {},
+  "technical": {},
   "shared": {
     "wikiNavigation": "Wiki Navigation",
     "activeCodes": "Community Updates",
