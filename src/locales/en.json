@@ -42,22 +42,22 @@
         {
           "number": "1",
           "title": "Beginner Guide",
-          "description": "Master the Spirit World from day one with our comprehensive beginner guide covering controls, combat, and early progression."
+          "description": "Learn the core Void Platform loop: move, jump, wall jump, dash, and reach your first checkpoint."
         },
         {
           "number": "2",
-          "title": "Fastest Leveling",
-          "description": "Dominate early game and max your progression with the most efficient leveling routes and strategies."
+          "title": "Platform Movement",
+          "description": "Read dwell, travel, and return phases so you board moving platforms at the safest moment."
         },
         {
           "number": "3",
-          "title": "Best Farming Spots",
-          "description": "Maximize your Soul Essence and EXP gains with optimal farming locations for every stage."
+          "title": "Falling Mechanics",
+          "description": "Use coyote time, jump buffering, and apex redirects to land clean jumps and recover from void deaths."
         },
         {
           "number": "4",
-          "title": "How to Extract",
-          "description": "Learn the best methods and locations for collecting coins in Void Platform."
+          "title": "Survival Tips",
+          "description": "Avoid spike beds, land near platform centers, and learn anchor spacing before pushing a harder route."
         }
       ]
     },
@@ -65,265 +65,351 @@
       "eyebrow": "Popular Pages",
       "title": "Trending Now",
       "quickLinks": [
-        "Hollow Progression",
-        "Fastest Leveling",
-        "Spirit Charms",
-        "All Boss Guides"
+        "Void Platform Basics",
+        "Platform Movement",
+        "Falling Mechanics",
+        "Single Player"
       ],
       "cards": [
         {
           "badge": "Beginner",
-          "title": "Beginner Guide",
-          "description": "Everything you need from your first login to mastering the basics of combat and progression.",
-          "href": "/beginner-guide"
+          "title": "Void Platform Beginner Guide",
+          "description": "Learn the first-run loop: read the level, time the jump, use the dash, and reach the next checkpoint.",
+          "href": "/guide/void-platform-beginner-guide"
         },
         {
-          "badge": "Updated",
-          "title": "Active Codes",
-          "description": "All working codes with rewards redeem before they expire.",
-          "href": "/codes"
+          "badge": "Basics",
+          "title": "Void Platform How to Play",
+          "description": "Get comfortable with movement, wall jumps, dash timing, and the controls behind every route.",
+          "href": "/guide/void-platform-how-to-play"
         },
         {
-          "badge": "Updated",
-          "title": "Equipment Database",
-          "description": "94 items across 5 slots complete gear database with stats, rarity, and sources.",
-          "href": "/equipment"
+          "badge": "Mechanics",
+          "title": "Void Platform Platform Movement",
+          "description": "Read dwell, travel, and return phases on moving platforms before committing to a jump.",
+          "href": "/mechanics/void-platform-platform-movement"
         },
         {
-          "badge": "Popular",
-          "title": "Which Race Should You Pick?",
-          "description": "Shinigami, Quincy, or Hollow compare all three and find your perfect playstyle.",
-          "href": "/races/best-race"
+          "badge": "Mechanics",
+          "title": "Void Platform Falling Mechanics",
+          "description": "Understand gravity, coyote time, jump buffering, void death, and anchor respawns.",
+          "href": "/mechanics/void-platform-falling-mechanics"
         },
         {
-          "badge": "New",
-          "title": "Enemies & Monsters",
-          "description": "23 enemy types across 5 regions drops, locations, and farming tips.",
-          "href": "/enemies"
+          "badge": "Mechanics",
+          "title": "Void Platform Platform Physics",
+          "description": "See how jump arcs, collision boxes, one-way platforms, and fair deaths fit together.",
+          "href": "/mechanics/void-platform-platform-physics"
         },
         {
-          "badge": "Popular",
-          "title": "Boss Locations & Drops",
-          "description": "Every boss location, drop table, and respawn timer in one reference.",
-          "href": "/boss-locations-drops-respawn-times"
+          "badge": "Mode",
+          "title": "Void Platform Single Player Mode",
+          "description": "Set up a solo run, pace your attempts, and avoid the mistakes that sink clean clears.",
+          "href": "/modes/void-platform-single-player"
         },
         {
-          "badge": "Popular",
-          "title": "Best Builds",
-          "description": "Optimal stat allocation, skill tree picks, and Charm combos for every playstyle.",
-          "href": "/builds/best-builds"
+          "badge": "Tips",
+          "title": "Void Platform Tips and Tricks",
+          "description": "Use coyote time, buffered jumps, apex redirects, and deliberate resets to save runs.",
+          "href": "/guide/void-platform-tips"
         },
         {
-          "badge": "New",
-          "title": "Shikai Tier List",
-          "description": "All 6 Shinigami Shikai types ranked by PvP and PvE performance.",
-          "href": "/tier-list/shikai"
+          "badge": "Progression",
+          "title": "Void Platform Progression Guide",
+          "description": "Move from a first clear to harder routes with a steady plan for anchors and movement tech.",
+          "href": "/progression/void-platform-progression-guide"
         },
         {
-          "badge": "New",
-          "title": "World Events Guide",
-          "description": "Supply Caches, Raids, and endgame world events with rare rewards.",
-          "href": "/world-events"
+          "badge": "Community",
+          "title": "Void Platform Community",
+          "description": "Find community discussion, shared routes, and answers to common setup questions.",
+          "href": "/community/void-platform-community"
         }
       ]
     },
     "aboutGame": {
       "title": "What is Void Platform?",
       "paragraphs": [
-        "Void Platform is a stylized fighting RPG on Roblox inspired by the Bleach anime universe. Choose from three playable races Shinigami, Quincy, or Hollow each with unique progression systems, unlockable abilities, and evolution paths. Master over 130 skills as you fight your way to the level 100 cap.",
-        "Whether you're unlocking your first Shikai, evolving from a base Hollow into an Arrancar, or grinding Quincy Lieutenant missions, our wiki covers every system with detailed guides, data tables, and step-by-step walkthroughs."
+        "Void Platform is a browser-based precision platformer built around wall jumps, dashes, and carefully timed movement across floating platforms. Each level asks you to read a jump, commit to an arc, and recover quickly when a route collapses into spikes or open void.",
+        "The core loop is simple: clear gaps, avoid spike hazards, and collect coins while pushing toward the next checkpoint. Our guides break down controls, movement timing, falling mechanics, and survival strategies so new players can turn repeated attempts into consistent clears."
       ],
       "stats": [
-        {
-          "label": "Developer",
-          "value": "Unconfirmed"
-        },
         {
           "label": "Platform",
           "value": "Browser"
         },
         {
           "label": "Genre",
-          "value": "Fighting RPG"
+          "value": "Precision Platformer"
         },
         {
-          "label": "Visits",
-          "value": "12.6M+"
+          "label": "Movement",
+          "value": "Wall Jump & Dash"
         },
         {
-          "label": "Favorites",
-          "value": "243K+"
+          "label": "Objective",
+          "value": "Collect Coins"
         },
         {
-          "label": "Total Skills",
-          "value": "130+"
-        },
-        {
-          "label": "Level Cap",
-          "value": "100"
+          "label": "Hazards",
+          "value": "Spikes & Void"
         }
       ],
       "cta": "Explore All Guides"
     },
     "explore": {
       "title": "Explore Void Platform Wiki",
-      "description": "Master your seafood restaurant on Roblox with essential progression guides, active codes, complete fish & recipe catalogs, and optimal upgrade strategies.",
+      "description": "Browse eight Void Platform guide hubs covering the first run, movement, falling, progression, challenge tiers, controls, updates, and common questions.",
       "modules": [
         {
           "order": 1,
-          "name": "Void Platform Working Codes",
-          "description": "Redeem the latest working codes to claim free coins, gems, exclusive cosmetics, and boost items before they expire.",
-          "href": "/codes",
-          "displayType": "code-box",
+          "name": "Void Platform Beginner Guide",
+          "description": "Learn the first-run loop in Void Platform: read the level, time your jump, use the dash, and reach the next checkpoint without wasting attempts.",
+          "href": "/guide/void-platform-beginner-guide",
+          "displayType": "step-by-step",
           "highlights": [
             {
-              "label": "Code",
-              "detail": "FULLRELEASE — Free Cash & Rewards"
+              "label": "1",
+              "detail": "Start with a short run and test jump height and dash distance before committing to a gap."
             },
             {
-              "label": "Code",
-              "detail": "75KLIKES — Exclusive Ability Reroll"
+              "label": "2",
+              "detail": "Watch each platform for one full cycle so you know when it dwells and when it moves."
             },
             {
-              "label": "Tip",
-              "detail": "Codes are case-sensitive; enter them in the Settings menu"
+              "label": "3",
+              "detail": "Use wall jumps to regain height and dash to cross gaps that a normal jump cannot clear."
+            },
+            {
+              "label": "4",
+              "detail": "Land near the center of moving platforms; edges are where momentum carries you into the void."
+            },
+            {
+              "label": "5",
+              "detail": "Treat spikes and open pits as reset points and learn the respawn anchor before pushing ahead."
             }
           ]
         },
         {
           "order": 2,
-          "name": "Beginner Guide: How to Start & Serve Customers",
-          "description": "Step-by-step beginner guide covering customer ordering, food prep, station management, and cashier checkout mechanics.",
-          "href": "/guide",
-          "displayType": "feature-cards",
+          "name": "Void Platform Gameplay Guide",
+          "description": "Understand the core Void Platform loop: traverse floating platforms, collect coins, avoid spike hazards, and keep a clean route from start to checkpoint.",
+          "href": "/guide/void-platform-gameplay",
+          "displayType": "card-list",
           "highlights": [
             {
-              "label": "Step 1",
-              "detail": "Take customer order at the stall front"
+              "label": "Movement",
+              "detail": "Chain jumps, wall jumps, and dashes to cross floating platforms."
             },
             {
-              "label": "Step 2",
-              "detail": "Cook seafood on the grill or boil station"
+              "label": "Coins",
+              "detail": "Collect coins along the route while keeping enough time to line up the next jump."
             },
             {
-              "label": "Step 3",
-              "detail": "Serve warm food promptly for maximum customer tips"
+              "label": "Spikes",
+              "detail": "Treat spike beds as lethal hazards and approach their edges at low speed."
+            },
+            {
+              "label": "Anchors",
+              "detail": "Learn respawn anchors so a failed route costs one attempt, not the whole run."
+            },
+            {
+              "label": "Routes",
+              "detail": "Watch a platform's full cycle before boarding so you commit on the dwell."
             }
           ]
         },
         {
           "order": 3,
-          "name": "Seafood & Fish Tier List",
-          "description": "Complete breakdown of all catchable fish and seafood ranked by market value, customer demand, and profit margins.",
-          "href": "/tier-list",
-          "displayType": "tier-grid",
+          "name": "Void Platform Tips and Tricks",
+          "description": "Practical Void Platform tips for cleaner jumps, safer platform boarding, and faster recovery after a missed route.",
+          "href": "/guide/void-platform-tips",
+          "displayType": "card-list",
           "highlights": [
             {
-              "label": "S Tier",
-              "detail": "King Crab · Lobster Boil — Highest profit per customer"
+              "label": "Coyote",
+              "detail": "A late jump still registers briefly after you leave a ledge, so do not panic-spam."
             },
             {
-              "label": "A Tier",
-              "detail": "Salmon · Jumbo Shrimp · Tuna Steak — Reliable fast earners"
+              "label": "Buffer",
+              "detail": "Press jump just before landing to queue the next hop on contact."
             },
             {
-              "label": "B Tier",
-              "detail": "Clams · Oysters · Squid — Great mid-game margin"
+              "label": "Apex",
+              "detail": "Change direction near the top of the arc, where air control is strongest."
             },
             {
-              "label": "C Tier",
-              "detail": "Common Sardines · Small Crab — Starter seafood"
+              "label": "Dwell",
+              "detail": "Board moving platforms during their pause instead of as they accelerate."
+            },
+            {
+              "label": "Reset",
+              "detail": "Use a deliberate void reset to return to the last anchor after a bad route."
             }
           ]
         },
         {
           "order": 4,
-          "name": "Best Upgrades Progression",
-          "description": "Optimal order to spend your cash: expand kitchen stations, hire waitstaff, speed up grills, and upgrade seating.",
-          "href": "/guide",
-          "displayType": "feature-cards",
+          "name": "Void Platform Progression Guide",
+          "description": "Plan the climb from your first clean clear to harder Void Platform routes by learning anchors, movement tech, and repeatable lines.",
+          "href": "/progression/void-platform-progression-guide",
+          "displayType": "step-by-step",
           "highlights": [
             {
-              "label": "Priority 1",
-              "detail": "Cooking Speed & Extra Burners — Clears customer backlog"
+              "label": "1",
+              "detail": "Clear the opening route without dashing so you learn the natural jump spacing."
             },
             {
-              "label": "Priority 2",
-              "detail": "Customer Seating Capacity — Increases simultaneous diners"
+              "label": "2",
+              "detail": "Add a dash after a wall jump to extend a gap without overshooting the landing."
             },
             {
-              "label": "Priority 3",
-              "detail": "Auto-Chef / Waiter Staff — Passive hands-free revenue"
+              "label": "3",
+              "detail": "Practice anchor routing on a known checkpoint until the reset becomes automatic."
+            },
+            {
+              "label": "4",
+              "detail": "Revisit earlier levels for cleaner lines and coin routes instead of forcing new ground."
+            },
+            {
+              "label": "5",
+              "detail": "Chain movement tech into one continuous run once each jump is reliable on its own."
             }
           ]
         },
         {
           "order": 5,
-          "name": "How to Get Cash Fast",
-          "description": "Top money-making strategies, VIP evaluation, tip maximization, and high-efficiency serving tips.",
-          "href": "/guide",
-          "displayType": "feature-cards",
+          "name": "Void Platform Levels and Challenges",
+          "description": "Compare the challenge types that define Void Platform runs, from static gaps and linear shuttles to elevators, pendulum arcs, phased platforms, and chasers.",
+          "href": "/mechanics",
+          "displayType": "tier-grid",
           "highlights": [
             {
-              "label": "Combo",
-              "detail": "Chain orders quickly to build the Customer Happiness multiplier"
+              "label": "S",
+              "detail": "Chasing and phased platforms — the cycle punishes late reads."
             },
             {
-              "label": "High Margin",
-              "detail": "Focus high-tier seafood boils during peak customer rush hours"
+              "label": "A",
+              "detail": "Pendulum arcs and vertical elevators — mid-air adjustment decides the landing."
             },
             {
-              "label": "Reinvest",
-              "detail": "Keep 20% cash reserve for fresh ingredient replenishment"
+              "label": "B",
+              "detail": "Linear shuttles — readable after one full cycle."
+            },
+            {
+              "label": "C",
+              "detail": "Static ledges and wide gaps — pure jump distance."
             }
           ]
         },
         {
           "order": 6,
-          "name": "Plot Expansion & Stand Customization",
-          "description": "Unlock bigger land plots, arrange optimal cooking layouts, and add high-value decorative upgrades.",
-          "href": "/guide",
-          "displayType": "feature-cards",
+          "name": "Void Platform Controls Guide",
+          "description": "A clear reference for the actions that drive every Void Platform route: horizontal movement, jump, wall jump, dash, and reset.",
+          "href": "/guide/void-platform-how-to-play",
+          "displayType": "code-cards",
           "highlights": [
             {
-              "label": "Plot 1",
-              "detail": "Starter Beach Stand (3 Tables, 1 Grill)"
+              "label": "Move",
+              "detail": "Use left and right input to line up the next landing before you jump."
             },
             {
-              "label": "Plot 2",
-              "detail": "Boardwalk Restaurant (6 Tables, 2 Grills, Boil Station)"
+              "label": "Jump",
+              "detail": "Hold jump for a higher arc and release early for short hops."
             },
             {
-              "label": "Plot 3",
-              "detail": "Luxury Pier Seafood Pavilion (Full Automation & VIP Seating)"
+              "label": "Wall Jump",
+              "detail": "Jump into a wall and push off to regain height."
+            },
+            {
+              "label": "Dash",
+              "detail": "Use a dash to cross a gap that a normal jump cannot clear."
+            },
+            {
+              "label": "Reset",
+              "detail": "Restart the run or return to the last anchor after a void death."
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "name": "Void Platform Update Guide",
+          "description": "Track the patch notes and rule changes that can alter Void Platform routes, platform cycles, collision behavior, and respawn timing.",
+          "href": "/community/void-platform-updates",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Patches",
+              "detail": "Check patch notes after every update because balance changes hit solo routes hardest."
+            },
+            {
+              "label": "Cycles",
+              "detail": "Relearn platform timing after a patch instead of assuming the old cycle still applies."
+            },
+            {
+              "label": "Fixes",
+              "detail": "Watch for collision and respawn fixes that change how a jump or anchor behaves."
+            },
+            {
+              "label": "Modes",
+              "detail": "New challenge rules can add stricter timing windows to familiar routes."
+            }
+          ]
+        },
+        {
+          "order": 8,
+          "name": "Void Platform FAQ",
+          "description": "Quick answers to the most common Void Platform questions about browser play, controls, failed jumps, void deaths, and coin routes.",
+          "href": "/tutorial",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Browser",
+              "detail": "Void Platform runs in a browser, so there is no install step."
+            },
+            {
+              "label": "Controls",
+              "detail": "Jump, wall jump, and dash timing drive every Void Platform route."
+            },
+            {
+              "label": "Deaths",
+              "detail": "Void contact ends the attempt and returns you to the last anchor."
+            },
+            {
+              "label": "Coins",
+              "detail": "Collect coins along the route without giving up a clean jump line."
+            },
+            {
+              "label": "Help",
+              "detail": "Start with the Void Platform beginner guide when a level keeps blocking you."
             }
           ]
         }
       ]
     },
     "faq": {
-      "title": "Frequently Asked Questions",
-      "description": "Quick answers to the most common questions about Void Platform.",
+      "title": "Void Platform FAQ",
+      "description": "Quick answers to the most common questions about Void Platform movement, controls, hazards, and progression.",
       "items": [
         {
           "question": "What is Void Platform?",
-          "answer": "Void Platform is a free-to-play fighting RPG on Roblox based on the Bleach anime. You choose one of game mechanics Shinigami (Soul Reaper), Quincy, or Hollow each with unique progression, combat abilities, and evolution systems. The game features 130+ skills, a level 100 cap, boss fights, and deep build customization."
+          "answer": "Void Platform is a browser-based precision platformer built around wall jumps, dashes, spike hazards, and coin collection. Each run asks you to read a platform pattern, commit to a jump, and recover quickly after a missed route."
         },
         {
-          "question": "Which race should beginners pick?",
-          "answer": "Shinigami is the most straightforward starter race, while Hollow and Quincy offer more specialized progression routes. Compare their abilities before committing."
+          "question": "Does Void Platform require a download?",
+          "answer": "Void Platform runs in a browser, so you can start a run without installing a separate client. Open the game page and use the movement and jump controls to begin."
         },
         {
-          "question": "What is the current level cap?",
-          "answer": "The current level cap is 100, with more than 130 skills available across trees and race progression systems."
+          "question": "What controls does Void Platform use?",
+          "answer": "Void Platform uses horizontal movement, jump, wall jump, and dash. Jump timing matters more than speed: hold for a higher arc, release early for short hops, and dash only after you have lined up the landing."
         },
         {
-          "question": "Where do I find active codes?",
-          "answer": "Use the Codes page for working codes, rewards, expiration notes, and redeem instructions."
+          "question": "Why does my jump in Void Platform keep failing?",
+          "answer": "Most failed Void Platform jumps come from boarding a moving platform too late, correcting too late in the fall, or releasing direction after the apex. Watch one full platform cycle, commit at the dwell, and steer near the top of the arc."
         },
         {
-          "question": "Are boss guides updated?",
-          "answer": "Boss pages are organized with spawn notes, attack patterns, strategies, drop tables, and related next steps for progression."
+          "question": "How do I survive longer in Void Platform?",
+          "answer": "Treat spikes and open void as reset points, land near the center of moving platforms, and learn the spacing between respawn anchors. A deliberate reset is faster than forcing a bad route."
         }
       ]
     },
