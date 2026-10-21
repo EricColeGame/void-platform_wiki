@@ -42,22 +42,22 @@
         {
           "number": "1",
           "title": "Beginner Guide",
-          "description": "Learn the core Void Platform loop: move, jump, wall jump, dash, and reach your first checkpoint."
+          "description": "Learn the first-run loop: read the route, time each jump, chain wall jumps and dashes, and reach the first checkpoint."
         },
         {
           "number": "2",
-          "title": "Platform Movement",
-          "description": "Read dwell, travel, and return phases so you board moving platforms at the safest moment."
+          "title": "Progression Guide",
+          "description": "Turn single clears into longer runs by learning anchor spacing and adding one movement technique at a time."
         },
         {
           "number": "3",
-          "title": "Falling Mechanics",
-          "description": "Use coyote time, jump buffering, and apex redirects to land clean jumps and recover from void deaths."
+          "title": "Coin Routes",
+          "description": "Plan coin pickups around safe landings so collecting every coin never forces a blind jump over the void."
         },
         {
           "number": "4",
-          "title": "Survival Tips",
-          "description": "Avoid spike beds, land near platform centers, and learn anchor spacing before pushing a harder route."
+          "title": "Platform Mechanics",
+          "description": "Read dwell, travel, and return phases before boarding so moving platforms never catch you at the edge."
         }
       ]
     },
@@ -130,8 +130,8 @@
     "aboutGame": {
       "title": "What is Void Platform?",
       "paragraphs": [
-        "Void Platform is a browser-based precision platformer built around wall jumps, dashes, and carefully timed movement across floating platforms. Each level asks you to read a jump, commit to an arc, and recover quickly when a route collapses into spikes or open void.",
-        "The core loop is simple: clear gaps, avoid spike hazards, and collect coins while pushing toward the next checkpoint. Our guides break down controls, movement timing, falling mechanics, and survival strategies so new players can turn repeated attempts into consistent clears."
+        "Void Platform is a browser-based precision platformer built around wall jumps, dashes, spike hazards, and coin collection. Its routes are suspended over open void, so each jump asks you to read the platform cycle, commit to an arc, and recover cleanly when a landing goes wrong.",
+        "The core loop is straightforward: cross floating platforms, collect coins, avoid spike beds, and reach the next anchor before pushing deeper. Our guides explain controls, platform movement, falling mechanics, and survival habits so a first-time player can move from repeated resets to consistent clears."
       ],
       "stats": [
         {
@@ -164,29 +164,29 @@
         {
           "order": 1,
           "name": "Void Platform Beginner Guide",
-          "description": "Learn the first-run loop in Void Platform: read the level, time your jump, use the dash, and reach the next checkpoint without wasting attempts.",
+          "description": "Learn the first-run loop in Void Platform: read the level, time your jump, use wall jumps and dashes, and reach the first checkpoint without wasting attempts.",
           "href": "/guide/void-platform-beginner-guide",
           "displayType": "step-by-step",
           "highlights": [
             {
               "label": "1",
-              "detail": "Start with a short run and test jump height and dash distance before committing to a gap."
+              "detail": "Start with a short run and test jump height, dash distance, and wall-jump timing before committing to a gap."
             },
             {
               "label": "2",
-              "detail": "Watch each platform for one full cycle so you know when it dwells and when it moves."
+              "detail": "Watch each moving platform for one full cycle so you know its approach, dwell, travel, and return phases."
             },
             {
               "label": "3",
-              "detail": "Use wall jumps to regain height and dash to cross gaps that a normal jump cannot clear."
+              "detail": "Use wall jumps to regain height and save the dash for a gap that a normal jump cannot clear."
             },
             {
               "label": "4",
-              "detail": "Land near the center of moving platforms; edges are where momentum carries you into the void."
+              "detail": "Land near the center of each platform; the edges are where momentum carries you into the void."
             },
             {
               "label": "5",
-              "detail": "Treat spikes and open pits as reset points and learn the respawn anchor before pushing ahead."
+              "detail": "Learn the respawn anchor before a hard section so one missed jump costs an attempt, not the whole run."
             }
           ]
         },
@@ -334,7 +334,7 @@
         {
           "order": 7,
           "name": "Void Platform Update Guide",
-          "description": "Track the patch notes and rule changes that can alter Void Platform routes, platform cycles, collision behavior, and respawn timing.",
+          "description": "Track confirmed Void Platform updates and the changes that can affect routes, platform cycles, collision behavior, and respawn timing.",
           "href": "/community/void-platform-updates",
           "displayType": "card-list",
           "highlights": [
@@ -393,7 +393,7 @@
       "items": [
         {
           "question": "What is Void Platform?",
-          "answer": "Void Platform is a browser-based precision platformer built around wall jumps, dashes, spike hazards, and coin collection. Each run asks you to read a platform pattern, commit to a jump, and recover quickly after a missed route."
+          "answer": "Void Platform is a browser-based precision platformer built around wall jumps, dashes, spike hazards, and coin collection. A run asks you to read a platform pattern, commit to a jump, and recover quickly after a missed route."
         },
         {
           "question": "Does Void Platform require a download?",
