@@ -14,6 +14,29 @@
   "dir": "ltr",
   "categories": ["games", "entertainment", "education"],
   "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "shortcuts": [
+    {
+      "name": "Beginner Guide",
+      "short_name": "Guide",
+      "description": "Start with Void Platform controls, wall jumps, and dash basics.",
+      "url": "/en/guide",
+      "icons": [
+        { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Gameplay Controls",
+      "short_name": "Controls",
+      "description": "Review Void Platform controls, mechanics, and movement tips.",
+      "url": "/en/mechanics",
+      "icons": [
+        { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    }
+  ],
   "icons": [
     { "src": "/favicon-16x16.png", "sizes": "16x16", "type": "image/png" },
     { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
